@@ -81,16 +81,27 @@ class _HomePageState extends State<HomePage> {
                   )
               )
             ),
+            Center(
+              child: Text(
+                "Page 3",
+                style: TextStyle(
+                  fontSize: 24
+                  )
+              )
+            ),
           ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onItemTapped,
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Page 1"),
-          BottomNavigationBarItem(icon: Icon(Icons.star), label: "Page 2"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Page 3"),
+          BottomNavigationBarItem(icon: Icon(Icons.work), label: "Page 2"),
+          BottomNavigationBarItem(icon: Icon(Icons.schedule), label: "Page 3"),
+          BottomNavigationBarItem(icon: Icon(Icons.task), label: "Page 4"),
         ],
       ),
     );
