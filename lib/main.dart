@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Test Safe Area",
+                  "Test Safe   Area",
                   style: TextStyle(
                     fontSize: 18, 
                     fontWeight: FontWeight.bold
