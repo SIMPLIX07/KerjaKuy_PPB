@@ -67,10 +67,6 @@ class _HomePageState extends State<HomePage> {
                                 width: MediaQuery.of(context).size.width,
                                 height: 80,
                                 padding: EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -145,6 +141,7 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           SizedBox(height: 15,),
                           Text("Lamaran Anda", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                          SizedBox(height: 10,),
                           Container(  // Pembungkus Hitam
                             width: MediaQuery.of(context).size.width * 0.9,
                             height: 200, 
@@ -288,8 +285,157 @@ class _HomePageState extends State<HomePage> {
                           )
                         ],
                       ),
-                    )
+                    ),
                     //Section rekomendasi
+                    SizedBox(height: 10,),
+                    Text("Rekomendasi", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                    SizedBox(height: 10,),
+                    Container(  // Pembungkus Hitam
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      height: 200, 
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 36, 33, 33),
+                        borderRadius: BorderRadius.circular(12)
+                      ),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          height: 160, 
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 246, 243, 243),
+                            borderRadius: BorderRadius.circular(12)
+                          ),
+                          child: Column(
+                            children: [
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.biotech, size: 70,),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text("Font Desk Agent", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                                        Text("Hilton"),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Container(
+                                  width: 250,
+                                  height: 40,
+                                  child: Row(
+                                    children: [
+                                      Container( // Gaji
+                                        width: 100,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(30),
+                                          border: Border.all(
+                                            color: Colors.green,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Text("Gaji 8 Juta"),
+                                        ),
+                                      ),
+                                      SizedBox(width: 5,),
+                                      Container( //Penuh Waktu
+                                        width: 100,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(30),
+                                          border: Border.all(
+                                            color: Colors.green,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Text("Penuh Waktu"),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(left: 5),
+                                      width: 120,
+                                      height: 40,
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.location_city, size: 20,),
+                                          SizedBox(width: 5,),
+                                          Text("Jakarta Pusat")
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                        width: 100,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: Colors. green,
+                                          borderRadius: BorderRadius.circular(30),
+                                        ),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Text("Lamar", style: TextStyle(color: Colors.white),),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    //Berita Pekerjaan
+                    SizedBox(height: 5,),
+                    Text("Berita Pekerjaan",style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        //sisi kiri
+                        Column(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 120-72,
+                              decoration: BoxDecoration(
+                                color: Colors.amber
+                              ),
+                            )
+                          ],
+                        ),
+                        //Sisi Kanan
+                        Column(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 120-72,
+                              decoration: BoxDecoration(
+                                color: Colors.amber
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ],
