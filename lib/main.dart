@@ -4,14 +4,110 @@ void main() {
   runApp(const MyApp());
 }
 
-Widget _buildInterviewItem({
+//WIDGET UNTUK PAGE 4
+Widget lamaran({
+  required String companyName,
+  required String status,
+}) {
+  // status lamaran(PAGE 3)
+  Color statusColor;
+  if (status == 'Diproses') {
+    statusColor = Colors.amber;
+  } else if (status == 'Diterima') {
+    statusColor = Colors.green;
+  } else {
+    statusColor = Colors.red;
+  }
+
+  // teks sesuai status(PAGE 3)
+  String message;
+  if (status == 'Diproses') {
+    message = "Lamaran anda sedang diproses";
+  } else if (status == 'Diterima') {
+    message = "Selamat! Lamaran anda diterima";
+  } else {
+    message = "Mohon maaf, lamaran anda belum diterima";
+  }
+
+  return Container(
+    margin: const EdgeInsets.only(bottom: 12),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.3),
+          blurRadius: 4,
+          offset: Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Row(
+      children: [
+        Container(
+          width: 4,
+          height: 70,
+          decoration: BoxDecoration(
+            color: statusColor,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12),
+              bottomLeft: Radius.circular(12),
+            ),
+          ),
+        ),
+        SizedBox(width: 10),
+        Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.business, color: Colors.grey[600]),
+              ),
+              SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    message,
+                    style: TextStyle(fontSize: 13, color: Colors.black),
+                  ),
+                  Text(
+                    "oleh $companyName",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+//WIDGET UNTUK PAGE 4
+Widget wawancara({
   required String date,
   required String time,
   required String company,
   bool isCompleted = false,
 }) {
+  
+  Color statusColor;
+
+  if (isCompleted) {
+    statusColor = Colors.green;
+  } else {
+    statusColor = Colors.amber;
+  }
+
   return Container(
-    padding: EdgeInsets.all(16),
     margin: EdgeInsets.only(bottom: 12),
     decoration: BoxDecoration(
       color: Colors.white,
@@ -24,50 +120,71 @@ Widget _buildInterviewItem({
         ),
       ],
     ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    child: Row(
       children: [
-        Text(
-          "Tanggal: $date",
-          style: TextStyle(
-            fontSize: 14,
-            color: isCompleted ? Colors.grey : Colors.black,
-          ),
-        ),
-        SizedBox(height: 4),
-        Text(
-          "Jam: $time",
-          style: TextStyle(
-            fontSize: 14,
-            color: isCompleted ? Colors.grey : Colors.black,
-          ),
-        ),
-        SizedBox(height: 8),
-        Text(
-          "Wawancara dengan $company",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: isCompleted ? Colors.grey : Colors.black,
-          ),
-        ),
-        if (isCompleted)
-          Container(
-            margin: EdgeInsets.only(top: 8),
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.green,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              "Selesai",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
+        // Garis indikator di sebelah kiri
+        Container(
+          width: 4,
+          height: 100,
+          decoration: BoxDecoration(
+            color: statusColor,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(8),
+              bottomLeft: Radius.circular(8),
             ),
           ),
+        ),
+        SizedBox(width: 12),
+        // Konten utama
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Baris pertama: Tanggal dengan ikon
+                Row(
+                  children: [
+                    Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                    SizedBox(width: 6),
+                    Text(
+                      "Tanggal: $date",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isCompleted ? Colors.grey : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 6),
+                // Baris kedua: Jam dengan ikon
+                Row(
+                  children: [
+                    Icon(Icons.access_time, size: 16, color: Colors.grey),
+                    SizedBox(width: 6),
+                    Text(
+                      "Jam: $time",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isCompleted ? Colors.grey : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Text(
+                  "Wawancara dengan $company",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: isCompleted ? Colors.grey : Colors.black,
+                  ),
+                ),
+                SizedBox(height: 8),
+              ],
+            ),
+          ),
+        ),
       ],
     ),
   );
@@ -98,21 +215,23 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
-  late TabController _tabController;
+  late TabController _tabControllerPage3;
+  late TabController _tabControllerPage4;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabControllerPage3 = TabController(length: 3, vsync: this);
+    _tabControllerPage4 = TabController(length: 2, vsync: this);
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabControllerPage3.dispose();
+    _tabControllerPage4.dispose();
     super.dispose();
   }
 
@@ -135,6 +254,7 @@ class _HomePageState extends State<HomePage>
           controller: _pageController,
           onPageChanged: _onPageChanged,
           children: [
+            // PAGE 1 - HOME
             Stack(
               children: [
                 Column(
@@ -636,155 +756,104 @@ class _HomePageState extends State<HomePage>
               ],
             ),
 
-            // PAGE 3
+            // PAGE 3 - LAMARAN
             Column(
               children: [
                 // HEADER
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 17, 209, 174),
-                  ),
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(color: const Color(0xFF28AE9D)),
                   child: SafeArea(
                     bottom: false,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Jadwal \nWawancara",
+                          "Lamaran Pekerjaan",
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
-                        SizedBox(height: 8),
                       ],
                     ),
                   ),
                 ),
 
-                // TAB BAR DI BAWAH HEADER - DIPINDAH KELUAR DARI HEADER
+                // TAB BAR
                 Container(
-                  color: const Color.fromARGB(255, 255, 255, 255), // Warna sama dengan header
-                  child: Container(
-                    height: 50,
-                    child: TabBar(
-                      controller: _tabController,
-                      indicatorColor: const Color.fromARGB(255, 17, 209, 174),
-                      indicatorWeight: 3,
-                      labelColor: const Color.fromARGB(255, 0, 0, 0),
-                      unselectedLabelColor: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.7),
-                      labelStyle: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      unselectedLabelStyle: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.normal,
-                      ),
-                      tabs: [
-                        Tab(text: "Akan Datang"),
-                        Tab(text: "Riwayat"),
-                      ],
+                  color: Colors.white,
+                  child: TabBar(
+                    controller: _tabControllerPage3,
+                    indicatorColor: const Color(0xFF28AE9D),
+                    indicatorWeight: 3,
+                    labelColor: Colors.black,
+                    unselectedLabelColor: Colors.grey,
+                    labelStyle: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
+                    tabs: const [
+                      Tab(text: "Diproses"),
+                      Tab(text: "Diterima"),
+                      Tab(text: "Ditolak"),
+                    ],
                   ),
                 ),
 
-                // TAB BAR VIEW UNTUK KONTEN
+                // TAB CONTENT
                 Expanded(
                   child: TabBarView(
-                    controller: _tabController,
+                    controller: _tabControllerPage3,
                     children: [
-                      // TAB 1: AKAN DATANG
+                      // TAB 1: Diproses
                       Padding(
                         padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: ListView(
                           children: [
-                            Text(
-                              "Wawancara Mendatang",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[700],
-                              ),
+                            lamaran(
+                              companyName: "PT Garuda Indonesia",
+                              status: "Diproses",
                             ),
-                            SizedBox(height: 12),
-                            Expanded(
-                              child: ListView(
-                                children: [
-                                  _buildInterviewItem(
-                                    date: "20-06-2025",
-                                    time: "16.00 PM",
-                                    company: "PT. APRL",
-                                  ),
-
-                                  _buildInterviewItem(
-                                    date: "22-06-2025",
-                                    time: "15.00 PM",
-                                    company: "PT. ASTRA",
-                                  ),
-
-                                  _buildInterviewItem(
-                                    date: "02-07-2025",
-                                    time: "10.00 AM",
-                                    company: "PT. COCACQUA",
-                                  ),
-                                ],
-                              ),
+                            lamaran(
+                              companyName: "PT Coca-Cola",
+                              status: "Diproses",
                             ),
                           ],
                         ),
                       ),
 
-                      // TAB 2: SELESAI
+                      // TAB 2: Diterima
                       Padding(
                         padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: ListView(
                           children: [
-                            Text(
-                              "Riwayat Wawancara",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[700],
-                              ),
+                            lamaran(
+                              companyName: "PT Indomie",
+                              status: "Diterima",
                             ),
-                            SizedBox(height: 8),
-                            Text(
-                              "Daftar wawancara yang telah diselesaikan",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
+                            lamaran(
+                              companyName: "PT Astra International",
+                              status: "Diterima",
                             ),
-                            SizedBox(height: 12),
-                            Expanded(
-                              child: ListView(
-                                children: [
-                                  _buildInterviewItem(
-                                    date: "15-06-2025",
-                                    time: "14.00 PM",
-                                    company: "PT. Google Indonesia",
-                                    isCompleted: true,
-                                  ),
-                                  _buildInterviewItem(
-                                    date: "10-06-2025",
-                                    time: "09.00 AM",
-                                    company: "PT. Microsoft Asia",
-                                    isCompleted: true,
-                                  ),
-                                  _buildInterviewItem(
-                                    date: "05-06-2025",
-                                    time: "13.30 PM",
-                                    company: "PT. Amazon Web Services",
-                                    isCompleted: true,
-                                  ),
-                                ],
-                              ),
+                          ],
+                        ),
+                      ),
+
+                      // TAB 3: Ditolak
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: ListView(
+                          children: [
+                            lamaran(
+                              companyName: "PT Unilever",
+                              status: "Ditolak",
+                            ),
+                            lamaran(
+                              companyName: "PT Tokopedia",
+                              status: "Ditolak",
                             ),
                           ],
                         ),
@@ -795,7 +864,112 @@ class _HomePageState extends State<HomePage>
               ],
             ),
 
-            Center(child: Text("Page 4", style: TextStyle(fontSize: 24))),
+            // PAGE 4 - JADWAL WAWANCARA
+            Column(
+              children: [
+                // HEADER
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(color: Color(0xFF28AE9D)),
+                  child: SafeArea(
+                    bottom: false,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Jadwal Wawancara",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // TAB BAR
+                Container(
+                  color: Colors.white,
+                  child: TabBar(
+                    controller: _tabControllerPage4,
+                    indicatorColor: const Color(0xFF28AE9D),
+                    indicatorWeight: 3,
+                    labelColor: Colors.black,
+                    unselectedLabelColor: Colors.grey,
+                    labelStyle: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    tabs: const [
+                      Tab(text: "Akan Datang"),
+                      Tab(text: "Riwayat"),
+                    ],
+                  ),
+                ),
+
+                // TAB CONTENT
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabControllerPage4,
+                    children: [
+                      // TAB 1: Akan Datang
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: ListView(
+                          children: [
+                            wawancara(
+                              date: "20-06-2025",
+                              time: "16.00 PM",
+                              company: "PT. APRL",
+                            ),
+                            wawancara(
+                              date: "22-06-2025",
+                              time: "15.00 PM",
+                              company: "PT. ASTRA",
+                            ),
+                            wawancara(
+                              date: "02-07-2025",
+                              time: "10.00 AM",
+                              company: "PT. COCACQUA",
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // TAB 2: Riwayat
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: ListView(
+                          children: [
+                            wawancara(
+                              date: "15-06-2025",
+                              time: "14.00 PM",
+                              company: "PT. Google Indonesia",
+                              isCompleted: true,
+                            ),
+                            wawancara(
+                              date: "10-06-2025",
+                              time: "09.00 AM",
+                              company: "PT. Microsoft Asia",
+                              isCompleted: true,
+                            ),
+                            wawancara(
+                              date: "05-06-2025",
+                              time: "13.30 PM",
+                              company: "PT. Amazon Web Services",
+                              isCompleted: true,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -812,11 +986,11 @@ class _HomePageState extends State<HomePage>
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Page 1"),
             BottomNavigationBarItem(icon: Icon(Icons.work), label: "Page 2"),
+            BottomNavigationBarItem(icon: Icon(Icons.task), label: "Lamaran"),
             BottomNavigationBarItem(
               icon: Icon(Icons.schedule),
-              label: "Page 3",
+              label: "Jadwal",
             ),
-            BottomNavigationBarItem(icon: Icon(Icons.task), label: "Page 4"),
           ],
         ),
       ),
