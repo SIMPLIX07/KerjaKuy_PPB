@@ -241,6 +241,40 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _pageController.jumpToPage(index);
   }
 
+  final List<Map<String, dynamic>> kategoriList = [
+    {'icon': Icons.bar_chart, 'nama': 'Akutansi'},
+    {'icon': Icons.code, 'nama': 'Web Development'},
+    {'icon': Icons.analytics, 'nama': 'Data Analyst'},
+    {'icon': Icons.brush, 'nama': 'Desain Grafis'},
+    {'icon': Icons.account_balance, 'nama': 'Perbankan'},
+    {'icon': Icons.school, 'nama': 'Pendidikan'},
+    {'icon': Icons.wifi, 'nama': 'Telekomunikasi'},
+    {'icon': Icons.account_balance_rounded, 'nama': 'Pemerintahan'},
+    {'icon': Icons.video_camera_back, 'nama': 'Video Editor'},
+    {'icon': Icons.campaign, 'nama': 'Digital Marketing'},
+  ];
+
+  final List<Map<String, dynamic>> pekerjaanList = [
+    {
+      'posisi': 'Surfeyor FnB',
+      'perusahaan': '+joddi',
+      'syarat': ['kontrak', '1 tahun', 'WFO', 'Penuh Waktu'],
+      'lokasi': 'Jakarta',
+    },
+    {
+      'posisi': 'Surfeyor FnB',
+      'perusahaan': '+joddi',
+      'syarat': ['kontrak', '1 tahun', 'WFO', 'Penuh Waktu'],
+      'lokasi': 'Jakarta',
+    },
+    {
+      'posisi': 'Surfeyor FnB',
+      'perusahaan': '+joddi',
+      'syarat': ['kontrak', '1 tahun', 'WFO', 'Penuh Waktu'],
+      'lokasi': 'Jakarta',
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1191,20 +1225,190 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ],
               ),
             ),
-
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Test Safe   Area",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                Expanded(
-                  child: Center(
-                    child: Text("Page 2", style: TextStyle(fontSize: 24)),
+            // Page 2
+            Expanded(
+              // atau langsung pakai Scaffold body
+              child: ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  // 🔍 Search bar
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          hintText: 'Cari',
+                          prefixIcon: const Icon(
+                            Icons.search,
+                            color: Colors.grey,
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 16,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide.none,
+                          ),
+                          hintStyle: const TextStyle(color: Colors.grey),
+                        ),
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+
+                  // Kategori Populer
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Kategori Populer",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: EdgeInsets.all(10),
+                          child: GridView.count(
+                            shrinkWrap: true,
+
+                            physics:
+                                const NeverScrollableScrollPhysics(), // 🧠 penting biar tidak bentrok scroll
+                            crossAxisCount: 5,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: 1,
+                            children: kategoriList.map((kategori) {
+                              return InkWell(
+                                borderRadius: BorderRadius.circular(12),
+                                onTap: () {
+                                  print("Klik: ${kategori['nama']}");
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 6,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        kategori['icon'],
+                                        size: 20,
+                                        color: Colors.blueAccent,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        kategori['nama'],
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Rekomendasi
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    child: GridView.count(
+                      crossAxisCount: 1,
+                      mainAxisSpacing: 6,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 1,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: pekerjaanList.map((pk) {
+                        return Card(
+                          color: const Color.fromARGB(255, 55, 55, 55),
+                          child: Column(
+                            children: [
+                              ListTile(
+                                title: Text(
+                                  style: TextStyle(color: Colors.white),
+                                  pk['posisi'],
+                                ),
+                                subtitle: Text(
+                                  style: TextStyle(color: Colors.white),
+                                  pk['perusahaan'],
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(20),
+                                child: GridView.count(
+                                  crossAxisCount: 3, // jumlah kolom syarat
+                                  mainAxisSpacing: 6,
+                                  crossAxisSpacing: 6,
+                                  childAspectRatio: 4,
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  children: (pk['syarat'] as List<dynamic>).map(
+                                    (s) {
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white12,
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                        padding: EdgeInsets.all(6),
+                                        child: Text(
+                                          s.toString(),
+                                          style: TextStyle(color: Colors.white),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      );
+                                    },
+                                  ).toList(),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
             ),
 
             // PAGE 3 - LAMARAN
@@ -1435,8 +1639,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           selectedItemColor: Colors.green,
           unselectedItemColor: Colors.grey,
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Page 1"),
-            BottomNavigationBarItem(icon: Icon(Icons.work), label: "Page 2"),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+            BottomNavigationBarItem(icon: Icon(Icons.work), label: "Lowongan"),
             BottomNavigationBarItem(icon: Icon(Icons.task), label: "Lamaran"),
             BottomNavigationBarItem(
               icon: Icon(Icons.schedule),
