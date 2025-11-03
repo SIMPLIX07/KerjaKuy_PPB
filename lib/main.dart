@@ -1,4 +1,117 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Timer(Duration(seconds: 3), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color(0xFF28AE9D),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.flutter_dash, size: 100, color: Colors.white),
+            SizedBox(height: 20),
+            Text(
+              "KerjaKuy",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text("Masuk - KerjaKuy"),
+        backgroundColor: Color(0xFF28AE9D),
+        foregroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              "Selamat Datang!",
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF28AE9D),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 40),
+            TextField(
+              decoration: InputDecoration(
+                labelText: "Username",
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.person),
+              ),
+            ),
+            SizedBox(height: 16),
+            TextField(
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: "Password",
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.lock),
+              ),
+            ),
+            SizedBox(height: 30),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF28AE9D),
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 16),
+                textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                );
+              },
+              child: Text("Masuk"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 void main() {
   runApp(const MyApp());
@@ -199,7 +312,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.white,
         ),
       ),
-      home: const HomePage(),
+      home: const SplashScreen(),
     );
   }
 }
@@ -274,6 +387,271 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       'lokasi': 'Jakarta',
     },
   ];
+
+  void _showAllLamaranDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text("Semua Lamaran"),
+          content: Container(
+            width: double.maxFinite,
+            height: 200,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // CARD 1: Garuda Indonesia (Diterima)
+                  Container(
+                    width: 400 * 0.9,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(width: 5),
+                        Container(
+                          height: 40,
+                          width: 5,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF28AE9D), // Hijau
+                            borderRadius: BorderRadius.circular(90),
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        Icon(Icons.airplanemode_active, size: 40),
+                        SizedBox(width: 20),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Selamat anda diterima di perusahaan",
+                                style: TextStyle(fontSize: 12),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                "PT Garuda Indonesia",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 10),
+
+                  // CARD 2: Qatar Airways (Ditolak)
+                  Container(
+                    width: 400 * 0.9,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(width: 5),
+                        Container(
+                          height: 40,
+                          width: 5,
+                          decoration: BoxDecoration(
+                            color: Colors.red, // Merah
+                            borderRadius: BorderRadius.circular(90),
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        Icon(Icons.airplanemode_active, size: 40),
+                        SizedBox(width: 20),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Mohon Maaf anda belum diterima",
+                                style: TextStyle(fontSize: 12),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                "Qatar Airways",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 10),
+
+                  // CARD 3: PT. KAI (Diproses)
+                  Container(
+                    width: 400 * 0.9,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(width: 5),
+                        Container(
+                          height: 40,
+                          width: 5,
+                          decoration: BoxDecoration(
+                            color: Colors.amber,
+                            borderRadius: BorderRadius.circular(90),
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        Icon(Icons.train, size: 40),
+                        SizedBox(width: 20),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Lamaran anda sedang diproses",
+                                style: TextStyle(fontSize: 12),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                "PT. KAI",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: Text("Tutup"),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showJobDetailDialog({
+    required String jobTitle,
+    required String companyName,
+    required String salary,
+    required String description,
+    required String location,
+  }) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                jobTitle,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Color(0xFF28AE9D),
+                ),
+              ),
+              Text(
+                companyName,
+                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Divider(color: Colors.grey[300]),
+                SizedBox(height: 10),
+                Text(
+                  "Gaji:",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+                Text(
+                  salary,
+                  style: TextStyle(fontSize: 15, color: Colors.green[700]),
+                ),
+                SizedBox(height: 15),
+                Text(
+                  "Lokasi:",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+                Text(location, style: TextStyle(fontSize: 15)),
+                SizedBox(height: 15),
+                Text(
+                  "Deskripsi Pekerjaan:",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+                Text(description, style: TextStyle(fontSize: 15)),
+                SizedBox(height: 20),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Batal", style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF28AE9D),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: Text("Lamar Sekarang"),
+              onPressed: () {
+                print("Melamar pekerjaan: $jobTitle di $companyName");
+                Navigator.of(dialogContext).pop();
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Berhasil melamar $jobTitle!"),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -558,22 +936,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                             ],
                                           ),
                                         ),
-                                        Container(
-                                          width: 100,
-                                          height: 30,
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            color: Color(0xFF28AE9D),
-                                            borderRadius: BorderRadius.circular(
-                                              30,
+                                        ElevatedButton(
+                                          onPressed: _showAllLamaranDialog,
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Color(0xFF28AE9D),
+                                            foregroundColor: Colors.white,
+                                            fixedSize: Size(100, 30),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
                                             ),
+                                            padding: EdgeInsets.zero,
+                                            alignment: Alignment.center,
                                           ),
                                           child: Text(
                                             "Lihat Lainnya",
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 12,
-                                              color: Colors.white,
                                             ),
                                           ),
                                         ),
@@ -614,7 +994,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           alignment: Alignment.center,
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.8,
-                            height: 180,
+                            height: 200,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
@@ -739,25 +1119,39 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                           ],
                                         ),
                                       ),
-                                      Container(
-                                        margin: EdgeInsets.only(right: 5),
-                                        width: 100,
-                                        height: 40,
-                                        decoration: BoxDecoration(
-                                          color: Color(0xFF28AE9D),
-                                          borderRadius: BorderRadius.circular(
-                                            30,
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          print("Tombol Lamar ditekan!");
+                                          _showJobDetailDialog(
+                                            jobTitle: "Mobile Developer",
+                                            companyName:
+                                                "PT. Telkom INdonesia",
+                                            salary:
+                                                "Rp 8.000.000 - Rp 12.000.000",
+                                            location:
+                                                "Jakarta, Indonesia (Remote)",
+                                            description:
+                                                "Mencari Mobile Developer berpengalaman untuk membangun aplikasi inovatif. Menguasai Flutter/React Native adalah nilai plus.", // Deskripsi
+                                          );
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Color(0xFF28AE9D),
+                                          foregroundColor: Colors.white,
+                                          fixedSize: Size(100, 40),
+                                          padding: EdgeInsets.zero,
+                                          alignment: Alignment.center,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              30,
+                                            ),
                                           ),
                                         ),
-                                        child: Align(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            "Lamar",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                        child: Text(
+                                          "Lamar",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
                                       ),
