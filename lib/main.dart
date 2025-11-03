@@ -1789,14 +1789,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
                           hintStyle: const TextStyle(color: Colors.grey),
                         ),
-                        style: const TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 12),
                       ),
                     ),
                   ),
 
                   // Kategori Populer
                   Container(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.only(
+                      bottom: 10,
+                      left: 5,
+                      right: 5,
+                      top: 10,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -1855,7 +1860,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                         kategori['nama'],
                                         textAlign: TextAlign.center,
                                         style: const TextStyle(
-                                          fontSize: 10,
+                                          fontSize: 6,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -1871,17 +1876,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
 
                   // Rekomendasi
+                  const Text(
+                    "Rekomendasi",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
                   Container(
-                    padding: EdgeInsets.all(20),
+                    padding: EdgeInsets.only(top: 10),
                     child: GridView.count(
                       crossAxisCount: 1,
                       mainAxisSpacing: 6,
                       crossAxisSpacing: 12,
-                      childAspectRatio: 1,
+                      childAspectRatio: 2,
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       children: pekerjaanList.map((pk) {
                         return Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(color: const Color(0xFF28AE9D)),
+                          ),
                           color: const Color.fromARGB(255, 55, 55, 55),
                           child: Column(
                             children: [
@@ -1901,7 +1914,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   crossAxisCount: 3, // jumlah kolom syarat
                                   mainAxisSpacing: 6,
                                   crossAxisSpacing: 6,
-                                  childAspectRatio: 4,
+                                  childAspectRatio: 3.5,
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
                                   children: (pk['syarat'] as List<dynamic>).map(
