@@ -117,9 +117,135 @@ void main() {
   runApp(const MyApp());
 }
 
-//WIDGET UNTUK PAGE 4
-Widget lamaran({required String companyName, required String status}) {
-  // status lamaran(PAGE 3)
+// Pesan perusahaan - PAGE 3
+class PesanPerusahaanPage extends StatelessWidget {
+  final String companyName;
+  final String date;
+  final String time;
+  final String message;
+
+  const PesanPerusahaanPage({
+    super.key,
+    required this.companyName,
+    required this.date,
+    required this.time,
+    required this.message,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF7F7F7),
+
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Row bar back
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              color: const Color(0xFF28AE9D),
+              width: double.infinity,
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: const Icon(Icons.arrow_back, color: Colors.white),
+                  ),
+                  const SizedBox(width: 16),
+                  const Text(
+                    "Pesan Perusahaan",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Isi halaman
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Nama perusahaan
+                      Text(
+                        companyName,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF28AE9D),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+
+                      // Tanggal dan waktu
+                      Row(
+                        children: [
+                          Text(
+                            time,
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Text(
+                            date,
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 20),
+                      // Pesan
+                      Text(
+                        message,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          height: 1.5,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ), // 🟢 Akhir dari SafeArea
+    );
+  }
+}
+
+//WIDGET UNTUK PAGE 3
+Widget lamaran({
+  required String companyName,
+  required String status,
+  VoidCallback? onTap,
+}) {
   Color statusColor;
   if (status == 'Diproses') {
     statusColor = Colors.amber;
@@ -139,64 +265,68 @@ Widget lamaran({required String companyName, required String status}) {
     message = "Mohon maaf, lamaran anda belum diterima";
   }
 
-  return Container(
-    margin: const EdgeInsets.only(bottom: 12),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(0.3),
-          blurRadius: 4,
-          offset: Offset(0, 2),
-        ),
-      ],
-    ),
-    child: Row(
-      children: [
-        Container(
-          width: 4,
-          height: 70,
-          decoration: BoxDecoration(
-            color: statusColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(12),
-              bottomLeft: Radius.circular(12),
+  return InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(12),
+    child: Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 4,
+            height: 70,
+            decoration: BoxDecoration(
+              color: statusColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                bottomLeft: Radius.circular(12),
+              ),
             ),
           ),
-        ),
-        SizedBox(width: 10),
-        Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(8),
+          const SizedBox(width: 10),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(Icons.business, color: Colors.grey[600]),
                 ),
-                child: Icon(Icons.business, color: Colors.grey[600]),
-              ),
-              SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    message,
-                    style: TextStyle(fontSize: 13, color: Colors.black),
-                  ),
-                  Text(
-                    "oleh $companyName",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                  ),
-                ],
-              ),
-            ],
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(message, style: const TextStyle(fontSize: 13)),
+                    Text(
+                      "oleh $companyName",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }
@@ -1124,8 +1254,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                           print("Tombol Lamar ditekan!");
                                           _showJobDetailDialog(
                                             jobTitle: "Mobile Developer",
-                                            companyName:
-                                                "PT. Telkom INdonesia",
+                                            companyName: "PT. Telkom INdonesia",
                                             salary:
                                                 "Rp 8.000.000 - Rp 12.000.000",
                                             location:
@@ -1880,12 +2009,49 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         child: ListView(
                           children: [
                             lamaran(
-                              companyName: "PT Indomie",
+                              companyName: "PT Garuda Indonesia",
                               status: "Diterima",
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PesanPerusahaanPage(
+                                      companyName: "PT Garuda Indonesia",
+                                      date: "5 November 2025",
+                                      time: "09:00 AM",
+                                      message:
+                                          "Yth. Gilang Pradana\n"
+                                          "\n"
+                                          "Kami dari PT Garuda Indonesia ingin mengucapkan selamat "
+                                          "atas keberhasilan Anda melewati seluruh tahapan seleksi "
+                                          "untuk posisi Marketing Staf.",
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
+
                             lamaran(
-                              companyName: "PT Astra International",
+                              companyName: "Telkomsel",
                               status: "Diterima",
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PesanPerusahaanPage(
+                                      companyName: "Telkomse",
+                                      date: "20 Februari 2022",
+                                      time: "21:00 PM",
+                                      message:
+                                          "Yth. Gilang Pradana\n"
+                                          "\n"
+                                          "Kami dari Telkomsel ingin mengucapkan selamat "
+                                          "atas keberhasilan Anda melewati seluruh tahapan seleksi "
+                                          "untuk posisi Marketing Staf.",
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),
