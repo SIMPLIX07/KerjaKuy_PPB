@@ -1124,7 +1124,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           alignment: Alignment.center,
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.8,
-                            height: 200,
+                            height: 190,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
