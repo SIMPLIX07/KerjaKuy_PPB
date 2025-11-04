@@ -815,9 +815,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   height: 50,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(100),
-                                    color: Colors.red,
+                                    color: Color(0xFF28AE9D),
+                                  ),
+                                  child: Icon(
+                                    Icons.person,
+                                    color: Colors.white,
+                                    size: 30,
                                   ),
                                 ),
+
                                 SizedBox(width: 10),
                                 // Nama & jabatan
                                 Column(
@@ -1821,8 +1827,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           padding: EdgeInsets.all(10),
                           child: GridView.count(
                             shrinkWrap: true,
-                            physics:
-                                const NeverScrollableScrollPhysics(), 
+                            physics: const NeverScrollableScrollPhysics(),
                             crossAxisCount: 5,
                             mainAxisSpacing: 12,
                             crossAxisSpacing: 12,
@@ -1908,7 +1913,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(right: 20, left: 20, top: 5),
+                                padding: EdgeInsets.only(
+                                  right: 20,
+                                  left: 20,
+                                  top: 5,
+                                ),
                                 child: GridView.count(
                                   crossAxisCount: 3,
                                   mainAxisSpacing: 6,
@@ -1937,9 +1946,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(right: 20, left: 20, top: 10),
+                                padding: EdgeInsets.only(
+                                  right: 20,
+                                  left: 20,
+                                  top: 10,
+                                ),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Row(
                                       children: [
@@ -1947,7 +1961,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                           color: const Color(0xFF28AE9D),
                                           Icons.location_on,
                                         ),
-                                        Text(pk['lokasi'], style: TextStyle(color: Colors.white),),
+                                        Text(
+                                          pk['lokasi'],
+                                          style: TextStyle(color: Colors.white),
+                                        ),
                                       ],
                                     ),
 
