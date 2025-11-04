@@ -186,7 +186,7 @@ class PesanPerusahaanPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Nama perusahaan
+                      // Perusahaan
                       Text(
                         companyName,
                         style: const TextStyle(
@@ -197,7 +197,7 @@ class PesanPerusahaanPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
 
-                      // Tanggal dan waktu
+                      // Waktu
                       Row(
                         children: [
                           Text(
@@ -235,7 +235,7 @@ class PesanPerusahaanPage extends StatelessWidget {
             ),
           ],
         ),
-      ), // 🟢 Akhir dari SafeArea
+      ),
     );
   }
 }
@@ -1823,7 +1823,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             shrinkWrap: true,
 
                             physics:
-                                const NeverScrollableScrollPhysics(), // 🧠 penting biar tidak bentrok scroll
+                                const NeverScrollableScrollPhysics(), 
                             crossAxisCount: 5,
                             mainAxisSpacing: 12,
                             crossAxisSpacing: 12,
