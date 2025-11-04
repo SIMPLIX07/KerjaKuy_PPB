@@ -1815,13 +1815,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         const SizedBox(height: 12),
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.grey,
+                            color: const Color.fromARGB(255, 55, 55, 55),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           padding: EdgeInsets.all(10),
                           child: GridView.count(
                             shrinkWrap: true,
-
                             physics:
                                 const NeverScrollableScrollPhysics(), 
                             crossAxisCount: 5,
@@ -1853,7 +1852,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       Icon(
                                         kategori['icon'],
                                         size: 20,
-                                        color: Colors.blueAccent,
+                                        color: const Color(0xFF28AE9D),
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
@@ -1886,7 +1885,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       crossAxisCount: 1,
                       mainAxisSpacing: 6,
                       crossAxisSpacing: 12,
-                      childAspectRatio: 2,
+                      childAspectRatio: 1.8,
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       children: pekerjaanList.map((pk) {
@@ -1909,9 +1908,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.all(20),
+                                padding: EdgeInsets.only(right: 20, left: 20, top: 5),
                                 child: GridView.count(
-                                  crossAxisCount: 3, // jumlah kolom syarat
+                                  crossAxisCount: 3,
                                   mainAxisSpacing: 6,
                                   crossAxisSpacing: 6,
                                   childAspectRatio: 3.5,
@@ -1935,6 +1934,49 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       );
                                     },
                                   ).toList(),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(right: 20, left: 20, top: 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          color: const Color(0xFF28AE9D),
+                                          Icons.location_on,
+                                        ),
+                                        Text(pk['lokasi'], style: TextStyle(color: Colors.white),),
+                                      ],
+                                    ),
+
+                                    ElevatedButton(
+                                      onPressed: () {},
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(
+                                          0xFF28AE9D,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 20,
+                                          vertical: 10,
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        "Lamar",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
