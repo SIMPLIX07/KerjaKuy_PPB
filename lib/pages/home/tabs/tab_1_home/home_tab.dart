@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_application_1/pages/settings/settingPelamar/settingPelamar.dart';
+
 class HomeTab extends StatefulWidget {
   final VoidCallback onLihatLainnyaPressed;
 
@@ -295,19 +297,30 @@ class _HomeTabState extends State<HomeTab> {
                       Row(
                         children: [
                           // Avatar
-                          Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              color: Color(0xFF28AE9D),
-                            ),
-                            child: Icon(
-                              Icons.person,
-                              color: Colors.white,
-                              size: 30,
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const ProfilePage(),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                color: Color(0xFF28AE9D),
+                              ),
+                              child: const Icon(
+                                Icons.person,
+                                color: Colors.white,
+                                size: 30,
+                              ),
                             ),
                           ),
+
                           SizedBox(width: 10),
                           // Nama & jabatan
                           Column(
@@ -392,16 +405,11 @@ class _HomeTabState extends State<HomeTab> {
                                     width: 5,
                                     decoration: BoxDecoration(
                                       color: Color(0xFF28AE9D),
-                                      borderRadius: BorderRadius.circular(
-                                        90,
-                                      ),
+                                      borderRadius: BorderRadius.circular(90),
                                     ),
                                   ),
                                   SizedBox(width: 20),
-                                  Icon(
-                                    Icons.airplanemode_active,
-                                    size: 40,
-                                  ),
+                                  Icon(Icons.airplanemode_active, size: 40),
                                   SizedBox(width: 20),
                                   Container(
                                     width: 200,
@@ -446,16 +454,11 @@ class _HomeTabState extends State<HomeTab> {
                                     width: 5,
                                     decoration: BoxDecoration(
                                       color: Colors.red,
-                                      borderRadius: BorderRadius.circular(
-                                        90,
-                                      ),
+                                      borderRadius: BorderRadius.circular(90),
                                     ),
                                   ),
                                   SizedBox(width: 20),
-                                  Icon(
-                                    Icons.airplanemode_active,
-                                    size: 40,
-                                  ),
+                                  Icon(Icons.airplanemode_active, size: 40),
                                   SizedBox(width: 20),
                                   Container(
                                     width: 200,
@@ -506,17 +509,14 @@ class _HomeTabState extends State<HomeTab> {
                                               decoration: BoxDecoration(
                                                 color: Color(0xFF28AE9D),
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                  50,
-                                                ),
+                                                    BorderRadius.circular(50),
                                               ),
                                             ),
                                             SizedBox(width: 5),
                                             Text(
                                               "Diterima",
                                               style: TextStyle(
-                                                fontWeight:
-                                                    FontWeight.w500,
+                                                fontWeight: FontWeight.w500,
                                                 color: Colors.white,
                                               ),
                                             ),
@@ -529,25 +529,21 @@ class _HomeTabState extends State<HomeTab> {
                                               height: 5,
                                               width: 5,
                                               decoration: BoxDecoration(
-                                                color:
-                                                    const Color.fromARGB(
+                                                color: const Color.fromARGB(
                                                   255,
                                                   255,
                                                   0,
                                                   0,
                                                 ),
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                  50,
-                                                ),
+                                                    BorderRadius.circular(50),
                                               ),
                                             ),
                                             SizedBox(width: 5),
                                             Text(
                                               "Tidak diterima",
                                               style: TextStyle(
-                                                fontWeight:
-                                                    FontWeight.w500,
+                                                fontWeight: FontWeight.w500,
                                                 color: Colors.white,
                                               ),
                                             ),
@@ -563,8 +559,7 @@ class _HomeTabState extends State<HomeTab> {
                                       foregroundColor: Colors.white,
                                       fixedSize: Size(100, 30),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30),
+                                        borderRadius: BorderRadius.circular(30),
                                       ),
                                       padding: EdgeInsets.zero,
                                       alignment: Alignment.center,
@@ -626,10 +621,7 @@ class _HomeTabState extends State<HomeTab> {
                             child: Row(
                               children: [
                                 Container(
-                                  margin: EdgeInsets.only(
-                                    left: 20,
-                                    top: 10,
-                                  ),
+                                  margin: EdgeInsets.only(left: 20, top: 10),
                                   width: 130,
                                   height: 60,
                                   decoration: BoxDecoration(
@@ -648,8 +640,7 @@ class _HomeTabState extends State<HomeTab> {
                                 ),
                                 SizedBox(width: 20),
                                 Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       "Font Desk Agent",
@@ -680,8 +671,7 @@ class _HomeTabState extends State<HomeTab> {
                                       height: 30,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(30),
+                                        borderRadius: BorderRadius.circular(30),
                                         border: Border.all(
                                           color: Color(0xFF28AE9D),
                                           width: 2,
@@ -699,8 +689,7 @@ class _HomeTabState extends State<HomeTab> {
                                       height: 30,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(30),
+                                        borderRadius: BorderRadius.circular(30),
                                         border: Border.all(
                                           color: Color(0xFF28AE9D),
                                           width: 2,
@@ -720,8 +709,7 @@ class _HomeTabState extends State<HomeTab> {
                           Align(
                             alignment: Alignment.topLeft,
                             child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Container(
                                   margin: EdgeInsets.only(left: 20),
@@ -745,10 +733,8 @@ class _HomeTabState extends State<HomeTab> {
                                     _showJobDetailDialog(
                                       jobTitle: "Mobile Developer",
                                       companyName: "PT. Telkom INdonesia",
-                                      salary:
-                                          "Rp 8.000.000 - Rp 12.000.000",
-                                      location:
-                                          "Jakarta, Indonesia (Remote)",
+                                      salary: "Rp 8.000.000 - Rp 12.000.000",
+                                      location: "Jakarta, Indonesia (Remote)",
                                       description:
                                           "Mencari Mobile Developer berpengalaman untuk membangun aplikasi inovatif. Menguasai Flutter/React Native adalah nilai plus.", // Deskripsi
                                     );
@@ -760,9 +746,7 @@ class _HomeTabState extends State<HomeTab> {
                                     padding: EdgeInsets.zero,
                                     alignment: Alignment.center,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        30,
-                                      ),
+                                      borderRadius: BorderRadius.circular(30),
                                     ),
                                   ),
                                   child: Text(
@@ -838,9 +822,7 @@ class _HomeTabState extends State<HomeTab> {
                               Container(
                                 height: 110,
                                 width: 170,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                ),
+                                decoration: BoxDecoration(color: Colors.white),
                                 child: Align(
                                   alignment: Alignment.topLeft,
                                   child: Text(
@@ -908,9 +890,7 @@ class _HomeTabState extends State<HomeTab> {
                               Container(
                                 height: 110,
                                 width: 170,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                ),
+                                decoration: BoxDecoration(color: Colors.white),
                                 child: Align(
                                   alignment: Alignment.topLeft,
                                   child: Text(
@@ -978,9 +958,7 @@ class _HomeTabState extends State<HomeTab> {
                               Container(
                                 height: 110,
                                 width: 170,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                ),
+                                decoration: BoxDecoration(color: Colors.white),
                                 child: Align(
                                   alignment: Alignment.topLeft,
                                   child: Text(
@@ -1053,9 +1031,7 @@ class _HomeTabState extends State<HomeTab> {
                               Container(
                                 height: 110,
                                 width: 170,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                ),
+                                decoration: BoxDecoration(color: Colors.white),
                                 child: Align(
                                   alignment: Alignment.topLeft,
                                   child: Text(
@@ -1123,9 +1099,7 @@ class _HomeTabState extends State<HomeTab> {
                               Container(
                                 height: 110,
                                 width: 170,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                ),
+                                decoration: BoxDecoration(color: Colors.white),
                                 child: Align(
                                   alignment: Alignment.topLeft,
                                   child: Text(
@@ -1193,9 +1167,7 @@ class _HomeTabState extends State<HomeTab> {
                               Container(
                                 height: 110,
                                 width: 170,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                ),
+                                decoration: BoxDecoration(color: Colors.white),
                                 child: Align(
                                   alignment: Alignment.topLeft,
                                   child: Text(
