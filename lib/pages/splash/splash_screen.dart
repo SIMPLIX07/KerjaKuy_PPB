@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/landingPage/landingPage.dart';
 import 'dart:async';
-import '../home/registerPelamar/register_pelamar.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,10 +13,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 3), () {
+
+    Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const RegisterPage()),
+        MaterialPageRoute(builder: (context) => const LandingPage()),
       );
     });
   }
@@ -24,22 +25,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF28AE9D),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.flutter_dash, size: 100, color: Colors.white),
-            SizedBox(height: 20),
-            Text(
-              "KerjaKuy",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
+      body: SizedBox.expand(
+        child: Image.asset(
+          "lib/assets/KerjaKuy.png",
+          fit: BoxFit.cover, // background full screen
         ),
       ),
     );
