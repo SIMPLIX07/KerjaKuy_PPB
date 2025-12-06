@@ -1,0 +1,78 @@
+import 'package:flutter/material.dart';
+//import 'tabsPerusahaan/tab_1_home_perusahaan.dart';
+//import 'tabsPerusahaan/tab_2_lowongan_saya.dart';
+import 'tabsPerusahaan/karyawanPerusahaan.dart';
+
+class HomePagePerusahaan extends StatefulWidget {
+  const HomePagePerusahaan({super.key});
+
+  @override
+  State<HomePagePerusahaan> createState() => _HomePagePerusahaanState();
+}
+
+class _HomePagePerusahaanState extends State<HomePagePerusahaan>
+    with TickerProviderStateMixin {
+  final PageController _pageController = PageController();
+  int _currentIndex = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  void _onItemTapped(int index) {
+    _pageController.jumpToPage(index);
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: _onPageChanged,
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            Center(child: Text("Halaman Home (belum dibuat)")), // sementara
+            Center(child: Text("Halaman Lowongan (belum dibuat)")), // sementara
+            KaryawanPerusahaanTab(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: PhysicalModel(
+        color: Colors.white,
+        elevation: 8,
+        shadowColor: Colors.black,
+        child: BottomNavigationBar(
+          backgroundColor: Colors.white,
+          currentIndex: _currentIndex,
+          onTap: _onItemTapped,
+          selectedItemColor: Colors.green,
+          unselectedItemColor: Colors.grey,
+          type: BottomNavigationBarType.fixed,
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+            BottomNavigationBarItem(icon: Icon(Icons.work), label: "Lowongan"),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.people),
+              label: "Karyawan",
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
