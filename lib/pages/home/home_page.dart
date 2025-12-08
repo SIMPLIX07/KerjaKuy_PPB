@@ -5,7 +5,10 @@ import 'tabs/tab_3_lamaran/lamaran_tab.dart';
 import 'tabs/tab_4_jadwal/jadwal_tab.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final String username;
+  final String jobTitle;
+
+  const HomePage({super.key, required this.username, required this.jobTitle});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -50,16 +53,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        top: false, 
-        bottom: false, 
+        top: false,
+        bottom: false,
         child: PageView(
           controller: _pageController,
           onPageChanged: _onPageChanged,
-          physics:
-              const NeverScrollableScrollPhysics(), 
+          physics: const NeverScrollableScrollPhysics(),
           children: [
             // PAGE 1 - HOME
             HomeTab(
+              username: widget.username,
+              jobTitle: widget.jobTitle,
               onLihatLainnyaPressed: () {
                 _onItemTapped(2); //ke page 3
               },
@@ -86,7 +90,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           onTap: _onItemTapped,
           selectedItemColor: Colors.green,
           unselectedItemColor: Colors.grey,
-          type: BottomNavigationBarType.fixed, 
+          type: BottomNavigationBarType.fixed,
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
             BottomNavigationBarItem(icon: Icon(Icons.work), label: "Lowongan"),

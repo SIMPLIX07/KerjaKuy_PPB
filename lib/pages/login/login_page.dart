@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../home/home_page.dart';
+import '../../database/db_helper.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -38,8 +39,7 @@ class _LoginPageState extends State<LoginPage> {
     final isValid =
         _nameController.text.trim().isNotEmpty &&
         _emailController.text.trim().isNotEmpty &&
-        _passwordController.text.trim().isNotEmpty &&
-        _confirmPasswordController.text.trim().isNotEmpty;
+        _passwordController.text.trim().isNotEmpty;
 
     if (isValid != _isFormValid) {
       setState(() {
@@ -197,13 +197,28 @@ class _LoginPageState extends State<LoginPage> {
                   // BUTTON MASUK
                   ElevatedButton(
                     onPressed: _isFormValid
-                        ? () {
-                            Navigator.pushReplacement(
+                        ? () async {
+                            final user = await DBHelper.loginUser(
+                              usernameOrEmail: _nameController.text,
+                              password: _passwordController.text,
+                            );
+
+                            if(user != null){
+                              Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const HomePage(),
+                                builder: (context) =>  HomePage(
+                                  username: user['username'],
+                                  jobTitle: user['pekerjaan'],
+                                ),
                               ),
                             );
+                            }else{
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("Username atau Password tidak valid"))
+                              );
+                            }
+                            
                           }
                         : null,
                     style: ElevatedButton.styleFrom(

@@ -1,17 +1,41 @@
 import 'package:flutter/material.dart';
-
+import '../../../../database/db_helper.dart';
 import 'package:flutter_application_1/pages/settings/settingPelamar/settingPelamar.dart';
 
 class HomeTab extends StatefulWidget {
+  final String username;
+  final String jobTitle;
   final VoidCallback onLihatLainnyaPressed;
 
-  const HomeTab({super.key, required this.onLihatLainnyaPressed});
+  const HomeTab({
+    super.key,
+    required this.username,
+    required this.jobTitle,
+    required this.onLihatLainnyaPressed,
+  });
 
   @override
   State<HomeTab> createState() => _HomeTabState();
 }
 
 class _HomeTabState extends State<HomeTab> {
+  List<Map<String, dynamic>> _berita = [];
+  bool _loadingBerita = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBerita();
+  }
+
+  Future<void> _loadBerita() async {
+    final data = await DBHelper.getBerita();
+    setState(() {
+      _berita = data;
+      _loadingBerita = false;
+    });
+  }
+
   void _showAllLamaranDialog() {
     showDialog(
       context: context,
@@ -328,13 +352,13 @@ class _HomeTabState extends State<HomeTab> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Muhammad Salman Al Farizy",
+                                widget.username,
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Text("Senior Analyst"),
+                              Text(widget.jobTitle),
                             ],
                           ),
                         ],
@@ -782,429 +806,80 @@ class _HomeTabState extends State<HomeTab> {
                   ),
                 ),
                 SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    //sisi kiri
-                    Column(
-                      children: [
-                        Container(
-                          width: 190,
-                          height: 350,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            //Isi dari berita
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              //foto berita
-                              Container(
-                                margin: EdgeInsets.only(top: 15),
-                                width: 170,
-                                height: 110,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "Foto muncul disini",
-                                    style: TextStyle(color: Colors.white),
+                _loadingBerita
+                    ? Center(child: CircularProgressIndicator())
+                    : Wrap(
+                        spacing: 15, // jarak kanan-kiri antar kolom
+                        runSpacing: 20, // jarak antar baris
+                        children: _berita.map((berita) {
+                          return Container(
+                            width: 190,
+                            height: 350,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                // FOTO
+                                Container(
+                                  margin: EdgeInsets.only(top: 15),
+                                  width: 170,
+                                  height: 110,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Foto muncul disini",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              //Headline berita
-                              SizedBox(height: 10),
-                              Container(
-                                height: 110,
-                                width: 170,
-                                decoration: BoxDecoration(color: Colors.white),
-                                child: Align(
-                                  alignment: Alignment.topLeft,
+
+                                SizedBox(height: 10),
+
+                                // HEADLINE
+                                Container(
+                                  height: 110,
+                                  width: 170,
                                   child: Text(
-                                    "Klaim Pengangguran AS Naik Tipis, dekati posisi terendah dalam sejarah",
+                                    berita['deskripsi'],
                                     style: TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.bold,
                                     ),
+                                    maxLines: 4,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                              ),
-                              //Tangal
-                              Container(
-                                width: 190,
-                                height: 90,
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 5),
-                                  child: Align(
-                                    alignment: Alignment.bottomLeft,
-                                    child: Text(
-                                      "Jumat, 23 Desember 2025",
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold,
+
+                                // Tanggal
+                                Container(
+                                  width: 190,
+                                  height: 90,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 5),
+                                    child: Align(
+                                      alignment: Alignment.bottomLeft,
+                                      child: Text(
+                                        berita['tanggal'],
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Container(
-                          width: 190,
-                          height: 350,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            //Isi dari berita
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              //foto berita
-                              Container(
-                                margin: EdgeInsets.only(top: 15),
-                                width: 170,
-                                height: 110,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "Foto muncul disini",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                              //Headline berita
-                              SizedBox(height: 10),
-                              Container(
-                                height: 110,
-                                width: 170,
-                                decoration: BoxDecoration(color: Colors.white),
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    "Klaim Pengangguran AS Naik Tipis, dekati posisi terendah dalam sejarah",
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              //Tangal
-                              Container(
-                                width: 190,
-                                height: 90,
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 5),
-                                  child: Align(
-                                    alignment: Alignment.bottomLeft,
-                                    child: Text(
-                                      "Jumat, 23 Desember 2025",
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Container(
-                          width: 190,
-                          height: 350,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            //Isi dari berita
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              //foto berita
-                              Container(
-                                margin: EdgeInsets.only(top: 15),
-                                width: 170,
-                                height: 110,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "Foto muncul disini",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                              //Headline berita
-                              SizedBox(height: 10),
-                              Container(
-                                height: 110,
-                                width: 170,
-                                decoration: BoxDecoration(color: Colors.white),
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    "Klaim Pengangguran AS Naik Tipis, dekati posisi terendah dalam sejarah",
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              //Tangal
-                              Container(
-                                width: 190,
-                                height: 90,
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 5),
-                                  child: Align(
-                                    alignment: Alignment.bottomLeft,
-                                    child: Text(
-                                      "Jumat, 23 Desember 2025",
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                      ],
-                    ),
-                    //Sisi Kanan
-                    Column(
-                      children: [
-                        Container(
-                          width: 190,
-                          height: 350,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            //Isi dari berita
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              //foto berita
-                              Container(
-                                margin: EdgeInsets.only(top: 15),
-                                width: 170,
-                                height: 110,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "Foto muncul disini",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                              //Headline berita
-                              SizedBox(height: 10),
-                              Container(
-                                height: 110,
-                                width: 170,
-                                decoration: BoxDecoration(color: Colors.white),
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    "Klaim Pengangguran AS Naik Tipis, dekati posisi terendah dalam sejarah",
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              //Tangal
-                              Container(
-                                width: 190,
-                                height: 90,
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 5),
-                                  child: Align(
-                                    alignment: Alignment.bottomLeft,
-                                    child: Text(
-                                      "Jumat, 23 Desember 2025",
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Container(
-                          width: 190,
-                          height: 350,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            //Isi dari berita
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              //foto berita
-                              Container(
-                                margin: EdgeInsets.only(top: 15),
-                                width: 170,
-                                height: 110,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "Foto muncul disini",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                              //Headline berita
-                              SizedBox(height: 10),
-                              Container(
-                                height: 110,
-                                width: 170,
-                                decoration: BoxDecoration(color: Colors.white),
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    "Klaim Pengangguran AS Naik Tipis, dekati posisi terendah dalam sejarah",
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              //Tangal
-                              Container(
-                                width: 190,
-                                height: 90,
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 5),
-                                  child: Align(
-                                    alignment: Alignment.bottomLeft,
-                                    child: Text(
-                                      "Jumat, 23 Desember 2025",
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Container(
-                          width: 190,
-                          height: 350,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            //Isi dari berita
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              //foto berita
-                              Container(
-                                margin: EdgeInsets.only(top: 15),
-                                width: 170,
-                                height: 110,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "Foto muncul disini",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                              //Headline berita
-                              SizedBox(height: 10),
-                              Container(
-                                height: 110,
-                                width: 170,
-                                decoration: BoxDecoration(color: Colors.white),
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    "Klaim Pengangguran AS Naik Tipis, dekati posisi terendah dalam sejarah",
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              //Tangal
-                              Container(
-                                width: 190,
-                                height: 90,
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 5),
-                                  child: Align(
-                                    alignment: Alignment.bottomLeft,
-                                    child: Text(
-                                      "Jumat, 23 Desember 2025",
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                      ],
-                    ),
-                  ],
-                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
               ],
             ),
           ],

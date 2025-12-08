@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../home/home_page.dart'; // Pastikan path ini benar
+import '../home/home_page.dart';
+import '../../database/db_helper.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -11,9 +12,11 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   // 1. Controller untuk setiap TextField
   final _nameController = TextEditingController();
+  final _fullnameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _skill = TextEditingController();
 
   // 2. Variabel status untuk melacak validitas form
   bool _isFormValid = false;
@@ -23,33 +26,43 @@ class _RegisterPageState extends State<RegisterPage> {
     super.initState();
     // 3. Tambahkan listener ke setiap controller
     _nameController.addListener(_checkFormValidity);
+    _fullnameController.addListener(_checkFormValidity);
     _emailController.addListener(_checkFormValidity);
     _passwordController.addListener(_checkFormValidity);
     _confirmPasswordController.addListener(_checkFormValidity);
+    _skill.addListener(_checkFormValidity);
   }
 
   @override
   void dispose() {
     // Pastikan controller dibuang untuk menghindari kebocoran memori
     _nameController.dispose();
+    _fullnameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _skill.dispose();
     super.dispose();
   }
 
   // 4. Fungsi yang memeriksa apakah semua field sudah diisi
   void _checkFormValidity() {
     final name = _nameController.text.trim();
+    final fullname = _fullnameController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
     final confirmPassword = _confirmPasswordController.text.trim();
+    final skill = _skill.text.trim();
 
     // Logika validitas: semua field harus tidak kosong (isNotEmpty)
-    final isValid = name.isNotEmpty &&
-        email.isNotEmpty &&
-        password.isNotEmpty &&
-        confirmPassword.isNotEmpty;
+    final isValid =
+        (name.isNotEmpty &&
+            fullname.isNotEmpty &&
+            email.isNotEmpty &&
+            password.isNotEmpty &&
+            confirmPassword.isNotEmpty &&
+            skill.isNotEmpty) &&
+        password == confirmPassword;
 
     // Hanya panggil setState jika status validitas berubah
     if (isValid != _isFormValid) {
@@ -157,7 +170,7 @@ class _RegisterPageState extends State<RegisterPage> {
               // Nama
               _buildTextLabel("Nama Lengkap"),
               TextField(
-                controller: _nameController, // <-- Hubungkan controller
+                controller: _fullnameController, // <-- Hubungkan controller
                 decoration: InputDecoration(
                   hintText: "Masukkan nama anda disini.",
                   border: InputBorder.none,
@@ -192,10 +205,23 @@ class _RegisterPageState extends State<RegisterPage> {
               // Konfirmasi Kata Sandi
               _buildTextLabel("Konfirmasi Kata Sandi"),
               TextField(
-                controller: _confirmPasswordController, // <-- Hubungkan controller
+                controller:
+                    _confirmPasswordController, // <-- Hubungkan controller
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: "Konfirmasi kata sandi anda disini.",
+                  border: InputBorder.none,
+                ),
+              ),
+              Divider(),
+              // Konfirmasi Kata Sandi
+              _buildTextLabel("Keahlian"),
+              TextField(
+                controller: _skill, // <-- Hubungkan controller
+                obscureText: false,
+                decoration: InputDecoration(
+                  hintText:
+                      "Pisahkan dengan koma jika lebih dari 1 (Programming, Menggambar, Critical Thinking)",
                   border: InputBorder.none,
                 ),
               ),
@@ -207,21 +233,37 @@ class _RegisterPageState extends State<RegisterPage> {
               ElevatedButton(
                 // 5. onPressed hanya aktif jika form valid (_isFormValid == true)
                 onPressed: _isFormValid
-                    ? () {
+                    ? () async {
+                        int userId = await DBHelper.registerUser(
+                          fullname: _fullnameController.text,
+                          username: _nameController.text,
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                        );
+
+                        List<String> skills = _skill.text.split(',');
+                        for (var s in skills) {
+                          await DBHelper.tambahSkill(userId, s.trim());
+                        }
                         // Logika pendaftaran dan navigasi
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => const HomePage()),
+                          MaterialPageRoute(
+                            builder: (context) => HomePage(
+                              username: _nameController.text,
+                              jobTitle: "Pelamar",
+                            ),
+                          ),
                         );
                       }
                     : null, // Jika tidak valid, tombol dinonaktifkan
 
                 style: ElevatedButton.styleFrom(
                   // 6. Logika Perubahan Warna
-                  backgroundColor: _isFormValid 
+                  backgroundColor: _isFormValid
                       ? Color(0xFF28AE9D) // Warna Hijau jika valid
                       : Colors.grey.shade300, // Warna Abu-abu jika tidak valid
-                  
+
                   foregroundColor: Colors.white,
                   padding: EdgeInsets.symmetric(vertical: 16),
                   textStyle: TextStyle(
