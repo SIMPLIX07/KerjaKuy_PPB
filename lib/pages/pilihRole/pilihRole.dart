@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../login/login_page.dart';
-import '../registerPelamar/register_pelamar.dart';
+import '../landingPage/landingPage.dart';
+import '../landingPage_perusahaan/landingPage_perusahaan.dart';
 
-class LandingpagePelamar extends StatelessWidget {
-  const LandingpagePelamar({super.key});
+class LandingPage extends StatelessWidget {
+  const LandingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,7 @@ class LandingpagePelamar extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    "Selamat datang di\nKerjakuy !",
+                    "Silahkan Pilih\nRole!",
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
@@ -58,11 +59,11 @@ class LandingpagePelamar extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const LoginPage()),
+                          MaterialPageRoute(builder: (_) => const LandingPagePerusahaan()),
                         );
                       },
                       child: const Text(
-                        "Masuk Akun Yang sudah Ada",
+                        "Login sebagai Perusahaan",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -92,12 +93,12 @@ class LandingpagePelamar extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const RegisterPage(),
+                            builder: (_) => const LandingpagePelamar(),
                           ),
                         );
                       },
                       child: const Text(
-                        "Buat Akun baru",
+                        "Login sebagai Pelamar",
                         style: TextStyle(
                           color: Colors.black87,
                           fontSize: 16,

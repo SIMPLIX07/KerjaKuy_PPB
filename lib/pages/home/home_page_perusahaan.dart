@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 //import 'tabsPerusahaan/tab_1_home_perusahaan.dart';
 //import 'tabsPerusahaan/tab_2_lowongan_saya.dart';
 import 'tabsPerusahaan/karyawanPerusahaan.dart';
+import 'tabsPerusahaan/homePerusahaan.dart';
 
 class HomePagePerusahaan extends StatefulWidget {
-  const HomePagePerusahaan({super.key});
+  final String namaPerusahaan;
+  const HomePagePerusahaan({super.key, required this.namaPerusahaan});
 
   @override
   State<HomePagePerusahaan> createState() => _HomePagePerusahaanState();
@@ -46,7 +48,7 @@ class _HomePagePerusahaanState extends State<HomePagePerusahaan>
           onPageChanged: _onPageChanged,
           physics: const NeverScrollableScrollPhysics(),
           children: [
-            Center(child: Text("Halaman Home (belum dibuat)")), // sementara
+            HomePerusahaan(namaPerusahaan: widget.namaPerusahaan), // sementara
             Center(child: Text("Halaman Lowongan (belum dibuat)")), // sementara
             KaryawanPerusahaanTab(),
           ],
@@ -64,7 +66,6 @@ class _HomePagePerusahaanState extends State<HomePagePerusahaan>
           unselectedItemColor: Colors.grey,
           type: BottomNavigationBarType.fixed,
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
             BottomNavigationBarItem(icon: Icon(Icons.work), label: "Lowongan"),
             BottomNavigationBarItem(
               icon: Icon(Icons.people),

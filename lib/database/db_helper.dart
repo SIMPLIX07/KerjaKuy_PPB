@@ -24,6 +24,18 @@ class DBHelper {
         ''');
 
         await db.execute('''
+          CREATE TABLE perusahaan (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            namaPerusahaan TEXT UNIQUE,
+            email TEXT UNIQUE,
+            password TEXT,
+            alamat TEXT,
+            deskripsi Text,
+            noTelepon Text
+          )
+        ''');
+
+        await db.execute('''
           CREATE TABLE keahlian (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id integer,
@@ -102,8 +114,47 @@ class DBHelper {
     await db.insert('keahlian', {'user_id': userId, 'nama_skill': namaSkill});
   }
 
-  static Future<List<Map<String, dynamic>>> getBerita()async{
+  static Future<List<Map<String, dynamic>>> getBerita() async {
     final db = await _getDB();
     return await db.query('berita', orderBy: 'id Desc');
+  }
+
+  static Future<int> registerPerusahaan({
+    required String namaPerusahaan,
+    required String email,
+    required String password,
+    required String alamat,
+    required String deskripsi,
+    required String noTelepon,
+  }) async {
+    final db = await _getDB();
+    final userId = await db.insert('perusahaan', {
+      'namaPerusahaan': namaPerusahaan,
+      'email': email,
+      'password': password,
+      'alamat': alamat,
+      'deskripsi': deskripsi,
+      'noTelepon': noTelepon,
+    });
+
+    print(
+      "\x1B[32mREGISTER SUCCESS: User ID = $userId, nama Perusahaan = $namaPerusahaan, Email = $email\x1B[0m",
+    );
+
+    return userId;
+  }
+
+  static Future<Map<String, dynamic>?> loginPerusahaan({
+    required String email,
+    required String password,
+  }) async {
+    final db = await _getDB();
+    final res = await db.query(
+      'perusahaan',
+      where: 'email=? AND password=?',
+      whereArgs: [email, password],
+    );
+
+    return res.isNotEmpty ? res.first : null;
   }
 }

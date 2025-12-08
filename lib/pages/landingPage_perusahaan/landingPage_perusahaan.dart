@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../login/login_page.dart';
-import '../registerPelamar/register_pelamar.dart';
+import '../loginPerusahaan/loginPerusahaan.dart';
+import '../registerPerusahaan/registerPerusahaan.dart';
 
-class LandingpagePelamar extends StatelessWidget {
-  const LandingpagePelamar({super.key});
+class LandingPagePerusahaan extends StatelessWidget {
+  const LandingPagePerusahaan({super.key});
 
   @override
   Widget build(BuildContext context) {
