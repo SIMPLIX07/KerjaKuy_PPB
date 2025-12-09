@@ -3,8 +3,9 @@ import '../../buatLowongan/buatLowongan.dart';
 
 class HomePerusahaan extends StatelessWidget {
   final String namaPerusahaan;
+  final int perusahaanId;
 
-  const HomePerusahaan({super.key, required this.namaPerusahaan});
+  const HomePerusahaan({super.key, required this.namaPerusahaan, required this.perusahaanId});
 
   @override
   Widget build(BuildContext context) {
@@ -199,7 +200,10 @@ class HomePerusahaan extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const Buatlowongan(),
+                        builder: (context) =>  Buatlowongan(
+                          perusahaanId: perusahaanId,
+                          namaPerusahaan: namaPerusahaan,
+                        ),
                       ),
                     );
                   },

@@ -283,14 +283,15 @@ class _RegisterPageState extends State<RegisterPage> {
 
                         // NAVIGASI KE HOME PERUSAHAAN
                         Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HomePagePerusahaan(
-                                    namaPerusahaan:
-                                        _nameController.text,
-                                  ),
-                                ),
-                              );
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomePagePerusahaan(
+                              perusahaanId: userId, 
+                              namaPerusahaan:
+                                  _nameController.text,
+                            ),
+                          ),
+                        );
                       }
                     : null,
                 style: ElevatedButton.styleFrom(

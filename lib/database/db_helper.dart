@@ -53,6 +53,22 @@ class DBHelper {
         ''');
 
         await db.execute('''
+          CREATE TABLE lowongan (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            perusahaan_id integer,
+            nama_perusahaan TEXT,
+            kategori TEXT,
+            posisi TEXT,
+            deskripsi TEXT,
+            syarat TEXT,
+            gaji TEXT,
+            tipe TEXT,
+            periode_awal TEXT,
+            periode_akhir TEXT
+          )
+        ''');
+
+        await db.execute('''
     INSERT INTO berita (deskripsi, tanggal) VALUES
     ('Klaim Pengangguran AS Naik Tipis, dekati posisi terendah dalam sejarah', '23 Desember 2025'),
     ('Gaji Minimum Regional Jakarta Resmi Naik Tahun Ini', '21 Desember 2025'),
@@ -156,5 +172,53 @@ class DBHelper {
     );
 
     return res.isNotEmpty ? res.first : null;
+  }
+
+  // INSERT LOWONGAN
+  static Future<int> insertLowongan({
+    required String nama_perusahaan,
+    required int perusahaanId,
+    required String kategori,
+    required String posisi,
+    required String deskripsi,
+    required String syarat,
+    required String gaji,
+    required String tipe,
+    required String periodeAwal,
+    required String periodeAkhir,
+  }) async {
+    final db = await _getDB();
+    final lowonganId = await db.insert('lowongan', {
+      'perusahaan_id': perusahaanId,
+      'nama_perusahaan': nama_perusahaan,
+      'kategori': kategori,
+      'posisi': posisi,
+      'deskripsi': deskripsi,
+      'syarat': syarat,
+      'gaji': gaji,
+      'tipe': tipe,
+      'periode_awal': periodeAwal,
+      'periode_akhir': periodeAkhir,
+    });
+
+    print(
+      "\x1B[32mLOWONGAN INSERT SUCCESS: ID = $lowonganId, Posisi = $posisi\x1B[0m",
+    );
+
+
+    final semuaLowongan = await db.query('lowongan', orderBy: "id DESC");
+
+    print("\n===== DAFTAR SEMUA LOWONGAN =====");
+    for (var job in semuaLowongan) {
+      print(
+        "ID: ${job['id']} | "
+        "Perusahaan: ${job['nama_perusahaan']} | "
+        "Posisi: ${job['posisi']} | "
+        "Gaji: ${job['gaji']} | "
+        "Periode: ${job['periode_awal']} - ${job['periode_akhir']}",
+      );
+    }
+    print("==================================\n");
+    return lowonganId;
   }
 }

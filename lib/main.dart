@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pages/splash/splash_screen.dart';
 import 'pages/home/home_page_perusahaan.dart';
+import 'pages/buatLowongan/buatLowongan.dart';
 
 void main() {
   runApp(const MyApp());

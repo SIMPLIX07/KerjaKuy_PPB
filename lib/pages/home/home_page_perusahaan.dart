@@ -5,8 +5,9 @@ import 'tabsPerusahaan/karyawanPerusahaan.dart';
 import 'tabsPerusahaan/homePerusahaan.dart';
 
 class HomePagePerusahaan extends StatefulWidget {
+  final int perusahaanId;
   final String namaPerusahaan;
-  const HomePagePerusahaan({super.key, required this.namaPerusahaan});
+  const HomePagePerusahaan({super.key, required this.namaPerusahaan, required this.perusahaanId});
 
   @override
   State<HomePagePerusahaan> createState() => _HomePagePerusahaanState();
@@ -48,7 +49,7 @@ class _HomePagePerusahaanState extends State<HomePagePerusahaan>
           onPageChanged: _onPageChanged,
           physics: const NeverScrollableScrollPhysics(),
           children: [
-            HomePerusahaan(namaPerusahaan: widget.namaPerusahaan), // sementara
+            HomePerusahaan(namaPerusahaan: widget.namaPerusahaan, perusahaanId: widget.perusahaanId,), // sementara
             Center(child: Text("Halaman Lowongan (belum dibuat)")), // sementara
             KaryawanPerusahaanTab(),
           ],

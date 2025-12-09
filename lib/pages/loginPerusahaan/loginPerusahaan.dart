@@ -163,8 +163,9 @@ class _LoginPageState extends State<LoginPage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => HomePagePerusahaan(
+                                    perusahaanId: perusahaan['id'], // BENAR
                                     namaPerusahaan:
-                                        perusahaan['namaPerusahaan'],
+                                        perusahaan['namaPerusahaan'], // BENAR
                                   ),
                                 ),
                               );
