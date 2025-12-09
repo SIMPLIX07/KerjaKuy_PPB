@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../buatLowongan/buatLowongan.dart';
 
 class HomePerusahaan extends StatelessWidget {
   final String namaPerusahaan;
@@ -195,6 +196,12 @@ class HomePerusahaan extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     print("Tombol Buat Lowongan ditekan");
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Buatlowongan(),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF28AE9D),
