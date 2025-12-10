@@ -117,6 +117,19 @@ class DBHelper {
         ''');
 
         await db.execute('''
+          CREATE TABLE lamaran (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            perusahaan_id INTEGER,
+            cv_id INTEGER,
+            status TEXT,
+            FOREIGN KEY(cv_id) REFERENCES cv(id),
+            FOREIGN KEY(user_id) REFERENCES users(id),
+            FOREIGN KEY(perusahaan_id) REFERENCES perusahaan(id)
+          )
+        ''');
+
+        await db.execute('''
     INSERT INTO berita (deskripsi, tanggal) VALUES
     ('Klaim Pengangguran AS Naik Tipis, dekati posisi terendah dalam sejarah', '23 Desember 2025'),
     ('Gaji Minimum Regional Jakarta Resmi Naik Tahun Ini', '21 Desember 2025'),
@@ -398,5 +411,38 @@ class DBHelper {
   static Future<List<Map<String, dynamic>>> getCVByUserId(int userId) async {
     final db = await _getDB();
     return await db.query('cv', where: 'user_id = ?', whereArgs: [userId]);
+  }
+
+  static Future<int> insertLamaran({
+    required int user_id,
+    required int perusahaan_id,
+    required int cv_id,
+    
+  }) async {
+    final db = await _getDB();
+
+    final lamaranId = await db.insert('lamaran', {
+      'user_id': user_id,
+      'perusahaan_id': perusahaan_id,
+      'cv_id': cv_id,
+      'status': "Process",
+      
+    });
+
+    print("\x1B[32mLamaran INSERT SUCCESS — ID: $lamaranId\x1B[0m");
+    final semuaLamaran = await db.query('lamaran', orderBy: "id DESC");
+
+    print("\n===== DAFTAR SEMUA LOWONGAN =====");
+    for (var job in semuaLamaran) {
+      print(
+        "User ID: ${job['user_id']} | "
+        "Perusahaan ID: ${job['perusahaan_id']} | "
+        "CV ID: ${job['cv_id']} | "
+        "Status: ${job['status']} | "
+      );
+    }
+    print("==================================\n");
+
+    return lamaranId;
   }
 }

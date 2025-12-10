@@ -272,6 +272,8 @@ class _HomeTabState extends State<HomeTab> {
                   context,
                   MaterialPageRoute(
                     builder: (_) => DetailLowonganPage(
+                      userId: widget.userId,
+                      perusahaanId: data['perusahaan_id'],
                       posisi: data['posisi'] ?? "",
                       namaPerusahaan: data['nama_perusahaan'] ?? "",
                       gaji: data['gaji'] ?? "",
