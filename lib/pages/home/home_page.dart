@@ -5,10 +5,11 @@ import 'tabs/tab_3_lamaran/lamaran_tab.dart';
 import 'tabs/tab_4_jadwal/jadwal_tab.dart';
 
 class HomePage extends StatefulWidget {
+  final int userId;
   final String username;
   final String jobTitle;
 
-  const HomePage({super.key, required this.username, required this.jobTitle});
+  const HomePage({super.key,required this.userId,required this.username, required this.jobTitle});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -62,6 +63,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           children: [
             // PAGE 1 - HOME
             HomeTab(
+              userId:widget.userId,
               username: widget.username,
               jobTitle: widget.jobTitle,
               onLihatLainnyaPressed: () {

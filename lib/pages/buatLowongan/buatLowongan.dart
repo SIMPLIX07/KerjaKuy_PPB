@@ -1,3 +1,5 @@
+// ===================  VERSION RESPONSIVE ===================
+
 import 'package:flutter/material.dart';
 import '../../database/db_helper.dart';
 
@@ -21,8 +23,6 @@ class _BuatlowonganState extends State<Buatlowongan> {
   final TextEditingController posisiController = TextEditingController();
   final TextEditingController deskripsiController = TextEditingController();
   final TextEditingController syaratController = TextEditingController();
-  final TextEditingController gajiController = TextEditingController();
-  final TextEditingController tipeController = TextEditingController();
   String? gajiDipilih;
   String? tipeDipilih;
 
@@ -42,26 +42,21 @@ class _BuatlowonganState extends State<Buatlowongan> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-
     if (picked != null) {
-      String isoDate =
+      controller.text =
           "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
-      controller.text = isoDate;
     }
   }
 
   bool validasiForm() {
-    if (kategoriController.text.isEmpty ||
-        posisiController.text.isEmpty ||
-        deskripsiController.text.isEmpty ||
-        syaratController.text.isEmpty ||
-        gajiDipilih == null ||
-        tipeDipilih == null ||
-        periodeAwalController.text.isEmpty ||
-        periodeAkhirController.text.isEmpty) {
-      return false;
-    }
-    return true;
+    return kategoriController.text.isNotEmpty &&
+        posisiController.text.isNotEmpty &&
+        deskripsiController.text.isNotEmpty &&
+        syaratController.text.isNotEmpty &&
+        periodeAwalController.text.isNotEmpty &&
+        periodeAkhirController.text.isNotEmpty &&
+        gajiDipilih != null &&
+        tipeDipilih != null;
   }
 
   void showAlert(String pesan) {
@@ -88,27 +83,18 @@ class _BuatlowonganState extends State<Buatlowongan> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
           titlePadding: EdgeInsets.only(top: 25),
           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           title: Column(
             children: [
-              Icon(
-                Icons.check_circle_rounded,
-                color: Color(0xFF28AE9D),
-                size: 60,
-              ),
+              Icon(Icons.check_circle_rounded, color: Color(0xFF28AE9D), size: 60),
               SizedBox(height: 12),
               Text(
                 "Lowongan Berhasil Dibuat!",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+                    fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
               ),
             ],
           ),
@@ -116,37 +102,27 @@ class _BuatlowonganState extends State<Buatlowongan> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Lowongan kamu sudah tayang dan siap dilamar oleh kandidat. "
-                "Pantau pelamar yang masuk di halaman beranda ya!",
+                "Lowongan kamu sudah tayang dan siap dilamar oleh kandidat.",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 15, color: Colors.black87),
               ),
               SizedBox(height: 22),
-
-              
               SizedBox(
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context); 
-                    Navigator.pop(context); 
+                    Navigator.pop(context);
+                    Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF28AE9D),
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
-                  child: Text(
-                    "Kembali ke Beranda",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
+                  child: Text("Kembali ke Beranda",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 ),
               ),
-              SizedBox(height: 5),
             ],
           ),
         );
@@ -155,485 +131,110 @@ class _BuatlowonganState extends State<Buatlowongan> {
   }
 
   void resetController() {
-    periodeAwalController.text = "";
-    periodeAkhirController.text = "";
-    kategoriController.text = "";
-    posisiController.text = "";
-    deskripsiController.text = "";
-    syaratController.text = "";
-    gajiController.text = "";
-    tipeController.text = "";
+    kategoriController.clear();
+    posisiController.clear();
+    deskripsiController.clear();
+    syaratController.clear();
+    periodeAwalController.clear();
+    periodeAkhirController.clear();
     gajiDipilih = null;
     tipeDipilih = null;
   }
 
   @override
   Widget build(BuildContext context) {
+    final screen = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Stack(
           children: [
-            // Tombol Back
             Positioned(
-              top: 10,
               left: 10,
+              top: 10,
               child: IconButton(
                 icon: Icon(Icons.arrow_back, size: 30, color: Colors.black),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+                onPressed: () => Navigator.pop(context),
               ),
             ),
 
-            Center(
-              child: Container(
-                height: 800,
-                width: 500,
-                padding: const EdgeInsets.only(top: 35, left: 35, right: 35),
-                margin: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Color(0xFF28AE9D), width: 2),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Center(
+            Padding(
+              padding: const EdgeInsets.only(top: 60, left: 15, right: 15),
+              child: SingleChildScrollView(
+                child: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Color(0xFF28AE9D), width: 2),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        height: 80,
-                        width: 450,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Kategori",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            SizedBox(height: 5),
-                            Container(
-                              width: 420,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.3),
-                                    blurRadius: 6,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: TextField(
-                                controller: kategoriController,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 10,
-                                  ),
-                                  border: InputBorder.none,
-                                  hintText: "Programming, Bisnis, Teknik",
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Container(
-                        height: 80,
-                        width: 450,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Posisi",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            SizedBox(height: 5),
-                            Container(
-                              width: 420,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.3),
-                                    blurRadius: 6,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: TextField(
-                                controller: posisiController,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 10,
-                                  ),
-                                  border: InputBorder.none,
-                                  hintText: "Data Analyst, Manager, CMO",
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Container(
-                        height: 170,
-                        width: 450,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Deskripsi",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            SizedBox(height: 5),
-                            Container(
-                              width: 420,
-                              height: 130,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.3),
-                                    blurRadius: 6,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: TextField(
-                                controller: deskripsiController,
-                                maxLines: null,
-                                keyboardType: TextInputType.multiline,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 10,
-                                  ),
-                                  border: InputBorder.none,
-                                  hintText:
-                                      "Deskripsi mengenai pekerjaan yang akan anda buka",
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Container(
-                        height: 170,
-                        width: 450,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Syarat",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            SizedBox(height: 5),
-                            Container(
-                              width: 420,
-                              height: 130,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.3),
-                                    blurRadius: 6,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: TextField(
-                                controller: syaratController,
-                                maxLines: null,
-                                keyboardType: TextInputType.multiline,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 10,
-                                  ),
-                                  border: InputBorder.none,
-                                  hintText:
-                                      "Jika syarat lebih dari 1 maka buat line baru untuk setiap syarat",
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 5),
+                      // ================================ INPUT FIELD ================================
+
+                      fieldText("Kategori", kategoriController,
+                          "Programming, Bisnis, Teknik"),
+                      fieldText("Posisi", posisiController,
+                          "Data Analyst, Manager, CMO"),
+                      fieldTextBig(
+                          "Deskripsi", deskripsiController, "Deskripsi pekerjaan"),
+                      fieldTextBig("Syarat", syaratController,
+                          "Gunakan enter untuk setiap syarat"),
+
+                      SizedBox(height: 10),
+
+                      // ================================ ROW Gaji & Periode ================================
                       Row(
                         children: [
-                          Column(
-                            children: [
-                              Container(
-                                height: 80,
-                                width: 170,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Gaji",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Container(
-                                      width: 170,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(12),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.3),
-                                            blurRadius: 6,
-                                            offset: Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: DropdownButtonFormField<String>(
-                                        value: gajiDipilih,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            gajiDipilih = value;
-                                          });
-                                        },
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 10,
-                                          ),
-                                          border: InputBorder.none,
-                                        ),
-                                        hint: Text("Pilih Rentang Gaji"),
-                                        items: listGaji.map((String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 5),
-                              Container(
-                                height: 70,
-                                width: 170,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Periode Awal",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Container(
-                                      width: 170,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(12),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.3),
-                                            blurRadius: 6,
-                                            offset: Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: TextField(
-                                        controller: periodeAwalController,
-                                        readOnly: true,
-                                        onTap: () {
-                                          pilihTanggal(periodeAwalController);
-                                        },
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 10,
-                                          ),
-                                          border: InputBorder.none,
-                                          hintText: "DD/MM/YYYY",
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                          Expanded(
+                            child: columnDropdown(
+                              title: "Gaji",
+                              value: gajiDipilih,
+                              list: listGaji,
+                              onChanged: (v) => setState(() => gajiDipilih = v),
+                            ),
                           ),
                           SizedBox(width: 10),
-                          Column(
-                            children: [
-                              Container(
-                                height: 80,
-                                width: 160,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Tipe",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Container(
-                                      width: 150,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(12),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.3),
-                                            blurRadius: 6,
-                                            offset: Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: DropdownButtonFormField<String>(
-                                        value: tipeDipilih,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            tipeDipilih = value;
-                                          });
-                                        },
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 10,
-                                          ),
-                                          border: InputBorder.none,
-                                        ),
-                                        hint: Text("Pilih Tipe kerja"),
-                                        items: tipeKerja.map((String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 5),
-                              Container(
-                                height: 70,
-                                width: 160,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Periode Akhir",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Container(
-                                      width: 150,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(12),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.3),
-                                            blurRadius: 6,
-                                            offset: Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: TextField(
-                                        controller: periodeAkhirController,
-                                        readOnly: true,
-                                        onTap: () {
-                                          pilihTanggal(periodeAkhirController);
-                                        },
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 10,
-                                          ),
-                                          border: InputBorder.none,
-                                          hintText: "DD/MM/YYYY",
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                          Expanded(
+                            child: columnCalendar(
+                              title: "Periode Awal",
+                              controller: periodeAwalController,
+                              onTap: () => pilihTanggal(periodeAwalController),
+                            ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 30),
 
+                      SizedBox(height: 12),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: columnDropdown(
+                              title: "Tipe",
+                              value: tipeDipilih,
+                              list: tipeKerja,
+                              onChanged: (v) => setState(() => tipeDipilih = v),
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: columnCalendar(
+                              title: "Periode Akhir",
+                              controller: periodeAkhirController,
+                              onTap: () => pilihTanggal(periodeAkhirController),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: 35),
+
+                      // ================================ BUTTON SUBMIT ================================
                       SizedBox(
-                        height: 45,
+                        height: 50,
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
@@ -644,7 +245,7 @@ class _BuatlowonganState extends State<Buatlowongan> {
                               return;
                             }
 
-                            int id = await DBHelper.insertLowongan(
+                            await DBHelper.insertLowongan(
                               nama_perusahaan: widget.namaPerusahaan,
                               perusahaanId: widget.perusahaanId,
                               kategori: kategoriController.text,
@@ -657,58 +258,156 @@ class _BuatlowonganState extends State<Buatlowongan> {
                               periodeAkhir: periodeAkhirController.text,
                             );
 
-                            print("=== DATA LOWONGAN ===");
-                            print(
-                              "Nama Perusahaan       : ${widget.namaPerusahaan}",
-                            );
-                            print(
-                              "Id Perusahaan       : ${widget.perusahaanId}",
-                            );
-                            print(
-                              "Kategori       : ${kategoriController.text}",
-                            );
-                            print("Posisi         : ${posisiController.text}");
-                            print(
-                              "Deskripsi      : ${deskripsiController.text}",
-                            );
-                            print("Syarat         : ${syaratController.text}");
-                            print("Gaji           : ${gajiDipilih}");
-                            print("Tipe           : ${tipeDipilih}");
-                            print(
-                              "Periode Awal   : ${periodeAwalController.text}",
-                            );
-                            print(
-                              "Periode Akhir  : ${periodeAkhirController.text}",
-                            );
-                            print("=====================");
                             resetController();
                             berhasilInsert();
                           },
-
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF28AE9D),
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
+                                borderRadius: BorderRadius.circular(25)),
                           ),
-                          child: Text(
-                            "Selesai",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          child: Text("Selesai",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-            ),
+            )
           ],
         ),
       ),
+    );
+  }
+
+  // ==================== COMPONENTS ====================
+
+  Widget fieldText(String title, TextEditingController controller, String hint) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,
+              style:
+                  TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          SizedBox(height: 6),
+          inputBox(
+            TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: hint,
+                contentPadding: EdgeInsets.symmetric(horizontal: 12),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget fieldTextBig(String title, TextEditingController controller, String hint) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,
+              style:
+                  TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          SizedBox(height: 6),
+          inputBox(
+            TextField(
+              controller: controller,
+              maxLines: null,
+              keyboardType: TextInputType.multiline,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: hint,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+              ),
+            ),
+            height: 120,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget columnDropdown({
+    required String title,
+    required String? value,
+    required List<String> list,
+    required Function(String?) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        SizedBox(height: 6),
+        inputBox(
+          DropdownButtonFormField<String>(
+            value: value,
+            onChanged: onChanged,
+            decoration: InputDecoration(border: InputBorder.none),
+            hint: Text("Pilih"),
+            items: list.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget columnCalendar({
+    required String title,
+    required TextEditingController controller,
+    required Function() onTap,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        SizedBox(height: 6),
+        inputBox(
+          TextField(
+            controller: controller,
+            readOnly: true,
+            onTap: onTap,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: "DD/MM/YYYY",
+              contentPadding: EdgeInsets.symmetric(horizontal: 12),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget inputBox(Widget child, {double height = 45}) {
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: child,
     );
   }
 }

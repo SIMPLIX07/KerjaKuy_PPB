@@ -69,6 +69,53 @@ class DBHelper {
         ''');
 
         await db.execute('''
+          CREATE TABLE cv (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            pendidikan TEXT,
+            umur INTEGER,
+            tentang_saya TEXT,
+            universitas TEXT,
+            jurusan TEXT,
+            kontak TEXT,
+            title TEXT,
+            subtitle TEXT,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+          )
+        ''');
+
+        await db.execute('''
+          CREATE TABLE skillCV (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            cv_id INTEGER,
+            skill TEXT,
+            kemampuan INTEGER,
+            FOREIGN KEY(cv_id) REFERENCES cv(id)
+          )
+        ''');
+
+        await db.execute('''
+          CREATE TABLE pengalaman (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            cv_id INTEGER,
+            pengalaman TEXT,
+            durasi TEXT,
+            FOREIGN KEY(cv_id) REFERENCES cv(id)
+          )
+        ''');
+
+        await db.execute('''
+          CREATE TABLE kontak (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            cv_id INTEGER,
+            email TEXT,
+            no_telepon TEXT,
+            linkedIn TEXT,
+            FOREIGN KEY(cv_id) REFERENCES cv(id)
+          )
+        ''');
+
+        await db.execute('''
     INSERT INTO berita (deskripsi, tanggal) VALUES
     ('Klaim Pengangguran AS Naik Tipis, dekati posisi terendah dalam sejarah', '23 Desember 2025'),
     ('Gaji Minimum Regional Jakarta Resmi Naik Tahun Ini', '21 Desember 2025'),
@@ -205,7 +252,6 @@ class DBHelper {
       "\x1B[32mLOWONGAN INSERT SUCCESS: ID = $lowonganId, Posisi = $posisi\x1B[0m",
     );
 
-
     final semuaLowongan = await db.query('lowongan', orderBy: "id DESC");
 
     print("\n===== DAFTAR SEMUA LOWONGAN =====");
@@ -220,5 +266,100 @@ class DBHelper {
     }
     print("==================================\n");
     return lowonganId;
+  }
+
+  static Future<int> insertCV({
+    required int userId,
+    required String pendidikan,
+    required int umur,
+    required String tentangSaya,
+    required String universitas,
+    required String jurusan,
+    required String kontak,
+    required String title,
+    required String subtitle,
+  }) async {
+    final db = await _getDB();
+
+    final cvId = await db.insert('cv', {
+      'user_id': userId,
+      'pendidikan': pendidikan,
+      'umur': umur,
+      'tentang_saya': tentangSaya,
+      'universitas': universitas,
+      'jurusan': jurusan,
+      'kontak': kontak,
+      'title': title,
+      'subtitle': subtitle,
+    });
+
+    print("\x1B[32mCV INSERT SUCCESS — ID: $cvId\x1B[0m");
+
+    return cvId;
+  }
+
+  static Future<int> insertSkillCV({
+    required int cvId,
+    required String skill,
+    required int kemampuan,
+  }) async {
+    final db = await _getDB();
+
+    final id = await db.insert('skillCV', {
+      'cv_id': cvId,
+      'skill': skill,
+      'kemampuan': kemampuan,
+    });
+
+    print(
+      "\x1B[32mSKILL INSERT SUCCESS — CV: $cvId, Skill: $skill ($kemampuan%)\x1B[0m",
+    );
+
+    return id;
+  }
+
+  static Future<int> insertPengalaman({
+    required int cvId,
+    required String pengalaman,
+    required String durasi,
+  }) async {
+    final db = await _getDB();
+
+    final id = await db.insert('pengalaman', {
+      'cv_id': cvId,
+      'pengalaman': pengalaman,
+      'durasi': durasi,
+    });
+
+    print(
+      "\x1B[32mPENGALAMAN INSERT SUCCESS — CV: $cvId, $pengalaman ($durasi)\x1B[0m",
+    );
+
+    return id;
+  }
+
+  static Future<int> insertKontak({
+    required int cvId,
+    required String email,
+    required String noTelepon,
+    required String linkedIn,
+  }) async {
+    final db = await _getDB();
+
+    final id = await db.insert('kontak', {
+      'cv_id': cvId,
+      'email': email,
+      'no_telepon': noTelepon,
+      'linkedIn': linkedIn,
+    });
+
+    print("\x1B[32mKONTAK INSERT SUCCESS — CV: $cvId, Email: $email\x1B[0m");
+
+    return id;
+  }
+
+  static Future<List<Map<String, dynamic>>> getCVByUserId(int userId) async {
+    final db = await _getDB();
+    return await db.query('cv', where: 'user_id = ?', whereArgs: [userId]);
   }
 }

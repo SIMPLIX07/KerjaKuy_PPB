@@ -208,8 +208,10 @@ class _LoginPageState extends State<LoginPage> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>  HomePage(
+                                  
                                   username: user['username'],
                                   jobTitle: user['pekerjaan'],
+                                  userId: user['id'],    
                                 ),
                               ),
                             );

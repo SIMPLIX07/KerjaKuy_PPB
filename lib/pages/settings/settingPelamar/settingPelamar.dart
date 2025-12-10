@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/cvPelamar/buatCV.dart';
+import 'package:flutter_application_1/pages/cvPelamar/cvPelamar.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  final int userId;
+  final String nama;
+  final String jobTitle;
+  const ProfilePage({
+    super.key,
+    required this.userId,
+    required this.nama,
+    required this.jobTitle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,21 +31,21 @@ class ProfilePage extends StatelessWidget {
                       Navigator.pop(context);
                     },
                   ),
-                ],  
+                ],
               ),
             ),
 
             // Photo + Name + Role
             Column(
               children: [
-                const Icon(Icons.account_circle, size: 110, color: Colors.grey),
-                const SizedBox(height: 8),
-                const Text(
-                  "Angga Rizky Peratama",
+                Icon(Icons.account_circle, size: 110, color: Colors.grey),
+                SizedBox(height: 8),
+                Text(
+                  nama,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                const Text(
-                  "Senior Programmer",
+                Text(
+                  jobTitle,
                   style: TextStyle(color: Colors.grey, fontSize: 14),
                 ),
                 const SizedBox(height: 20),
@@ -84,6 +94,20 @@ class ProfilePage extends StatelessWidget {
                       icon: Icons.settings_suggest,
                       text: "Pengaturan Aplikasi",
                       onTap: () => print("Pengaturan Aplikasi tapped"),
+                    ),
+                    _menuTile(
+                      icon: Icons.settings_suggest,
+                      text: "CV Anda",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => CVPage(
+                              userId: userId, // data yang dikirim
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     _menuTile(
                       icon: Icons.logout,

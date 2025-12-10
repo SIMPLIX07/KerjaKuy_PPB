@@ -3,12 +3,14 @@ import '../../../../database/db_helper.dart';
 import 'package:flutter_application_1/pages/settings/settingPelamar/settingPelamar.dart';
 
 class HomeTab extends StatefulWidget {
+  final int userId;
   final String username;
   final String jobTitle;
   final VoidCallback onLihatLainnyaPressed;
 
   const HomeTab({
     super.key,
+    required this.userId,
     required this.username,
     required this.jobTitle,
     required this.onLihatLainnyaPressed,
@@ -34,177 +36,6 @@ class _HomeTabState extends State<HomeTab> {
       _berita = data;
       _loadingBerita = false;
     });
-  }
-
-  void _showAllLamaranDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text("Semua Lamaran"),
-          content: Container(
-            width: double.maxFinite,
-            height: 200,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // CARD 1: Garuda Indonesia (Diterima)
-                  Container(
-                    width: 400 * 0.9,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: Row(
-                      children: [
-                        SizedBox(width: 5),
-                        Container(
-                          height: 40,
-                          width: 5,
-                          decoration: BoxDecoration(
-                            color: Color(0xFF28AE9D), // Hijau
-                            borderRadius: BorderRadius.circular(90),
-                          ),
-                        ),
-                        SizedBox(width: 20),
-                        Icon(Icons.airplanemode_active, size: 40),
-                        SizedBox(width: 20),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Selamat anda diterima di perusahaan",
-                                style: TextStyle(fontSize: 12),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Text(
-                                "PT Garuda Indonesia",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: 10),
-
-                  // CARD 2: Qatar Airways (Ditolak)
-                  Container(
-                    width: 400 * 0.9,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: Row(
-                      children: [
-                        SizedBox(width: 5),
-                        Container(
-                          height: 40,
-                          width: 5,
-                          decoration: BoxDecoration(
-                            color: Colors.red, // Merah
-                            borderRadius: BorderRadius.circular(90),
-                          ),
-                        ),
-                        SizedBox(width: 20),
-                        Icon(Icons.airplanemode_active, size: 40),
-                        SizedBox(width: 20),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Mohon Maaf anda belum diterima",
-                                style: TextStyle(fontSize: 12),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Text(
-                                "Qatar Airways",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: 10),
-
-                  // CARD 3: PT. KAI (Diproses)
-                  Container(
-                    width: 400 * 0.9,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: Row(
-                      children: [
-                        SizedBox(width: 5),
-                        Container(
-                          height: 40,
-                          width: 5,
-                          decoration: BoxDecoration(
-                            color: Colors.amber,
-                            borderRadius: BorderRadius.circular(90),
-                          ),
-                        ),
-                        SizedBox(width: 20),
-                        Icon(Icons.train, size: 40),
-                        SizedBox(width: 20),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Lamaran anda sedang diproses",
-                                style: TextStyle(fontSize: 12),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Text(
-                                "PT. KAI",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: Text("Tutup"),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void _showJobDetailDialog({
@@ -240,39 +71,31 @@ class _HomeTabState extends State<HomeTab> {
           ),
           content: SingleChildScrollView(
             child: ListBody(
-              children: <Widget>[
+              children: [
                 Divider(color: Colors.grey[300]),
                 SizedBox(height: 10),
-                Text(
-                  "Gaji:",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                ),
+                Text("Gaji:", style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(
                   salary,
                   style: TextStyle(fontSize: 15, color: Colors.green[700]),
                 ),
                 SizedBox(height: 15),
-                Text(
-                  "Lokasi:",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                ),
+                Text("Lokasi:", style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(location, style: TextStyle(fontSize: 15)),
                 SizedBox(height: 15),
                 Text(
                   "Deskripsi Pekerjaan:",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(description, style: TextStyle(fontSize: 15)),
-                SizedBox(height: 20),
+                SizedBox(height: 25),
               ],
             ),
           ),
-          actions: <Widget>[
+          actions: [
             TextButton(
               child: Text("Batal", style: TextStyle(color: Colors.red)),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
+              onPressed: () => Navigator.of(dialogContext).pop(),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -284,14 +107,9 @@ class _HomeTabState extends State<HomeTab> {
               ),
               child: Text("Lamar Sekarang"),
               onPressed: () {
-                print("Melamar pekerjaan: $jobTitle di $companyName");
                 Navigator.of(dialogContext).pop();
-
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Berhasil melamar $jobTitle!"),
-                    duration: Duration(seconds: 2),
-                  ),
+                  SnackBar(content: Text("Berhasil melamar $jobTitle!")),
                 );
               },
             ),
@@ -301,587 +119,451 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
+  Widget buildLamaranCard({
+    required Color statusColor,
+    required IconData icon,
+    required String text1,
+    required String text2,
+  }) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 10),
+      padding: EdgeInsets.all(8),
+      width: MediaQuery.of(context).size.width * 0.85,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          Container(
+            height: 40,
+            width: 5,
+            decoration: BoxDecoration(
+              color: statusColor,
+              borderRadius: BorderRadius.circular(90),
+            ),
+          ),
+          SizedBox(width: 15),
+          Icon(icon, size: 35),
+          SizedBox(width: 15),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(text1, style: TextStyle(fontSize: 12)),
+                Text(text2, style: TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: SingleChildScrollView(
-        child: Stack(
+        child: Column(
           children: [
-            Column(
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  height: 70,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10,
-                  ), // jarak kiri-kanan
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          // Avatar
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const ProfilePage(),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                color: Color(0xFF28AE9D),
-                              ),
-                              child: const Icon(
-                                Icons.person,
-                                color: Colors.white,
-                                size: 30,
+            SizedBox(height: 15),
+
+            // Header
+            Container(
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: 70,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) =>  ProfilePage(
+                        userId: widget.userId,
+                        nama: widget.username,
+                        jobTitle: widget.jobTitle,
+                      )),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            color: Color(0xFF28AE9D),
+                          ),
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.username,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
+                            Text(widget.jobTitle),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.notifications),
+                ],
+              ),
+            ),
 
-                          SizedBox(width: 10),
-                          // Nama & jabatan
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+            // Search
+            Container(
+              margin: EdgeInsets.only(top: 10),
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: 50,
+              child: TextField(
+                decoration: InputDecoration(
+                  labelText: "Cari",
+                  hintText: "Masukkan jenis pekerjaan",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+              ),
+            ),
+
+            SizedBox(height: 25),
+
+            // Lamaran Anda
+            Padding(
+              padding: EdgeInsets.only(left: 20),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  "Lamaran Anda",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+
+            Container(
+              width: MediaQuery.of(context).size.width * 0.9,
+              padding: EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: Color(0xFF242121),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  buildLamaranCard(
+                    statusColor: Color(0xFF28AE9D),
+                    icon: Icons.airplanemode_active,
+                    text1: "Selamat anda diterima di perusahaan",
+                    text2: "PT Garuda Indonesia",
+                  ),
+                  buildLamaranCard(
+                    statusColor: Colors.red,
+                    icon: Icons.airplanemode_active,
+                    text1: "Mohon Maaf anda belum diterima",
+                    text2: "Qatar Airways",
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              Text(
-                                widget.username,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
+                              Container(
+                                height: 7,
+                                width: 7,
+                                decoration: BoxDecoration(
+                                  color: Color(0xFF28AE9D),
+                                  borderRadius: BorderRadius.circular(50),
                                 ),
                               ),
-                              Text(widget.jobTitle),
+                              SizedBox(width: 5),
+                              Text(
+                                "Diterima",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                height: 7,
+                                width: 7,
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                              ),
+                              SizedBox(width: 5),
+                              Text(
+                                "Tidak diterima",
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ],
                           ),
                         ],
                       ),
-                      Icon(Icons.notifications),
-                    ],
-                  ),
-                ),
-                //Pencarian bar
-                Container(
-                  margin: EdgeInsets.only(top: 10),
-                  width: 350,
-                  height: 50,
-                  child: TextField(
-                    decoration: InputDecoration(
-                      labelText: "Cari",
-                      hintText: "Masukkan jenis pekerjaan",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                  ),
-                ),
-                //section lamaran
-                Container(
-                  child: Column(
-                    children: [
-                      SizedBox(height: 15),
-                      Padding(
-                        padding: EdgeInsetsGeometry.only(left: 25),
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            "Lamaran Anda",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+                      ElevatedButton(
+                        onPressed: widget.onLihatLainnyaPressed,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF28AE9D),
+                          foregroundColor: Colors.white,
+                          fixedSize: Size(100, 35),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
                           ),
                         ),
+                        child: Text(
+                          "Lihat Lainnya",
+                          style: TextStyle(fontSize: 12),
+                        ),
                       ),
-                      SizedBox(height: 10),
-                      Container(
-                        // Pembungkus Hitam
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        height: 200,
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            SizedBox(height: 30),
+
+            // Rekomendasi
+            Padding(
+              padding: EdgeInsets.only(left: 20),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  "Rekomendasi",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+
+            Container(
+              width: MediaQuery.of(context).size.width * 0.9,
+              padding: EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: Color(0xFF242121),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 90,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(20),
+                              bottomLeft: Radius.circular(20),
+                            ),
+                            border: Border.all(color: Color(0xFF28AE9D)),
+                          ),
+                          child: Center(child: Icon(Icons.biotech, size: 40)),
+                        ),
+                        SizedBox(width: 15),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Font Desk Agent",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                "Hilton",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 32,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(
+                                color: Color(0xFF28AE9D),
+                                width: 2,
+                              ),
+                            ),
+                            child: Center(child: Text("Gaji 8 Juta")),
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Container(
+                            height: 32,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(
+                                color: Color(0xFF28AE9D),
+                                width: 2,
+                              ),
+                            ),
+                            child: Center(child: Text("Penuh Waktu")),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_pin,
+                          size: 20,
+                          color: Color(0xFF28AE9D),
+                        ),
+                        SizedBox(width: 5),
+                        Expanded(child: Text("Jakarta Pusat")),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _showJobDetailDialog(
+                            jobTitle: "Mobile Developer",
+                            companyName: "PT. Telkom Indonesia",
+                            salary: "Rp 8.000.000 - Rp 12.000.000",
+                            location: "Jakarta, Indonesia (Remote)",
+                            description:
+                                "Mencari Mobile Developer berpengalaman untuk membangun aplikasi inovatif.",
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF28AE9D),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 30,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: Text("Lamar"),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            SizedBox(height: 30),
+
+            // Berita
+            Padding(
+              padding: EdgeInsets.only(left: 20),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  "Berita Pekerjaan",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            SizedBox(height: 15),
+
+            _loadingBerita
+                ? Center(child: CircularProgressIndicator())
+                : GridView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 20,
+                      childAspectRatio: 0.68,
+                    ),
+                    itemCount: _berita.length,
+                    itemBuilder: (context, index) {
+                      final berita = _berita[index];
+                      return Container(
+                        padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 36, 33, 33),
-                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
                           children: [
-                            SizedBox(height: 10),
                             Container(
-                              //Garuda Indonesia
-                              width: 400 * 0.9,
-                              height: 60,
+                              width: double.infinity,
+                              height: 90,
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: Colors.black,
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: Row(
-                                // isi dari garuda
-                                children: [
-                                  SizedBox(width: 5),
-                                  Container(
-                                    height: 40,
-                                    width: 5,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFF28AE9D),
-                                      borderRadius: BorderRadius.circular(90),
-                                    ),
-                                  ),
-                                  SizedBox(width: 20),
-                                  Icon(Icons.airplanemode_active, size: 40),
-                                  SizedBox(width: 20),
-                                  Container(
-                                    width: 200,
-                                    height: 40,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Selamat anda diterima di perusahaan",
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                        Text(
-                                          "PT Garuda Indonesia",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                              child: Center(
+                                child: Text(
+                                  "Foto muncul disini",
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                             ),
                             SizedBox(height: 10),
-                            Container(
-                              //Garuda Indonesia
-                              width: 400 * 0.9,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                // isi dari garuda
-                                children: [
-                                  SizedBox(width: 5),
-                                  Container(
-                                    height: 40,
-                                    width: 5,
-                                    decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      borderRadius: BorderRadius.circular(90),
-                                    ),
-                                  ),
-                                  SizedBox(width: 20),
-                                  Icon(Icons.airplanemode_active, size: 40),
-                                  SizedBox(width: 20),
-                                  Container(
-                                    width: 200,
-                                    height: 40,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Mohon Maaf anda belum diterima",
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                        Text(
-                                          "Qatar Airways",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                            Text(
+                              berita['deskripsi'],
+                              maxLines: 4,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                             SizedBox(height: 10),
-                            Container(
-                              width: 400 * 0.9,
-                              height: 50,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    width: 120,
-                                    height: 50,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Row(
-                                          // diterima
-                                          children: [
-                                            Container(
-                                              height: 5,
-                                              width: 5,
-                                              decoration: BoxDecoration(
-                                                color: Color(0xFF28AE9D),
-                                                borderRadius:
-                                                    BorderRadius.circular(50),
-                                              ),
-                                            ),
-                                            SizedBox(width: 5),
-                                            Text(
-                                              "Diterima",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          // diterima
-                                          children: [
-                                            Container(
-                                              height: 5,
-                                              width: 5,
-                                              decoration: BoxDecoration(
-                                                color: const Color.fromARGB(
-                                                  255,
-                                                  255,
-                                                  0,
-                                                  0,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(50),
-                                              ),
-                                            ),
-                                            SizedBox(width: 5),
-                                            Text(
-                                              "Tidak diterima",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: widget.onLihatLainnyaPressed,
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Color(0xFF28AE9D),
-                                      foregroundColor: Colors.white,
-                                      fixedSize: Size(100, 30),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                      padding: EdgeInsets.zero,
-                                      alignment: Alignment.center,
-                                    ),
-                                    child: Text(
-                                      "Lihat Lainnya",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                            Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Text(
+                                berita['tanggal'],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
-                ),
-                //Section rekomendasi
-                SizedBox(height: 20),
-                Padding(
-                  padding: EdgeInsets.only(left: 20),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "Rekomendasi",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10),
-                Container(
-                  // Pembungkus Hitam
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 36, 33, 33),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      height: 190,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Row(
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(left: 20, top: 10),
-                                  width: 130,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(20),
-                                      bottomLeft: Radius.circular(20),
-                                    ),
-                                    border: Border.all(
-                                      color: Color(0xFF28AE9D),
-                                    ),
-                                  ),
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Icon(Icons.biotech, size: 50),
-                                  ),
-                                ),
-                                SizedBox(width: 20),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Font Desk Agent",
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text("Hilton"),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Padding(
-                            padding: EdgeInsets.only(left: 20),
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: Container(
-                                width: 250,
-                                height: 40,
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      // Gaji
-                                      width: 100,
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(30),
-                                        border: Border.all(
-                                          color: Color(0xFF28AE9D),
-                                          width: 2,
-                                        ),
-                                      ),
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: Text("Gaji 8 Juta"),
-                                      ),
-                                    ),
-                                    SizedBox(width: 5),
-                                    Container(
-                                      //Penuh Waktu
-                                      width: 100,
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(30),
-                                        border: Border.all(
-                                          color: Color(0xFF28AE9D),
-                                          width: 2,
-                                        ),
-                                      ),
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: Text("Penuh Waktu"),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 15),
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(left: 20),
-                                  width: 120,
-                                  height: 40,
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.location_pin,
-                                        size: 20,
-                                        color: Color(0xFF28AE9D),
-                                      ),
-                                      SizedBox(width: 5),
-                                      Text("Jakarta Pusat"),
-                                    ],
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    print("Tombol Lamar ditekan!");
-                                    _showJobDetailDialog(
-                                      jobTitle: "Mobile Developer",
-                                      companyName: "PT. Telkom INdonesia",
-                                      salary: "Rp 8.000.000 - Rp 12.000.000",
-                                      location: "Jakarta, Indonesia (Remote)",
-                                      description:
-                                          "Mencari Mobile Developer berpengalaman untuk membangun aplikasi inovatif. Menguasai Flutter/React Native adalah nilai plus.", // Deskripsi
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Color(0xFF28AE9D),
-                                    foregroundColor: Colors.white,
-                                    fixedSize: Size(100, 40),
-                                    padding: EdgeInsets.zero,
-                                    alignment: Alignment.center,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    "Lamar",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                //Berita Pekerjaan
-                SizedBox(height: 20),
-                Padding(
-                  padding: EdgeInsets.only(left: 20),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "Berita Pekerjaan",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
-                _loadingBerita
-                    ? Center(child: CircularProgressIndicator())
-                    : Wrap(
-                        spacing: 15, // jarak kanan-kiri antar kolom
-                        runSpacing: 20, // jarak antar baris
-                        children: _berita.map((berita) {
-                          return Container(
-                            width: 190,
-                            height: 350,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                // FOTO
-                                Container(
-                                  margin: EdgeInsets.only(top: 15),
-                                  width: 170,
-                                  height: 110,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Foto muncul disini",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
 
-                                SizedBox(height: 10),
-
-                                // HEADLINE
-                                Container(
-                                  height: 110,
-                                  width: 170,
-                                  child: Text(
-                                    berita['deskripsi'],
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    maxLines: 4,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-
-                                // Tanggal
-                                Container(
-                                  width: 190,
-                                  height: 90,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 5),
-                                    child: Align(
-                                      alignment: Alignment.bottomLeft,
-                                      child: Text(
-                                        berita['tanggal'],
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ),
-              ],
-            ),
+            SizedBox(height: 50),
           ],
         ),
       ),

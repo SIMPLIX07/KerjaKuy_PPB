@@ -251,6 +251,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           MaterialPageRoute(
                             builder: (context) => HomePage(
                               username: _nameController.text,
+                              userId: userId, 
                               jobTitle: "Pelamar",
                             ),
                           ),
