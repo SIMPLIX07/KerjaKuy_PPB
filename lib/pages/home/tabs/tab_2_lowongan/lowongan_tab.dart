@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/detailPekerjaan/detail_pekerjaan.dart';
 
 class LowonganTab extends StatelessWidget {
   LowonganTab({super.key});
@@ -170,6 +171,7 @@ class LowonganTab extends StatelessWidget {
                   "Rekomendasi",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
+
                 Container(
                   padding: EdgeInsets.only(top: 10),
                   child: GridView.count(
@@ -180,109 +182,122 @@ class LowonganTab extends StatelessWidget {
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     children: pekerjaanList.map((pk) {
-                      return Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: BorderSide(color: const Color(0xFF28AE9D)),
-                        ),
-                        color: const Color.fromARGB(255, 55, 55, 55),
-                        child: Column(
-                          children: [
-                            ListTile(
-                              title: Text(
-                                style: TextStyle(color: Colors.white),
-                                pk['posisi'],
-                              ),
-                              subtitle: Text(
-                                style: TextStyle(color: Colors.white),
-                                pk['perusahaan'],
-                              ),
+                      return InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () {
+                          // pindah ke halaman lain
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailPekerjaan(),
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                right: 20,
-                                left: 20,
-                                top: 5,
+                          );
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(color: const Color(0xFF28AE9D)),
+                          ),
+                          color: const Color.fromARGB(255, 55, 55, 55),
+                          child: Column(
+                            children: [
+                              ListTile(
+                                title: Text(
+                                  pk['posisi'],
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                subtitle: Text(
+                                  pk['perusahaan'],
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
-                              child: GridView.count(
-                                crossAxisCount: 3,
-                                mainAxisSpacing: 6,
-                                crossAxisSpacing: 6,
-                                childAspectRatio: 3.5,
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                children: (pk['syarat'] as List<dynamic>).map(
-                                  (s) {
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.white12,
-                                        borderRadius: BorderRadius.circular(
-                                          20,
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  right: 20,
+                                  left: 20,
+                                  top: 5,
+                                ),
+                                child: GridView.count(
+                                  crossAxisCount: 3,
+                                  mainAxisSpacing: 6,
+                                  crossAxisSpacing: 6,
+                                  childAspectRatio: 3.5,
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  children: (pk['syarat'] as List<dynamic>).map(
+                                    (s) {
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white12,
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
                                         ),
-                                      ),
-                                      padding: EdgeInsets.all(6),
-                                      child: Text(
-                                        s.toString(),
-                                        style: TextStyle(color: Colors.white),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    );
-                                  },
-                                ).toList(),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                right: 20,
-                                left: 20,
-                                top: 10,
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        color: const Color(0xFF28AE9D),
-                                        Icons.location_on,
-                                      ),
-                                      Text(
-                                        pk['lokasi'],
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ],
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
+                                        padding: EdgeInsets.all(6),
+                                        child: Text(
+                                          s.toString(),
+                                          style: TextStyle(color: Colors.white),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      );
                                     },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(
-                                        0xFF28AE9D,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          10,
+                                  ).toList(),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  right: 20,
+                                  left: 20,
+                                  top: 10,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.location_on,
+                                          color: const Color(0xFF28AE9D),
+                                        ),
+                                        Text(
+                                          pk['lokasi'],
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        // pindah ke halaman lain juga bisa
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(
+                                          0xFF28AE9D,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 20,
+                                          vertical: 10,
                                         ),
                                       ),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 20,
-                                        vertical: 10,
+                                      child: const Text(
+                                        "Lamar",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
-                                    child: const Text(
-                                      "Lamar",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     }).toList(),
