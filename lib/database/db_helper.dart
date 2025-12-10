@@ -64,7 +64,8 @@ class DBHelper {
             gaji TEXT,
             tipe TEXT,
             periode_awal TEXT,
-            periode_akhir TEXT
+            periode_akhir TEXT,
+            lokasi TEXT
           )
         ''');
 
@@ -177,6 +178,17 @@ class DBHelper {
     await db.insert('keahlian', {'user_id': userId, 'nama_skill': namaSkill});
   }
 
+  static Future<List<String>> getSkillUser(int userId) async {
+    final db = await _getDB();
+    final res = await db.query(
+      'keahlian',
+      where: 'user_id = ?',
+      whereArgs: [userId],
+    );
+
+    return res.map((e) => e['nama_skill'].toString()).toList();
+  }
+
   static Future<List<Map<String, dynamic>>> getBerita() async {
     final db = await _getDB();
     return await db.query('berita', orderBy: 'id Desc');
@@ -233,6 +245,7 @@ class DBHelper {
     required String tipe,
     required String periodeAwal,
     required String periodeAkhir,
+    required String lokasi,
   }) async {
     final db = await _getDB();
     final lowonganId = await db.insert('lowongan', {
@@ -246,6 +259,7 @@ class DBHelper {
       'tipe': tipe,
       'periode_awal': periodeAwal,
       'periode_akhir': periodeAkhir,
+      'lokasi': lokasi,
     });
 
     print(
@@ -261,11 +275,34 @@ class DBHelper {
         "Perusahaan: ${job['nama_perusahaan']} | "
         "Posisi: ${job['posisi']} | "
         "Gaji: ${job['gaji']} | "
+        "Lokasi: ${job['lokasi']} | "
         "Periode: ${job['periode_awal']} - ${job['periode_akhir']}",
       );
     }
     print("==================================\n");
     return lowonganId;
+  }
+
+  static Future<Map<String, dynamic>?> getRekomendasiLowongan(
+    int userId,
+  ) async {
+    final db = await _getDB();
+
+    List<String> skills = await getSkillUser(userId);
+    if (skills.isEmpty) return null;
+
+    String likeQuery = skills.map((_) => "kategori LIKE ?").join(" OR ");
+    List<String> likeArgs = skills.map((s) => "%$s%").toList();
+
+    final res = await db.query(
+      'lowongan',
+      where: likeQuery,
+      whereArgs: likeArgs,
+      orderBy: "RANDOM()",
+      limit: 1,
+    );
+
+    return res.isNotEmpty ? res.first : null;
   }
 
   static Future<int> insertCV({

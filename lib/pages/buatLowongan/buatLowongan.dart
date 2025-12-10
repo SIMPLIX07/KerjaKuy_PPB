@@ -17,6 +17,7 @@ class Buatlowongan extends StatefulWidget {
 }
 
 class _BuatlowonganState extends State<Buatlowongan> {
+  final TextEditingController lokasiController = TextEditingController();
   final TextEditingController periodeAwalController = TextEditingController();
   final TextEditingController periodeAkhirController = TextEditingController();
   final TextEditingController kategoriController = TextEditingController();
@@ -51,6 +52,7 @@ class _BuatlowonganState extends State<Buatlowongan> {
   bool validasiForm() {
     return kategoriController.text.isNotEmpty &&
         posisiController.text.isNotEmpty &&
+        lokasiController.text.isNotEmpty && 
         deskripsiController.text.isNotEmpty &&
         syaratController.text.isNotEmpty &&
         periodeAwalController.text.isNotEmpty &&
@@ -83,18 +85,27 @@ class _BuatlowonganState extends State<Buatlowongan> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
           titlePadding: EdgeInsets.only(top: 25),
           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           title: Column(
             children: [
-              Icon(Icons.check_circle_rounded, color: Color(0xFF28AE9D), size: 60),
+              Icon(
+                Icons.check_circle_rounded,
+                color: Color(0xFF28AE9D),
+                size: 60,
+              ),
               SizedBox(height: 12),
               Text(
                 "Lowongan Berhasil Dibuat!",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
             ],
           ),
@@ -117,10 +128,14 @@ class _BuatlowonganState extends State<Buatlowongan> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF28AE9D),
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                  child: Text("Kembali ke Beranda",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  child: Text(
+                    "Kembali ke Beranda",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
                 ),
               ),
             ],
@@ -173,15 +188,41 @@ class _BuatlowonganState extends State<Buatlowongan> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // ================================ INPUT FIELD ================================
+                      fieldText(
+                        "Kategori",
+                        kategoriController,
+                        "Programming, Bisnis, Teknik",
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: fieldText(
+                              "Posisi",
+                              posisiController,
+                              "Data Analyst, Manager, CMO",
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: fieldText(
+                              "Lokasi",
+                              lokasiController,
+                              "Jakarta, Bandung, Remote",
+                            ),
+                          ),
+                        ],
+                      ),
 
-                      fieldText("Kategori", kategoriController,
-                          "Programming, Bisnis, Teknik"),
-                      fieldText("Posisi", posisiController,
-                          "Data Analyst, Manager, CMO"),
                       fieldTextBig(
-                          "Deskripsi", deskripsiController, "Deskripsi pekerjaan"),
-                      fieldTextBig("Syarat", syaratController,
-                          "Gunakan enter untuk setiap syarat"),
+                        "Deskripsi",
+                        deskripsiController,
+                        "Deskripsi pekerjaan",
+                      ),
+                      fieldTextBig(
+                        "Syarat",
+                        syaratController,
+                        "Gunakan enter untuk setiap syarat",
+                      ),
 
                       SizedBox(height: 10),
 
@@ -256,6 +297,8 @@ class _BuatlowonganState extends State<Buatlowongan> {
                               tipe: tipeDipilih!,
                               periodeAwal: periodeAwalController.text,
                               periodeAkhir: periodeAkhirController.text,
+                              lokasi: lokasiController.text,
+
                             );
 
                             resetController();
@@ -265,18 +308,23 @@ class _BuatlowonganState extends State<Buatlowongan> {
                             backgroundColor: Color(0xFF28AE9D),
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25)),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
                           ),
-                          child: Text("Selesai",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          child: Text(
+                            "Selesai",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -285,15 +333,20 @@ class _BuatlowonganState extends State<Buatlowongan> {
 
   // ==================== COMPONENTS ====================
 
-  Widget fieldText(String title, TextEditingController controller, String hint) {
+  Widget fieldText(
+    String title,
+    TextEditingController controller,
+    String hint,
+  ) {
     return Padding(
       padding: EdgeInsets.only(bottom: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style:
-                  TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(
+            title,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
           SizedBox(height: 6),
           inputBox(
             TextField(
@@ -304,21 +357,26 @@ class _BuatlowonganState extends State<Buatlowongan> {
                 contentPadding: EdgeInsets.symmetric(horizontal: 12),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
   }
 
-  Widget fieldTextBig(String title, TextEditingController controller, String hint) {
+  Widget fieldTextBig(
+    String title,
+    TextEditingController controller,
+    String hint,
+  ) {
     return Padding(
       padding: EdgeInsets.only(bottom: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style:
-                  TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(
+            title,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
           SizedBox(height: 6),
           inputBox(
             TextField(
@@ -350,8 +408,10 @@ class _BuatlowonganState extends State<Buatlowongan> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        Text(
+          title,
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
         SizedBox(height: 6),
         inputBox(
           DropdownButtonFormField<String>(
@@ -359,9 +419,11 @@ class _BuatlowonganState extends State<Buatlowongan> {
             onChanged: onChanged,
             decoration: InputDecoration(border: InputBorder.none),
             hint: Text("Pilih"),
-            items: list.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+            items: list
+                .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                .toList(),
           ),
-        )
+        ),
       ],
     );
   }
@@ -374,8 +436,10 @@ class _BuatlowonganState extends State<Buatlowongan> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        Text(
+          title,
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
         SizedBox(height: 6),
         inputBox(
           TextField(

@@ -221,7 +221,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 obscureText: false,
                 decoration: InputDecoration(
                   hintText:
-                      "Pisahkan dengan koma jika lebih dari 1 (Programming, Menggambar, Critical Thinking)",
+                      "Masukan Keahlian paling Dominan(Rekomendasi berdasarkan keahlian anda)",
                   border: InputBorder.none,
                 ),
               ),

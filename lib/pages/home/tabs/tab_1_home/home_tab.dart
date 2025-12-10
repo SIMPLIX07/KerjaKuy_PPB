@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../database/db_helper.dart';
 import 'package:flutter_application_1/pages/settings/settingPelamar/settingPelamar.dart';
+import '../../../detailLowongan/detail_lowongan.dart';
 
 class HomeTab extends StatefulWidget {
   final int userId;
@@ -21,12 +22,15 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  Map<String, dynamic>? rekomendasi;
+  bool loadingRekom = true;
   List<Map<String, dynamic>> _berita = [];
   bool _loadingBerita = true;
 
   @override
   void initState() {
     super.initState();
+    _loadRekomendasi();
     _loadBerita();
   }
 
@@ -35,6 +39,14 @@ class _HomeTabState extends State<HomeTab> {
     setState(() {
       _berita = data;
       _loadingBerita = false;
+    });
+  }
+
+  Future<void> _loadRekomendasi() async {
+    final data = await DBHelper.getRekomendasiLowongan(widget.userId);
+    setState(() {
+      rekomendasi = data;
+      loadingRekom = false;
     });
   }
 
@@ -160,6 +172,134 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
+  Widget rekomCard(Map<String, dynamic> data) {
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 90,
+                height: 60,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(20),
+                  ),
+                  border: Border.all(color: Color(0xFF28AE9D)),
+                ),
+                child: Center(child: Icon(Icons.work, size: 40)),
+              ),
+              SizedBox(width: 15),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      data['posisi'],
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(data['nama_perusahaan']),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12),
+
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 32,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: Color(0xFF28AE9D), width: 2),
+                  ),
+                  child: Center(child: Text("Gaji: ${data['gaji']}")),
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: Container(
+                  height: 32,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: Color(0xFF28AE9D), width: 2),
+                  ),
+                  child: Center(child: Text("${data['tipe']}")),
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 15),
+
+          Row(
+            children: [
+              Icon(Icons.location_pin, size: 20, color: Color(0xFF28AE9D)),
+              SizedBox(width: 5),
+              Expanded(child: Text(data['lokasi'] ?? "Lokasi tidak tersedia")),
+            ],
+          ),
+
+          SizedBox(height: 10),
+
+          Align(
+            alignment: Alignment.centerRight,
+            child: ElevatedButton(
+              onPressed: () {
+                print("=== DATA REKOMENDASI DIKIRIM ===");
+                print("Posisi: ${data['posisi']}");
+                print("Perusahaan: ${data['nama_perusahaan']}");
+                print("Gaji: ${data['gaji']}");
+                print("Tipe: ${data['tipe']}");
+                print("Lokasi: ${data['lokasi']}");
+                print("Deskripsi: ${data['deskripsi']}");
+                print("Syarat: ${data['syarat']}");
+                print("================================");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => DetailLowonganPage(
+                      posisi: data['posisi'] ?? "",
+                      namaPerusahaan: data['nama_perusahaan'] ?? "",
+                      gaji: data['gaji'] ?? "",
+                      tipe: data['tipe'] ?? "",
+                      lokasi: data['lokasi'] ?? "",
+                      deskripsi: data['deskripsi'] ?? "",
+                      syarat: data['syarat'] ?? "",
+                    ),
+                  ),
+                );
+              },
+
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF28AE9D),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+              ),
+              child: Text("Lamar"),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -178,11 +318,13 @@ class _HomeTabState extends State<HomeTab> {
                   GestureDetector(
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) =>  ProfilePage(
-                        userId: widget.userId,
-                        nama: widget.username,
-                        jobTitle: widget.jobTitle,
-                      )),
+                      MaterialPageRoute(
+                        builder: (_) => ProfilePage(
+                          userId: widget.userId,
+                          nama: widget.username,
+                          jobTitle: widget.jobTitle,
+                        ),
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -359,129 +501,16 @@ class _HomeTabState extends State<HomeTab> {
                 color: Color(0xFF242121),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 90,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(20),
-                              bottomLeft: Radius.circular(20),
-                            ),
-                            border: Border.all(color: Color(0xFF28AE9D)),
-                          ),
-                          child: Center(child: Icon(Icons.biotech, size: 40)),
-                        ),
-                        SizedBox(width: 15),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Font Desk Agent",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Text(
-                                "Hilton",
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 32,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              border: Border.all(
-                                color: Color(0xFF28AE9D),
-                                width: 2,
-                              ),
-                            ),
-                            child: Center(child: Text("Gaji 8 Juta")),
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: Container(
-                            height: 32,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              border: Border.all(
-                                color: Color(0xFF28AE9D),
-                                width: 2,
-                              ),
-                            ),
-                            child: Center(child: Text("Penuh Waktu")),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_pin,
-                          size: 20,
-                          color: Color(0xFF28AE9D),
-                        ),
-                        SizedBox(width: 5),
-                        Expanded(child: Text("Jakarta Pusat")),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _showJobDetailDialog(
-                            jobTitle: "Mobile Developer",
-                            companyName: "PT. Telkom Indonesia",
-                            salary: "Rp 8.000.000 - Rp 12.000.000",
-                            location: "Jakarta, Indonesia (Remote)",
-                            description:
-                                "Mencari Mobile Developer berpengalaman untuk membangun aplikasi inovatif.",
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF28AE9D),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 30,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: Text("Lamar"),
+              child: loadingRekom
+                  ? Center(child: CircularProgressIndicator())
+                  : rekomendasi == null
+                  ? Center(
+                      child: Text(
+                        "Belum ada rekomendasi.",
+                        style: TextStyle(color: Colors.white),
                       ),
-                    ),
-                  ],
-                ),
-              ),
+                    )
+                  : rekomCard(rekomendasi!),
             ),
 
             SizedBox(height: 30),
