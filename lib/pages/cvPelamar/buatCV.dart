@@ -16,15 +16,23 @@ class _BuatCVState extends State<BuatCV> {
   final TextEditingController universitasController = TextEditingController();
   final TextEditingController jurusanController = TextEditingController();
 
-  final List<TextEditingController> skillController =
-      List.generate(3, (_) => TextEditingController());
-  final List<TextEditingController> skillLevelController =
-      List.generate(3, (_) => TextEditingController());
+  final List<TextEditingController> skillController = List.generate(
+    3,
+    (_) => TextEditingController(),
+  );
+  final List<TextEditingController> skillLevelController = List.generate(
+    3,
+    (_) => TextEditingController(),
+  );
 
-  final List<TextEditingController> pengalamanController =
-      List.generate(3, (_) => TextEditingController());
-  final List<TextEditingController> durasiController =
-      List.generate(3, (_) => TextEditingController());
+  final List<TextEditingController> pengalamanController = List.generate(
+    3,
+    (_) => TextEditingController(),
+  );
+  final List<TextEditingController> durasiController = List.generate(
+    3,
+    (_) => TextEditingController(),
+  );
 
   // kontak
   final TextEditingController emailController = TextEditingController();
@@ -62,7 +70,7 @@ class _BuatCVState extends State<BuatCV> {
           TextButton(
             child: Text("OK"),
             onPressed: () => Navigator.pop(context),
-          )
+          ),
         ],
       ),
     );
@@ -75,18 +83,24 @@ class _BuatCVState extends State<BuatCV> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
           titlePadding: EdgeInsets.only(top: 25),
           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           title: Column(
             children: [
-              Icon(Icons.check_circle_rounded,
-                  size: 60, color: Color(0xFF28AE9D)),
+              Icon(
+                Icons.check_circle_rounded,
+                size: 60,
+                color: Color(0xFF28AE9D),
+              ),
               SizedBox(height: 10),
-              Text("CV Berhasil Dibuat!",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+              Text(
+                "CV Berhasil Dibuat!",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
             ],
           ),
           content: Column(
@@ -109,12 +123,12 @@ class _BuatCVState extends State<BuatCV> {
                     backgroundColor: Color(0xFF28AE9D),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                   child: Text(
                     "Kembali",
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ),
               ),
@@ -125,7 +139,7 @@ class _BuatCVState extends State<BuatCV> {
     );
   }
 
-  // reset 
+  // reset
   void resetAll() {
     titleController.clear();
     subtitleController.clear();
@@ -176,28 +190,45 @@ class _BuatCVState extends State<BuatCV> {
                       inputFieldBig("Tentang Saya", tentangController),
 
                       SizedBox(height: 15),
-                      Text("Pendidikan",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 17)),
+                      Text(
+                        "Pendidikan",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      ),
+                      SizedBox(height: 8),
                       inputField("Universitas", universitasController),
                       inputField("Jurusan", jurusanController),
 
                       SizedBox(height: 15),
-                      Text("Skill (maksimal 3)",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 17)),
+                      Text(
+                        "Skill (maksimal 3)",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      ),
                       for (int i = 0; i < 3; i++) skillRow(i),
 
                       SizedBox(height: 15),
-                      Text("Pengalaman (maksimal 3)",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 17)),
+                      Text(
+                        "Pengalaman (maksimal 3)",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      ),
                       for (int i = 0; i < 3; i++) pengalamanRow(i),
 
                       SizedBox(height: 15),
-                      Text("Kontak",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 17)),
+                      Text(
+                        "Kontak",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      ),
                       inputField("Email", emailController),
                       inputField("No. Telepon", telpController),
                       inputField("LinkedIn", linkedinController),
@@ -211,7 +242,8 @@ class _BuatCVState extends State<BuatCV> {
                           onPressed: () async {
                             if (!validasiForm()) {
                               showAlert(
-                                  "Lengkapi semua field dan minimal 1 skill & pengalaman.");
+                                "Lengkapi semua field dan minimal 1 skill & pengalaman.",
+                              );
                               return;
                             }
 
@@ -234,8 +266,10 @@ class _BuatCVState extends State<BuatCV> {
                                 await DBHelper.insertSkillCV(
                                   cvId: cvId,
                                   skill: skillController[i].text,
-                                  kemampuan: int.tryParse(
-                                          skillLevelController[i].text) ??
+                                  kemampuan:
+                                      int.tryParse(
+                                        skillLevelController[i].text,
+                                      ) ??
                                       0,
                                 );
                               }
@@ -267,18 +301,23 @@ class _BuatCVState extends State<BuatCV> {
                             backgroundColor: Color(0xFF28AE9D),
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25)),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
                           ),
-                          child: Text("Simpan CV",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          child: Text(
+                            "Simpan CV",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -292,9 +331,10 @@ class _BuatCVState extends State<BuatCV> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style:
-                  TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+          Text(
+            title,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
           SizedBox(height: 6),
           inputBox(
             TextField(
@@ -305,7 +345,7 @@ class _BuatCVState extends State<BuatCV> {
                 hintText: "Masukkan $title",
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -318,9 +358,10 @@ class _BuatCVState extends State<BuatCV> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style:
-                  TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+          Text(
+            title,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
           SizedBox(height: 6),
           inputBox(
             TextField(
@@ -328,13 +369,15 @@ class _BuatCVState extends State<BuatCV> {
               maxLines: null,
               decoration: InputDecoration(
                 border: InputBorder.none,
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
                 hintText: "Tulis $title...",
               ),
             ),
             height: 120,
-          )
+          ),
         ],
       ),
     );
@@ -352,7 +395,9 @@ class _BuatCVState extends State<BuatCV> {
               TextField(
                 controller: skillController[i],
                 decoration: InputDecoration(
-                    border: InputBorder.none, hintText: "Skill ${i + 1}"),
+                  border: InputBorder.none,
+                  hintText: "Skill ${i + 1}",
+                ),
               ),
             ),
           ),
@@ -362,8 +407,10 @@ class _BuatCVState extends State<BuatCV> {
               TextField(
                 controller: skillLevelController[i],
                 keyboardType: TextInputType.number,
-                decoration:
-                    InputDecoration(border: InputBorder.none, hintText: "1–10"),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: "Rate 1–10 (1 = pemula, 10 = expert)",
+                ),
               ),
             ),
           ),
@@ -384,8 +431,9 @@ class _BuatCVState extends State<BuatCV> {
               TextField(
                 controller: pengalamanController[i],
                 decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: "Pengalaman ${i + 1}"),
+                  border: InputBorder.none,
+                  hintText: "Pengalaman ${i + 1}",
+                ),
               ),
             ),
           ),
@@ -394,8 +442,10 @@ class _BuatCVState extends State<BuatCV> {
             child: inputBox(
               TextField(
                 controller: durasiController[i],
-                decoration:
-                    InputDecoration(border: InputBorder.none, hintText: "Durasi"),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: "Contoh: 1 Tahun, 6 Bulan",
+                ),
               ),
             ),
           ),
@@ -413,9 +463,10 @@ class _BuatCVState extends State<BuatCV> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              blurRadius: 6,
-              offset: Offset(0, 2))
+            color: Colors.grey.withOpacity(0.3),
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          ),
         ],
       ),
       child: child,
