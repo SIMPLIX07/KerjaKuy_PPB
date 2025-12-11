@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../database/db_helper.dart';
+import '../detailCV/detailCV.dart';
 
 class DetailPelamarPage extends StatefulWidget {
   final int lowonganId;
@@ -45,9 +46,7 @@ class _DetailPelamarPageState extends State<DetailPelamarPage> {
   @override
   Widget build(BuildContext context) {
     if (lowonganDetail == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     final deskripsi = parseList(lowonganDetail!["deskripsi"] ?? "");
@@ -232,24 +231,33 @@ class _DetailPelamarPageState extends State<DetailPelamarPage> {
                               children: [
                                 Padding(
                                   padding: EdgeInsets.all(10),
-                                  child: Text("Nama",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
+                                  child: Text(
+                                    "Nama",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(10),
-                                  child: Text("Email",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
+                                  child: Text(
+                                    "Email",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(10),
-                                  child: Text("CV",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
+                                  child: Text(
+                                    "CV",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -266,10 +274,19 @@ class _DetailPelamarPageState extends State<DetailPelamarPage> {
                                     child: Text(p["email"]),
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.remove_red_eye,
-                                        color: Colors.teal),
+                                    icon: const Icon(
+                                      Icons.remove_red_eye,
+                                      color: Colors.teal,
+                                    ),
                                     onPressed: () {
-                                      print("lihat cv ${p['cv_id']}");
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => DetailCVPelamarPage(
+                                            cvId: p["cv_id"],
+                                          ),
+                                        ),
+                                      );
                                     },
                                   ),
                                 ],

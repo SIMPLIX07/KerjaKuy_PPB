@@ -531,4 +531,8 @@ class DBHelper {
     if (result.isEmpty) return null;
     return result.first;
   }
+
+  static Future<Database> getDBPublic() async {
+    return await _getDB(); 
+  }
 }
