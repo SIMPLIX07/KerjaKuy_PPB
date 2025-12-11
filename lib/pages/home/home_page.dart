@@ -9,7 +9,12 @@ class HomePage extends StatefulWidget {
   final String username;
   final String jobTitle;
 
-  const HomePage({super.key,required this.userId,required this.username, required this.jobTitle});
+  const HomePage({
+    super.key,
+    required this.userId,
+    required this.username,
+    required this.jobTitle,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -63,7 +68,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           children: [
             // PAGE 1 - HOME
             HomeTab(
-              userId:widget.userId,
+              userId: widget.userId,
               username: widget.username,
               jobTitle: widget.jobTitle,
               onLihatLainnyaPressed: () {
@@ -78,7 +83,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             LamaranTab(tabController: _tabControllerPage3),
 
             // PAGE 4 - JADWAL WAWANCARA
-            JadwalTab(tabController: _tabControllerPage4),
+            JadwalTab(
+              tabController: _tabControllerPage4,
+              userId: widget.userId,
+            ),
           ],
         ),
       ),

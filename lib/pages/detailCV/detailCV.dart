@@ -2,9 +2,18 @@ import 'package:flutter/material.dart';
 import '../../database/db_helper.dart';
 
 class DetailCVPelamarPage extends StatefulWidget {
+  final int lowonganId;
+  final int perusahaanId;
+  final int userId;
   final int cvId;
 
-  const DetailCVPelamarPage({super.key, required this.cvId});
+  const DetailCVPelamarPage({
+    super.key,
+    required this.cvId,
+    required this.lowonganId,
+    required this.perusahaanId,
+    required this.userId,
+  });
 
   @override
   State<DetailCVPelamarPage> createState() => _DetailCVPelamarPageState();
@@ -76,6 +85,201 @@ class _DetailCVPelamarPageState extends State<DetailCVPelamarPage> {
           ? userData.first["fullname"].toString()
           : "Nama Tidak Ada";
     });
+  }
+
+  void _showWawancaraDialog() {
+    DateTime? selectedDate;
+    TimeOfDay? jamMulai;
+    TimeOfDay? jamSelesai;
+
+    final linkController = TextEditingController();
+    final pesanController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text(
+                "Jadwalkan Wawancara",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // TANGGAL
+                    const Text("Tanggal"),
+                    const SizedBox(height: 5),
+                    InkWell(
+                      onTap: () async {
+                        final DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2020),
+                          lastDate: DateTime(2035),
+                        );
+                        if (picked != null) {
+                          setState(() => selectedDate = picked);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          selectedDate == null
+                              ? "Pilih tanggal"
+                              : "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}",
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 15),
+
+                    // JAM MULAI
+                    const Text("Jam Mulai"),
+                    const SizedBox(height: 5),
+                    InkWell(
+                      onTap: () async {
+                        final picked = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (picked != null) {
+                          setState(() => jamMulai = picked);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          jamMulai == null
+                              ? "Pilih jam mulai"
+                              : "${jamMulai!.hour.toString().padLeft(2, '0')}:${jamMulai!.minute.toString().padLeft(2, '0')}",
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 15),
+
+                    // JAM SELESAI
+                    const Text("Jam Selesai"),
+                    const SizedBox(height: 5),
+                    InkWell(
+                      onTap: () async {
+                        final picked = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (picked != null) {
+                          setState(() => jamSelesai = picked);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          jamSelesai == null
+                              ? "Pilih jam selesai"
+                              : "${jamSelesai!.hour.toString().padLeft(2, '0')}:${jamSelesai!.minute.toString().padLeft(2, '0')}",
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // LINK MEET
+                    const Text("Link Meet"),
+                    TextField(
+                      controller: linkController,
+                      decoration: const InputDecoration(
+                        hintText: "https://meet.google.com/xxxx",
+                      ),
+                    ),
+
+                    const SizedBox(height: 15),
+
+                    // PESAN
+                    const Text("Pesan untuk pelamar"),
+                    TextField(
+                      controller: pesanController,
+                      maxLines: 3,
+                      decoration: const InputDecoration(
+                        hintText: "Pesan singkat...",
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Batal"),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (selectedDate == null ||
+                        jamMulai == null ||
+                        jamSelesai == null ||
+                        linkController.text.isEmpty ||
+                        pesanController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Semua field wajib diisi"),
+                        ),
+                      );
+                      return;
+                    }
+
+                    final tanggal =
+                        "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}";
+                    final mulai =
+                        "${jamMulai!.hour.toString().padLeft(2, '0')}:${jamMulai!.minute.toString().padLeft(2, '0')}";
+                    final selesai =
+                        "${jamSelesai!.hour.toString().padLeft(2, '0')}:${jamSelesai!.minute.toString().padLeft(2, '0')}";
+
+                    await DBHelper.buatWawancara(
+                      userId: widget.userId,
+                      perusahaanId: widget.perusahaanId,
+                      lowonganId: widget.lowonganId,
+                      jamMulai: mulai,
+                      jamSelesai: selesai,
+                      tanggal: tanggal,
+                      linkMeet: linkController.text,
+                      pesan: pesanController.text,
+                    );
+
+                    print("=== WAWANCARA DIBUAT ===");
+                    print("User ID: ${widget.userId}");
+                    print("Perusahaan ID: ${widget.perusahaanId}");
+                    print("Lowongan ID: ${widget.lowonganId}");
+                    print("Tanggal: $tanggal");
+                    print("Mulai: $mulai");
+                    print("Selesai: $selesai");
+                    print("Link Meet: ${linkController.text}");
+                    print("Pesan: ${pesanController.text}");
+                    print("===========================");
+
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Kirim"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -203,15 +407,12 @@ class _DetailCVPelamarPageState extends State<DetailCVPelamarPage> {
                                   Expanded(
                                     flex: 5,
                                     child: SizedBox(
-                                      height:
-                                          8, 
+                                      height: 8,
                                       child: LinearProgressIndicator(
                                         value: percent,
                                         color: Colors.teal,
                                         backgroundColor: Colors.teal.shade100,
-                                        borderRadius: BorderRadius.circular(
-                                          10,
-                                        ), 
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                     ),
                                   ),
@@ -290,17 +491,18 @@ class _DetailCVPelamarPageState extends State<DetailCVPelamarPage> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        print("DITERIMA CV ${widget.cvId}");
+                        print("Wawancara CV ${widget.cvId}");
+                        _showWawancaraDialog();
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
+                        backgroundColor: const Color.fromARGB(255, 126, 118, 4),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text("Terima"),
+                      child: const Text("Wawancara"),
                     ),
                   ),
                 ],

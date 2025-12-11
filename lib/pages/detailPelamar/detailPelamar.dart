@@ -278,11 +278,31 @@ class _DetailPelamarPageState extends State<DetailPelamarPage> {
                                       Icons.remove_red_eye,
                                       color: Colors.teal,
                                     ),
-                                    onPressed: () {
+                                    onPressed: () async {
+                                      final perusahaan_id =
+                                          await DBHelper.getPerusahaanIdByLowonganId(
+                                            widget.lowonganId,
+                                          );
+
+                                      print(
+                                        "=== DEBUG DATA NAVIGASI DETAIL CV ===",
+                                      );
+                                      print(
+                                        "Lowongan ID : ${widget.lowonganId}",
+                                      );
+                                      print("Perusahaan ID : $perusahaan_id");
+                                      print("User ID : ${p["user_id"]}");
+                                      print("CV ID : ${p["cv_id"]}");
+                                      print(
+                                        "=====================================",
+                                      );
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (_) => DetailCVPelamarPage(
+                                            lowonganId: widget.lowonganId,
+                                            perusahaanId: perusahaan_id!,
+                                            userId: p["user_id"],
                                             cvId: p["cv_id"],
                                           ),
                                         ),

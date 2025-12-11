@@ -3,11 +3,16 @@ import 'package:flutter/material.dart';
 //import 'tabsPerusahaan/tab_2_lowongan_saya.dart';
 import 'tabsPerusahaan/karyawanPerusahaan.dart';
 import 'tabsPerusahaan/homePerusahaan.dart';
+import 'tabsPerusahaan/jadwal_wawancara_perusahaan.dart';
 
 class HomePagePerusahaan extends StatefulWidget {
   final int perusahaanId;
   final String namaPerusahaan;
-  const HomePagePerusahaan({super.key, required this.namaPerusahaan, required this.perusahaanId});
+  const HomePagePerusahaan({
+    super.key,
+    required this.namaPerusahaan,
+    required this.perusahaanId,
+  });
 
   @override
   State<HomePagePerusahaan> createState() => _HomePagePerusahaanState();
@@ -49,9 +54,12 @@ class _HomePagePerusahaanState extends State<HomePagePerusahaan>
           onPageChanged: _onPageChanged,
           physics: const NeverScrollableScrollPhysics(),
           children: [
-            HomePerusahaan(namaPerusahaan: widget.namaPerusahaan, perusahaanId: widget.perusahaanId,), // sementara
-            Center(child: Text("Halaman Lowongan (belum dibuat)")), // sementara
+            HomePerusahaan(
+              namaPerusahaan: widget.namaPerusahaan,
+              perusahaanId: widget.perusahaanId,
+            ),
             KaryawanPerusahaanTab(),
+            JadwalWawancaraPerusahaan(perusahaanId: widget.perusahaanId),
           ],
         ),
       ),
@@ -71,6 +79,10 @@ class _HomePagePerusahaanState extends State<HomePagePerusahaan>
             BottomNavigationBarItem(
               icon: Icon(Icons.people),
               label: "Karyawan",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.schedule),
+              label: "Wawancara",
             ),
           ],
         ),
