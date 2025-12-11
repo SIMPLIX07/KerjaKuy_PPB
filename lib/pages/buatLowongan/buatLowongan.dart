@@ -52,7 +52,7 @@ class _BuatlowonganState extends State<Buatlowongan> {
   bool validasiForm() {
     return kategoriController.text.isNotEmpty &&
         posisiController.text.isNotEmpty &&
-        lokasiController.text.isNotEmpty && 
+        lokasiController.text.isNotEmpty &&
         deskripsiController.text.isNotEmpty &&
         syaratController.text.isNotEmpty &&
         periodeAwalController.text.isNotEmpty &&
@@ -123,7 +123,7 @@ class _BuatlowonganState extends State<Buatlowongan> {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    Navigator.pop(context);
+                    Navigator.pop(context, true);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF28AE9D),
@@ -298,7 +298,6 @@ class _BuatlowonganState extends State<Buatlowongan> {
                               periodeAwal: periodeAwalController.text,
                               periodeAkhir: periodeAkhirController.text,
                               lokasi: lokasiController.text,
-
                             );
 
                             resetController();

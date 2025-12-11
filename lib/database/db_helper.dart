@@ -123,6 +123,8 @@ class DBHelper {
             perusahaan_id INTEGER,
             cv_id INTEGER,
             status TEXT,
+            lowongan_id INTEGER,
+            FOREIGN KEY(lowongan_id) REFERENCES lowongan(id),
             FOREIGN KEY(cv_id) REFERENCES cv(id),
             FOREIGN KEY(user_id) REFERENCES users(id),
             FOREIGN KEY(perusahaan_id) REFERENCES perusahaan(id)
@@ -415,19 +417,19 @@ class DBHelper {
 
   //INSERT LOWONGAN
   static Future<int> insertLamaran({
+    required int lowongan_id,
     required int user_id,
     required int perusahaan_id,
     required int cv_id,
-    
   }) async {
     final db = await _getDB();
 
     final lamaranId = await db.insert('lamaran', {
+      'lowongan_id': lowongan_id,
       'user_id': user_id,
       'perusahaan_id': perusahaan_id,
       'cv_id': cv_id,
       'status': "Process",
-      
     });
 
     print("\x1B[32mLamaran INSERT SUCCESS — ID: $lamaranId\x1B[0m");
@@ -438,38 +440,95 @@ class DBHelper {
       print(
         "User ID: ${job['user_id']} | "
         "Perusahaan ID: ${job['perusahaan_id']} | "
+        "Lowongan ID: ${job['lowongan_id']} | "
         "CV ID: ${job['cv_id']} | "
-        "Status: ${job['status']} | "
+        "Status: ${job['status']} | ",
       );
     }
     print("==================================\n");
 
     return lamaranId;
-  
   }
 
   //fungsi megnambil lowogan berdasarkan id
+  // fungsi mengambil lowongan berdasarkan perusahaan sekaligus jumlah pelamar
   static Future<List<Map<String, dynamic>>> getLowonganByPerusahaanId(
     int perusahaanId,
   ) async {
     final db = await _getDB();
+
     final List<Map<String, dynamic>> maps = await db.query(
       'lowongan',
       where: 'perusahaan_id = ?',
       whereArgs: [perusahaanId],
-      orderBy: 'id DESC', // Lowongan terbaru di atas
+      orderBy: 'id DESC',
     );
 
-    return maps
-        .map(
-          (item) => {
-            'judul': item['posisi'],
-            'pelamar': 0,
-            'mulai': item['periode_awal'] ,
-            'akhir': item['periode_akhir'],
-          },
-        )
-        .toList();
+    // get jumlah pelamar
+    List<Map<String, dynamic>> result = [];
+
+    for (var item in maps) {
+      int lowonganId = item['id'];
+      int jumlahPelamar = await getJumlahPelamar(lowonganId);
+
+      result.add({
+        'id': lowonganId,
+        'judul': item['posisi'],
+        'mulai': item['periode_awal'],
+        'akhir': item['periode_akhir'],
+        'pelamar': jumlahPelamar,
+      });
+    }
+
+    return result;
   }
 
+  // GET JUMLAH PELAMAR BERDASARKAN LOWONGAN ID
+  static Future<int> getJumlahPelamar(int lowonganId) async {
+    final db = await _getDB();
+
+    final result = await db.rawQuery(
+      "SELECT COUNT(*) as total FROM lamaran WHERE lowongan_id = ?",
+      [lowonganId],
+    );
+
+    return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  //untuk get pelamar by lowongan
+  static Future<List<Map<String, dynamic>>> getPelamarByLowongan(
+    int lowonganId,
+  ) async {
+    final db = await _getDB();
+
+    final result = await db.rawQuery(
+      """
+    SELECT 
+      users.fullname AS nama,
+      users.email AS email,
+      cv.title AS cv_title,
+      cv.id AS cv_id
+    FROM lamaran
+    JOIN users ON users.id = lamaran.user_id
+    JOIN cv ON cv.id = lamaran.cv_id
+    WHERE lamaran.lowongan_id = ?
+    """,
+      [lowonganId],
+    );
+
+    return result;
+  }
+
+  static Future<Map<String, dynamic>?> getDetailLowongan(int lowonganId) async {
+    final db = await _getDB();
+
+    final result = await db.query(
+      'lowongan',
+      where: 'id = ?',
+      whereArgs: [lowonganId],
+    );
+
+    if (result.isEmpty) return null;
+    return result.first;
+  }
 }

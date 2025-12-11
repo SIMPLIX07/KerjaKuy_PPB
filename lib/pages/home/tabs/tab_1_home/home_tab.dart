@@ -281,6 +281,7 @@ class _HomeTabState extends State<HomeTab> {
                       lokasi: data['lokasi'] ?? "",
                       deskripsi: data['deskripsi'] ?? "",
                       syarat: data['syarat'] ?? "",
+                      lowonganId: data['id'],
                     ),
                   ),
                 );

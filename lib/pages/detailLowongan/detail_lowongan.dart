@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../database/db_helper.dart';
 
 class DetailLowonganPage extends StatelessWidget {
+  final int lowonganId;
   final int userId;
   final int perusahaanId;
   final String posisi;
@@ -23,6 +24,7 @@ class DetailLowonganPage extends StatelessWidget {
     required this.lokasi,
     required this.deskripsi,
     required this.syarat,
+    required this.lowonganId,
   });
 
   List<String> parseBulletText(String text) {
@@ -30,10 +32,9 @@ class DetailLowonganPage extends StatelessWidget {
   }
 
   void _showPilihCVDialog(BuildContext context) async {
-    
     final cvList = await DBHelper.getCVByUserId(userId);
 
-    int? selectedCvId; 
+    int? selectedCvId;
 
     showDialog(
       context: context,
@@ -135,6 +136,7 @@ class DetailLowonganPage extends StatelessWidget {
                             user_id: userId,
                             perusahaan_id: perusahaanId,
                             cv_id: selectedCvId!,
+                            lowongan_id: lowonganId,
                           );
 
                           Navigator.pop(context);
@@ -330,7 +332,7 @@ class DetailLowonganPage extends StatelessWidget {
             ),
             child: SizedBox(
               width: double.infinity,
-              height: 55, 
+              height: 55,
               child: ElevatedButton(
                 onPressed: () {
                   _showPilihCVDialog(context);
