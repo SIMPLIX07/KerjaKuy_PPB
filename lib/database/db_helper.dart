@@ -413,6 +413,7 @@ class DBHelper {
     return await db.query('cv', where: 'user_id = ?', whereArgs: [userId]);
   }
 
+  //INSERT LOWONGAN
   static Future<int> insertLamaran({
     required int user_id,
     required int perusahaan_id,
@@ -444,5 +445,31 @@ class DBHelper {
     print("==================================\n");
 
     return lamaranId;
+  
   }
+
+  //fungsi megnambil lowogan berdasarkan id
+  static Future<List<Map<String, dynamic>>> getLowonganByPerusahaanId(
+    int perusahaanId,
+  ) async {
+    final db = await _getDB();
+    final List<Map<String, dynamic>> maps = await db.query(
+      'lowongan',
+      where: 'perusahaan_id = ?',
+      whereArgs: [perusahaanId],
+      orderBy: 'id DESC', // Lowongan terbaru di atas
+    );
+
+    return maps
+        .map(
+          (item) => {
+            'judul': item['posisi'],
+            'pelamar': 0,
+            'mulai': item['periode_awal'] ,
+            'akhir': item['periode_akhir'],
+          },
+        )
+        .toList();
+  }
+
 }

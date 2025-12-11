@@ -1,36 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/database/db_helper.dart';
 import '../../buatLowongan/buatLowongan.dart';
 
-class HomePerusahaan extends StatelessWidget {
+class HomePerusahaan extends StatefulWidget {
   final String namaPerusahaan;
   final int perusahaanId;
 
-  const HomePerusahaan({super.key, required this.namaPerusahaan, required this.perusahaanId});
+  const HomePerusahaan({
+    super.key,
+    required this.namaPerusahaan,
+    required this.perusahaanId,
+  });
+
+  @override
+  State<HomePerusahaan> createState() => _HomePerusahaanState();
+}
+
+class _HomePerusahaanState extends State<HomePerusahaan> {
+  List<Map<String, dynamic>> lowongan = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLowongan();
+  }
+
+  Future<void> _loadLowongan() async {
+    final loadedLowongan =
+        await DBHelper.getLowonganByPerusahaanId(widget.perusahaanId);
+
+    setState(() {
+      lowongan = loadedLowongan;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Dummy data lowongan
-    final List<Map<String, dynamic>> lowongan = [
-      {
-        'judul': 'Marketing',
-        'pelamar': 8,
-        'mulai': '02-01-2025',
-        'akhir': '25-01-2025',
-      },
-      {
-        'judul': 'Software Engineering',
-        'pelamar': 5,
-        'mulai': '12-03-2025',
-        'akhir': '30-03-2025',
-      },
-      {
-        'judul': 'UI UX',
-        'pelamar': 5,
-        'mulai': '12-03-2025',
-        'akhir': '30-03-2025',
-      },
-    ];
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -58,7 +63,7 @@ class HomePerusahaan extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        namaPerusahaan,
+                        widget.namaPerusahaan,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -76,7 +81,6 @@ class HomePerusahaan extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // JUDUL SECTION
             const Padding(
               padding: EdgeInsets.only(left: 20),
               child: Text(
@@ -87,7 +91,6 @@ class HomePerusahaan extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            // CARD HITAM BERISI LOWONGAN
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 15),
               padding: const EdgeInsets.all(15),
@@ -95,117 +98,142 @@ class HomePerusahaan extends StatelessWidget {
                 color: const Color.fromARGB(255, 45, 45, 45),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Column(
-                children: [
-                  // LIST LOWONGAN
-                  for (var job in lowongan) ...[
-                    Container(
-                      width: double.infinity,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
+              child: lowongan.isEmpty
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 40.0),
+                        child: Text(
+                          "Belum ada lowongan, ayo buat lowongan sekarang",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white70, fontSize: 16),
+                        ),
                       ),
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 10),
+                    )
+                  : Column(
+                      children: [
+                        for (var job in lowongan) ...[
                           Container(
-                            height: 40,
-                            width: 5,
+                            width: double.infinity,
+                            height: 70,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF28AE9D),
-                              borderRadius: BorderRadius.circular(50),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                          ),
-                          const SizedBox(width: 15),
-                          // Teks Lowongan + Periode
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Row(
                               children: [
-                                Text(
-                                  job['judul'],
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
+                                const SizedBox(width: 10),
+                                Container(
+                                  height: 40,
+                                  width: 5,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF28AE9D),
+                                    borderRadius: BorderRadius.circular(50),
                                   ),
                                 ),
-                                Text(
-                                  "Periode: ${job['mulai']} - ${job['akhir']}",
-                                  style: const TextStyle(fontSize: 12),
+                                const SizedBox(width: 15),
+
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        job['judul'],
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 3),
+                                      Text(
+                                        "Periode: ${job['mulai']} - ${job['akhir']}",
+                                        style:
+                                            const TextStyle(fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
                                 ),
+
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  child: Text(
+                                    job['pelamar'].toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+
+                                const SizedBox(width: 15),
                               ],
                             ),
                           ),
-                          // Badges pelamar
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: Text(
-                              job['pelamar'].toString(),
-                              style: const TextStyle(
+                          const SizedBox(height: 12),
+                        ],
+
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: InkWell(
+                            onTap: () {
+                              print("Menuju daftar lamaran");
+                            },
+                            child: Container(
+                              width: 45,
+                              height: 45,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF28AE9D),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                Icons.arrow_forward,
                                 color: Colors.white,
-                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
-                          const SizedBox(width: 15),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-                  ],
-
-                  // TOMBOL PANAH
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: InkWell(
-                      onTap: () {
-                        print("Menuju daftar lamaran untuk semua lowongan");
-                      },
-                      child: Container(
-                        width: 45,
-                        height: 45,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF28AE9D),
-                          borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(
-                          Icons.arrow_forward,
-                          color: Colors.white,
-                        ),
-                      ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ),
 
             const Spacer(),
 
             // BUTTON BUAT LOWONGAN
             Padding(
-              padding: const EdgeInsets.only(left: 15, right: 15, bottom: 20),
+              padding:
+                  const EdgeInsets.only(left: 15, right: 15, bottom: 20),
               child: SizedBox(
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
-                  onPressed: () {
-                    print("Tombol Buat Lowongan ditekan");
-                    Navigator.push(
+                  onPressed: () async {
+                    final newLowongan = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>  Buatlowongan(
-                          perusahaanId: perusahaanId,
-                          namaPerusahaan: namaPerusahaan,
+                        builder: (context) => Buatlowongan(
+                          perusahaanId: widget.perusahaanId,
+                          namaPerusahaan: widget.namaPerusahaan,
                         ),
                       ),
                     );
+
+                    _loadLowongan();
+
+                    if (newLowongan != null) {
+                      setState(() {
+                        lowongan.add({
+                          "judul": newLowongan["posisi"],
+                          "mulai": newLowongan["periode_awal"],
+                          "akhir": newLowongan["periode_akhir"],
+                          "pelamar": 0,
+                        });
+                      });
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF28AE9D),
