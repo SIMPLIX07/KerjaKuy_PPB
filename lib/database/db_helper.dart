@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:sqflite/sqflite.dart'; // KETIK
 import 'package:path/path.dart'; // KETIK
 
@@ -132,24 +134,6 @@ class DBHelper {
         ''');
 
         await db.execute('''
-          CREATE TABLE wawancara (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            perusahaan_id INTEGER,
-            status TEXT,
-            lowongan_id INTEGER,
-            jam_mulai TEXT,
-            jam_selesai TEXT,
-            tanggal TEXT,
-            link_meet TEXT,
-            pesan TEXT,
-            FOREIGN KEY(lowongan_id) REFERENCES lowongan(id),
-            FOREIGN KEY(user_id) REFERENCES users(id),
-            FOREIGN KEY(perusahaan_id) REFERENCES perusahaan(id)
-          )
-        ''');
-
-        await db.execute('''
     INSERT INTO berita (deskripsi, tanggal) VALUES
     ('Klaim Pengangguran AS Naik Tipis, dekati posisi terendah dalam sejarah', '23 Desember 2025'),
     ('Gaji Minimum Regional Jakarta Resmi Naik Tahun Ini', '21 Desember 2025'),
@@ -160,6 +144,9 @@ class DBHelper {
     ('Fresh Graduate Banyak Dicari di Industri Digital 2025', '14 Desember 2025'),
     ('5 Skill yang Wajib Dimiliki untuk Karir Masa Depan', '12 Desember 2025');
   ''');
+      },
+      onOpen: (db) async {
+        await insertDummyLowonganIfEmpty(db);
       },
     );
   }
@@ -522,7 +509,6 @@ class DBHelper {
     final result = await db.rawQuery(
       """
     SELECT 
-      lamaran.user_id AS user_id, 
       users.fullname AS nama,
       users.email AS email,
       cv.title AS cv_title,
@@ -555,117 +541,67 @@ class DBHelper {
     return await _getDB();
   }
 
-  static Future<int> buatWawancara({
-    required int userId,
-    required int perusahaanId,
-    required int lowonganId,
-    required String jamMulai,
-    required String jamSelesai,
-    required String tanggal,
-    required String linkMeet,
-    required String pesan,
-  }) async {
-    final db = await _getDB();
+  static Future<void> insertDummyLowonganIfEmpty(Database db) async {
+    final result = await db.query('lowongan');
 
-    final wawancaraId = await db.insert('wawancara', {
-      'user_id': userId,
-      'perusahaan_id': perusahaanId,
-      'lowongan_id': lowonganId,
-      'status': "process",
-      'jam_mulai': jamMulai,
-      'jam_selesai': jamSelesai,
-      "tanggal": tanggal,
-      'link_meet': linkMeet,
-      'pesan': pesan,
-    });
+    if (result.isEmpty) {
+      print("➡ Menambahkan data dummy lowongan...");
 
-    print("\x1B[32mWawancara INSERT SUCCESS — ID: $wawancaraId\x1B[0m");
+      await db.insert('lowongan', {
+        'perusahaan_id': 1,
+        'nama_perusahaan': 'PT Teknologi Indonesia',
+        'kategori': 'Web Development',
+        'posisi': 'Frontend Developer',
+        'deskripsi': 'Membangun UI/UX menggunakan Flutter & Web.',
+        'syarat': jsonEncode([
+          "Menguasai Flutter",
+          "Pengalaman 1 tahun",
+          "Mengerti REST API",
+        ]),
+        'gaji': '7.000.000 - 10.000.000',
+        'tipe': 'Full Time',
+        'periode_awal': '2025-01-01',
+        'periode_akhir': '2025-02-01',
+        'lokasi': 'Jakarta',
+      });
 
-    return wawancaraId;
+      await db.insert('lowongan', {
+        'perusahaan_id': 2,
+        'nama_perusahaan': 'PT Data Nusantara',
+        'kategori': 'Data Analyst',
+        'posisi': 'Junior Data Analyst',
+        'deskripsi': 'Melakukan analisis data dan membuat visualisasi.',
+        'syarat': jsonEncode([
+          "Menguasai Excel",
+          "Basic SQL",
+          "Mampu membaca grafik",
+        ]),
+        'gaji': '5.000.000 - 8.000.000',
+        'tipe': 'Full Time',
+        'periode_awal': '2025-01-10',
+        'periode_akhir': '2025-03-10',
+        'lokasi': 'Bandung',
+      });
+    } else {
+      print("➡ Data lowongan sudah ada, tidak insert lagi.");
+    }
   }
 
-  static Future<int?> getPerusahaanIdByLowonganId(int lowonganId) async {
+  static Future<List<Map<String, dynamic>>> getLowongan() async {
+    final db = await _getDB();
+    return await db.query('lowongan', orderBy: 'id DESC');
+  }
+
+  static Future<Map<String, dynamic>?> findLowonganById(int id) async {
     final db = await _getDB();
 
     final result = await db.query(
       'lowongan',
-      columns: ['perusahaan_id'],
       where: 'id = ?',
-      whereArgs: [lowonganId],
+      whereArgs: [id],
       limit: 1,
     );
 
-    if (result.isEmpty) return null;
-    return result.first['perusahaan_id'] as int;
-  }
-
-  static Future<List<Map<String, dynamic>>> getWawancaraByUserId(
-    int userId,
-  ) async {
-    final db = await _getDB();
-
-    return await db.query(
-      'wawancara',
-      where: 'user_id = ?',
-      whereArgs: [userId],
-      orderBy: "tanggal ASC",
-    );
-  }
-
-  static Future<String?> getNamaPerusahaan(int perusahaanId) async {
-    final db = await _getDB();
-
-    final res = await db.query(
-      'perusahaan',
-      columns: ['namaPerusahaan'],
-      where: 'id = ?',
-      whereArgs: [perusahaanId],
-      limit: 1,
-    );
-
-    if (res.isEmpty) return null;
-    return res.first['namaPerusahaan'] as String?;
-  }
-
-  static Future<String?> getPosisiByLowonganId(int lowonganId) async {
-    final db = await _getDB();
-
-    final res = await db.query(
-      'lowongan',
-      columns: ['posisi'],
-      where: 'id = ?',
-      whereArgs: [lowonganId],
-      limit: 1,
-    );
-
-    if (res.isEmpty) return null;
-    return res.first['posisi'] as String?;
-  }
-
-  static Future<List<Map<String, dynamic>>> getWawancaraByPerusahaanId(
-    int perusahaanId,
-  ) async {
-    final db = await _getDB();
-
-    return await db.query(
-      "wawancara",
-      where: "perusahaan_id = ?",
-      whereArgs: [perusahaanId],
-    );
-  }
-
-  static Future<String> getNamaUserById(int userId) async {
-    final db = await _getDB();
-    final res = await db.query(
-      'users',
-      columns: ['fullname'],
-      where: 'id = ?',
-      whereArgs: [userId],
-      limit: 1,
-    );
-
-    return res.isNotEmpty
-        ? res.first['fullname'].toString()
-        : 'Tidak diketahui';
+    return result.isNotEmpty ? result.first : null;
   }
 }

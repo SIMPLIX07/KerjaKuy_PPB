@@ -1,8 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/database/db_helper.dart';
 import 'package:flutter_application_1/pages/detailPekerjaan/detail_pekerjaan.dart';
+import 'dart:convert';
 
-class LowonganTab extends StatelessWidget {
-  LowonganTab({super.key});
+class LowonganTab extends StatefulWidget {
+  const LowonganTab({super.key});
+
+  @override
+  State<LowonganTab> createState() => _LowonganTabState();
+}
+
+class _LowonganTabState extends State<LowonganTab> {
+  List<Map<String, dynamic>> daftarLowongan = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadLowongan();
+  }
+
+  Future<void> loadLowongan() async {
+    final data = await DBHelper.getLowongan();
+    setState(() {
+      daftarLowongan = data;
+    });
+  }
 
   final List<Map<String, dynamic>> kategoriList = [
     {'icon': Icons.bar_chart, 'nama': 'Akutansi'},
@@ -15,27 +37,6 @@ class LowonganTab extends StatelessWidget {
     {'icon': Icons.account_balance_rounded, 'nama': 'Pemerintahan'},
     {'icon': Icons.video_camera_back, 'nama': 'Video Editor'},
     {'icon': Icons.campaign, 'nama': 'Digital Marketing'},
-  ];
-
-  final List<Map<String, dynamic>> pekerjaanList = [
-    {
-      'posisi': 'Surfeyor FnB',
-      'perusahaan': '+joddi',
-      'syarat': ['kontrak', '1 tahun', 'WFO', 'Penuh Waktu'],
-      'lokasi': 'Jakarta',
-    },
-    {
-      'posisi': 'Surfeyor FnB',
-      'perusahaan': '+joddi',
-      'syarat': ['kontrak', '1 tahun', 'WFO', 'Penuh Waktu'],
-      'lokasi': 'Jakarta',
-    },
-    {
-      'posisi': 'Surfeyor FnB',
-      'perusahaan': '+joddi',
-      'syarat': ['kontrak', '1 tahun', 'WFO', 'Penuh Waktu'],
-      'lokasi': 'Jakarta',
-    },
   ];
 
   @override
@@ -172,136 +173,117 @@ class LowonganTab extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
 
-                Container(
-                  padding: EdgeInsets.only(top: 10),
-                  child: GridView.count(
-                    crossAxisCount: 1,
-                    mainAxisSpacing: 6,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 1.8,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    children: pekerjaanList.map((pk) {
-                      return InkWell(
-                        borderRadius: BorderRadius.circular(20),
-                        onTap: () {
-                          // pindah ke halaman lain
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetailPekerjaan(),
-                            ),
-                          );
-                        },
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(color: const Color(0xFF28AE9D)),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: daftarLowongan.length,
+                  itemBuilder: (context, index) {
+                    final pk = daftarLowongan[index];
+
+                    // Hindari crash kalau syarat NULL atau bukan JSON valid
+                    final syaratList =
+                        (pk['syarat'] != null &&
+                            pk['syarat'].toString().isNotEmpty)
+                        ? jsonDecode(pk['syarat'])
+                        : [];
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                DetailPekerjaan(idLowongan: pk['id']),
                           ),
-                          color: const Color.fromARGB(255, 55, 55, 55),
+                        );
+                      },
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: BorderSide(color: const Color(0xFF28AE9D)),
+                        ),
+                        color: const Color.fromARGB(255, 55, 55, 55),
+                        margin: EdgeInsets.only(bottom: 12),
+                        child: Padding(
+                          padding: EdgeInsets.all(12),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               ListTile(
                                 title: Text(
-                                  pk['posisi'],
+                                  pk['posisi'] ?? '',
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 subtitle: Text(
-                                  pk['perusahaan'],
+                                  pk['nama_perusahaan'] ?? '',
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  right: 20,
-                                  left: 20,
-                                  top: 5,
-                                ),
-                                child: GridView.count(
-                                  crossAxisCount: 3,
-                                  mainAxisSpacing: 6,
-                                  crossAxisSpacing: 6,
-                                  childAspectRatio: 3.5,
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  children: (pk['syarat'] as List<dynamic>).map(
-                                    (s) {
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.white12,
-                                          borderRadius: BorderRadius.circular(
-                                            20,
-                                          ),
-                                        ),
-                                        padding: EdgeInsets.all(6),
-                                        child: Text(
-                                          s.toString(),
-                                          style: TextStyle(color: Colors.white),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      );
-                                    },
-                                  ).toList(),
-                                ),
+
+                              Wrap(
+                                spacing: 6,
+                                runSpacing: 6,
+                                children: syaratList.map<Widget>((s) {
+                                  return Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white12,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      s.toString(),
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  );
+                                }).toList(),
                               ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  right: 20,
-                                  left: 20,
-                                  top: 10,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.location_on,
-                                          color: const Color(0xFF28AE9D),
-                                        ),
-                                        Text(
-                                          pk['lokasi'],
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ],
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        // pindah ke halaman lain juga bisa
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(
-                                          0xFF28AE9D,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 20,
-                                          vertical: 10,
-                                        ),
+
+                              SizedBox(height: 16),
+
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.location_on,
+                                        color: const Color(0xFF28AE9D),
                                       ),
-                                      child: const Text(
-                                        "Lamar",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      Text(
+                                        pk['lokasi'] ?? '',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {},
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF28AE9D),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical: 10,
                                       ),
                                     ),
-                                  ],
-                                ),
+                                    child: Text(
+                                      "Lamar",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         ),
-                      );
-                    }).toList(),
-                  ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

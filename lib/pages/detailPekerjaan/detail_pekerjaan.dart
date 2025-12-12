@@ -1,20 +1,134 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/database/db_helper.dart';
 
-class DetailPekerjaan extends StatelessWidget {
-  DetailPekerjaan({super.key});
+class DetailPekerjaan extends StatefulWidget {
+  final int idLowongan;
 
-  final List<String> deskripsiPekerjaan = [
-    "Melakukan analisis kebutuhan dan menyusun rencana kerja.",
-    "Mengembangkan fitur aplikasi sesuai standar pengembangan.",
-    "Melakukan testing manual dan otomatis terhadap fitur yang dibuat.",
-    "Berkoordinasi dengan tim desain untuk implementasi UI/UX.",
-    "Menyelesaikan bug dan meningkatkan performa aplikasi.",
-    "Mendokumentasikan alur kerja dan perubahan pada aplikasi.",
-  ];
+  const DetailPekerjaan({super.key, required this.idLowongan});
+
+  @override
+  State<DetailPekerjaan> createState() => _DetailPekerjaanState();
+}
+
+class _DetailPekerjaanState extends State<DetailPekerjaan> {
+  Map<String, dynamic>? lowongan;
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadLowongan();
+  }
+
+  Future<void> loadLowongan() async {
+    final row = await DBHelper.findLowonganById(widget.idLowongan);
+
+    if (row != null) {
+      setState(() {
+        // WAJIB: jadikan map baru yang bisa diedit
+        lowongan = Map<String, dynamic>.from(row);
+
+        // decode syarat (jika JSON)
+        if (lowongan!['syarat'] != null &&
+            lowongan!['syarat'].toString().isNotEmpty) {
+          lowongan!['syarat'] = List<String>.from(
+            jsonDecode(lowongan!['syarat']),
+          );
+        } else {
+          lowongan!['syarat'] = [];
+        }
+
+        loading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (loading) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.only(top: 5),
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              spreadRadius: 2,
+              offset: Offset(2, 4),
+            ),
+          ],
+        ),
+        child: Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                spreadRadius: 2,
+                offset: Offset(2, 4),
+              ),
+            ],
+            borderRadius: BorderRadius.circular(12), // sudut melengkung
+          ),
+
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            spacing: 12,
+            children: [
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  shape: CircleBorder(),
+                  padding: EdgeInsets.all(20),
+                  shadowColor: Colors.black.withOpacity(0.5),
+                  backgroundColor: Colors.white,
+                  elevation: 4,
+                ),
+                child: Icon(
+                  Icons.bookmark_border,
+                  color: Colors.black,
+                  size: 16,
+                ),
+              ),
+
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.all(20),
+                  backgroundColor: const Color.fromARGB(255, 59, 208, 200),
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Row(
+                  spacing: 6,
+                  children: [
+                    Text(
+                      "Lamar",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Icon(Icons.send, color: Colors.white, size: 12),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+
       backgroundColor: Colors.white,
 
       appBar: AppBar(
@@ -25,51 +139,96 @@ class DetailPekerjaan extends StatelessWidget {
             image: DecorationImage(
               image: AssetImage("lib/assets/header_bg.jpg"),
               fit: BoxFit.cover,
-              alignment: Alignment.center
+              alignment: Alignment.center,
             ),
           ),
         ),
         backgroundColor: Colors.transparent,
         title: ListTile(
-          title: Text("Icons +", style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 20)),
+          title: Text(
+            lowongan!['nama_perusahaan'] ?? '',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
           subtitle: Text(
-            "UI UX Designer",
+            lowongan!['posisi'] ?? '',
             style: TextStyle(color: Colors.white70),
+          ),
+          leading: CircleAvatar(
+            backgroundColor: Colors.white,
+            child: Icon(Icons.business, color: Colors.black),
           ),
         ),
       ),
 
-      body: Expanded(
+      body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(children: [Text('Rp. 29.000.000')]),
+              Row(
+                children: [
+                  Text(
+                    lowongan!['gaji'] ?? '-',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
               SizedBox(height: 8),
-              Row(children: [Text('Penuh Waktu')]),
+
+              Row(
+                children: [
+                  Text(
+                    lowongan!['tipe'] ?? '-',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
               SizedBox(height: 8),
-              Row(children: [Text('Jakarta Pusat, Jakarta Raya')]),
+
+              Row(
+                children: [
+                  Text(
+                    lowongan!['lokasi'] ?? '-',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
 
               SizedBox(height: 16),
 
-              Text("Deskripsi Pekerjaan", textAlign: TextAlign.start),
+              Text(
+                "Deskripsi Pekerjaan",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                textAlign: TextAlign.start,
+              ),
+
+              SizedBox(height: 8),
+
+              Text(lowongan!['deskripsi'] ?? '-'),
+
+              SizedBox(height: 16),
+
+              Text(
+                "Syarat",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                textAlign: TextAlign.start,
+              ),
 
               SizedBox(height: 12),
 
               ListView.builder(
-                shrinkWrap: true, // penting agar tidak overflow
-                physics:
-                    NeverScrollableScrollPhysics(), // biar scroll ikut parent
-                itemCount: deskripsiPekerjaan.length,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: (lowongan!['syarat'] as List).length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 6),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("• "), // bullet
-                        Expanded(child: Text(deskripsiPekerjaan[index])),
+                        Text("• "),
+                        Expanded(child: Text(lowongan!['syarat'][index])),
                       ],
                     ),
                   );
