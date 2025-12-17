@@ -296,7 +296,7 @@ class _DetailPelamarPageState extends State<DetailPelamarPage> {
                                       print(
                                         "=====================================",
                                       );
-                                      Navigator.push(
+                                      final result = await Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (_) => DetailCVPelamarPage(
@@ -307,6 +307,10 @@ class _DetailPelamarPageState extends State<DetailPelamarPage> {
                                           ),
                                         ),
                                       );
+
+                                      if (result == true) {
+                                        _loadData(); // 🔥 REFRESH LIST PELAMAR
+                                      }
                                     },
                                   ),
                                 ],

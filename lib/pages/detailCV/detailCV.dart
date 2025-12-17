@@ -26,6 +26,49 @@ class _DetailCVPelamarPageState extends State<DetailCVPelamarPage> {
   Map<String, dynamic>? kontak;
   String namaPelamar = "";
 
+  void _showTolakDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            "Tolak Pelamar",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: const Text("Apakah Anda yakin ingin menolak pelamar ini?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal"),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () async {
+                // 🔴 PANGGIL FUNCTION TOLAK
+                await DBHelper.tolakPelamar(
+                  userId: widget.userId,
+                  lowonganId: widget.lowonganId,
+                  perusahaanId: widget.perusahaanId,
+                );
+
+                Navigator.pop(context); // tutup dialog
+                Navigator.pop(context, true); // kembali ke list pelamar
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Pelamar berhasil ditolak")),
+                );
+              },
+              child: const Text("Ya, Tolak"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showSuccessDialog() {
     showDialog(
       context: context,
@@ -499,9 +542,7 @@ class _DetailCVPelamarPageState extends State<DetailCVPelamarPage> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        print("DITOLAK CV ${widget.cvId}");
-                      },
+                      onPressed: _showTolakDialog,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
@@ -513,6 +554,7 @@ class _DetailCVPelamarPageState extends State<DetailCVPelamarPage> {
                       child: const Text("Tolak"),
                     ),
                   ),
+
                   const SizedBox(width: 15),
                   Expanded(
                     child: ElevatedButton(

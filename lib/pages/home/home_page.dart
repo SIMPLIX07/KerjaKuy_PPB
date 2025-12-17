@@ -80,7 +80,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             LowonganTab(),
 
             // PAGE 3 - LAMARAN
-            LamaranTab(tabController: _tabControllerPage3),
+            LamaranTab(
+              tabController: _tabControllerPage3,
+              userId: widget.userId,
+            ),
 
             // PAGE 4 - JADWAL WAWANCARA
             JadwalTab(

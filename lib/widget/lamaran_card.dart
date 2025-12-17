@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-//WIDGET UNTUK PAGE 3
+// WIDGET UNTUK PAGE 3
 class LamaranCard extends StatelessWidget {
   final String companyName;
-  final String status;
+  final String status; // Process | Diterima | Ditolak
   final VoidCallback? onTap;
 
   const LamaranCard({
@@ -16,22 +16,27 @@ class LamaranCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color statusColor;
-    if (status == 'Diproses') {
-      statusColor = Colors.amber;
-    } else if (status == 'Diterima') {
-      statusColor = Colors.green;
-    } else {
-      statusColor = Colors.red;
-    }
-
-    // teks sesuai status(PAGE 3)
     String message;
-    if (status == 'Diproses') {
-      message = "Lamaran anda sedang diproses";
-    } else if (status == 'Diterima') {
-      message = "Selamat! Lamaran anda diterima";
-    } else {
-      message = "Mohon maaf, lamaran anda belum diterima";
+
+    switch (status) {
+      case "Process":
+        statusColor = Colors.amber;
+        message = "Lamaran anda sedang diproses";
+        break;
+
+      case "Diterima":
+        statusColor = Colors.green;
+        message = "Selamat! Lamaran anda diterima";
+        break;
+
+      case "Ditolak":
+        statusColor = Colors.red;
+        message = "Mohon maaf, lamaran anda belum diterima";
+        break;
+
+      default:
+        statusColor = Colors.grey;
+        message = "Status lamaran tidak diketahui";
     }
 
     return InkWell(
@@ -52,6 +57,7 @@ class LamaranCard extends StatelessWidget {
         ),
         child: Row(
           children: [
+            // STRIP STATUS
             Container(
               width: 4,
               height: 70,
@@ -64,10 +70,12 @@ class LamaranCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
+
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Row(
                 children: [
+                  // ICON
                   Container(
                     width: 40,
                     height: 40,
@@ -75,13 +83,21 @@ class LamaranCard extends StatelessWidget {
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(Icons.business, color: Colors.grey[600]),
+                    child: Icon(
+                      Icons.business,
+                      color: Colors.grey[600],
+                    ),
                   ),
                   const SizedBox(width: 10),
+
+                  // TEXT
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(message, style: const TextStyle(fontSize: 13)),
+                      Text(
+                        message,
+                        style: const TextStyle(fontSize: 13),
+                      ),
                       Text(
                         "oleh $companyName",
                         style: const TextStyle(

@@ -512,7 +512,12 @@ class DBHelper {
     final db = await _getDB();
 
     final result = await db.rawQuery(
-      "SELECT COUNT(*) as total FROM lamaran WHERE lowongan_id = ?",
+      '''
+    SELECT COUNT(*) as total 
+    FROM lamaran 
+    WHERE lowongan_id = ?
+      AND status = 'Process'
+    ''',
       [lowonganId],
     );
 
@@ -525,7 +530,7 @@ class DBHelper {
   ) async {
     final db = await _getDB();
 
-    final result = await db.rawQuery(
+    return await db.rawQuery(
       """
     SELECT 
       lamaran.user_id AS user_id, 
@@ -537,11 +542,10 @@ class DBHelper {
     JOIN users ON users.id = lamaran.user_id
     JOIN cv ON cv.id = lamaran.cv_id
     WHERE lamaran.lowongan_id = ?
+      AND lamaran.status = 'Process'
     """,
       [lowonganId],
     );
-
-    return result;
   }
 
   static Future<Map<String, dynamic>?> getDetailLowongan(int lowonganId) async {
@@ -812,15 +816,28 @@ class DBHelper {
   }) async {
     final db = await _getDB();
 
-    // UPDATE WAWANCARA → selesai
-    await db.update(
+    // 1️⃣ CEK APAKAH ADA WAWANCARA
+    final wawancara = await db.query(
       'wawancara',
-      {'status': 'selesai'},
       where: 'user_id = ? AND lowongan_id = ? AND perusahaan_id = ?',
       whereArgs: [userId, lowonganId, perusahaanId],
     );
 
-    // UPDATE LAMARAN → Ditolak
+    // 2️⃣ JIKA ADA WAWANCARA → UPDATE JADI SELESAI
+    if (wawancara.isNotEmpty) {
+      await db.update(
+        'wawancara',
+        {'status': 'selesai'},
+        where: 'id = ?',
+        whereArgs: [wawancara.first['id']],
+      );
+
+      print("✔ Wawancara ditemukan → status diubah ke selesai");
+    } else {
+      print("ℹ Tidak ada wawancara → skip update wawancara");
+    }
+
+    // 3️⃣ UPDATE LAMARAN JADI DITOLAK
     await db.update(
       'lamaran',
       {'status': 'Ditolak'},
@@ -828,6 +845,29 @@ class DBHelper {
       whereArgs: [userId, lowonganId, perusahaanId],
     );
 
-    print("❌ Pelamar DITOLAK — user:$userId lowongan:$lowonganId");
+    print("❌ Lamaran DITOLAK — user:$userId lowongan:$lowonganId");
+  }
+
+  static Future<List<Map<String, dynamic>>> getLamaranByUserId(
+    int userId,
+  ) async {
+    final db = await _getDB();
+
+    return await db.rawQuery(
+      '''
+    SELECT 
+      lamaran.id AS lamaran_id,
+      lamaran.status,
+      perusahaan.namaPerusahaan,
+      lowongan.posisi,
+      lowongan.id AS lowongan_id
+    FROM lamaran
+    JOIN perusahaan ON perusahaan.id = lamaran.perusahaan_id
+    JOIN lowongan ON lowongan.id = lamaran.lowongan_id
+    WHERE lamaran.user_id = ?
+    ORDER BY lamaran.id DESC
+    ''',
+      [userId],
+    );
   }
 }

@@ -1,11 +1,102 @@
 import 'package:flutter/material.dart';
+import '../../../../database/db_helper.dart';
 import '../../../detail/pesan_perusahaan_page.dart';
 import '../../../../widget/lamaran_card.dart';
 
-class LamaranTab extends StatelessWidget {
+class LamaranTab extends StatefulWidget {
   final TabController tabController;
+  final int userId;
 
-  const LamaranTab({super.key, required this.tabController});
+  const LamaranTab({
+    super.key,
+    required this.tabController,
+    required this.userId,
+  });
+
+  @override
+  State<LamaranTab> createState() => _LamaranTabState();
+}
+
+class _LamaranTabState extends State<LamaranTab> {
+  List<Map<String, dynamic>> diproses = [];
+  List<Map<String, dynamic>> diterima = [];
+  List<Map<String, dynamic>> ditolak = [];
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLamaran();
+  }
+
+  Future<void> _loadLamaran() async {
+    final data = await DBHelper.getLamaranByUserId(widget.userId);
+
+    List<Map<String, dynamic>> p = [];
+    List<Map<String, dynamic>> a = [];
+    List<Map<String, dynamic>> r = [];
+
+    for (var item in data) {
+      if (item["status"] == "Process") {
+        p.add(item);
+      } else if (item["status"] == "Diterima") {
+        a.add(item);
+      } else if (item["status"] == "Ditolak") {
+        r.add(item);
+      }
+    }
+
+    setState(() {
+      diproses = p;
+      diterima = a;
+      ditolak = r;
+      isLoading = false;
+    });
+  }
+
+  Widget _buildList(List<Map<String, dynamic>> list,
+      {bool clickable = false}) {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (list.isEmpty) {
+      return const Center(child: Text("Belum ada lamaran."));
+    }
+
+    return RefreshIndicator(
+      onRefresh: _loadLamaran,
+      child: ListView.builder(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+        itemCount: list.length,
+        itemBuilder: (_, index) {
+          final item = list[index];
+
+          return LamaranCard(
+            companyName: item["namaPerusahaan"],
+            status: item["status"],
+            onTap: clickable
+                ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PesanPerusahaanPage(
+                          companyName: item["namaPerusahaan"],
+                          date: "-",
+                          time: "-",
+                          message:
+                              "Selamat! Anda diterima untuk posisi ${item["posisi"]}.",
+                        ),
+                      ),
+                    );
+                  }
+                : null,
+          );
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,13 +105,13 @@ class LamaranTab extends StatelessWidget {
         // HEADER
         Container(
           width: double.infinity,
-          padding: EdgeInsets.all(16),
-          decoration: BoxDecoration(color: const Color(0xFF28AE9D)),
+          padding: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(color: Color(0xFF28AE9D)),
           child: SafeArea(
             bottom: false,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: const [
                 Text(
                   "Lamaran Pekerjaan",
                   style: TextStyle(
@@ -38,12 +129,12 @@ class LamaranTab extends StatelessWidget {
         Container(
           color: Colors.white,
           child: TabBar(
-            controller: tabController,
+            controller: widget.tabController,
             indicatorColor: const Color(0xFF28AE9D),
             indicatorWeight: 3,
             labelColor: Colors.black,
             unselectedLabelColor: Colors.grey,
-            labelStyle: TextStyle(
+            labelStyle: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -58,89 +149,11 @@ class LamaranTab extends StatelessWidget {
         // TAB CONTENT
         Expanded(
           child: TabBarView(
-            controller: tabController,
+            controller: widget.tabController,
             children: [
-              // TAB 1: Diproses
-              ListView(
-                padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
-                children: [
-                  SizedBox(height: 16.0), 
-                  LamaranCard(
-                    companyName: "PT Garuda Indonesia",
-                    status: "Diproses",
-                  ),
-                  LamaranCard(
-                    companyName: "PT Coca-Cola",
-                    status: "Diproses",
-                  ),
-                ],
-              ),
-
-              // TAB 2: Diterima
-              ListView(
-                padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
-                children: [
-                  SizedBox(height: 16.0), 
-                  LamaranCard(
-                    companyName: "PT Garuda Indonesia",
-                    status: "Diterima",
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PesanPerusahaanPage(
-                            companyName: "PT Garuda Indonesia",
-                            date: "5 November 2025",
-                            time: "09:00 AM",
-                            message: "Yth. Gilang Pradana\n"
-                                "\n"
-                                "Kami dari PT Garuda Indonesia ingin mengucapkan selamat "
-                                "atas keberhasilan Anda melewati seluruh tahapan seleksi "
-                                "untuk posisi Marketing Staf.",
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  LamaranCard(
-                    companyName: "Telkomsel",
-                    status: "Diterima",
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PesanPerusahaanPage(
-                            companyName: "Telkomsel",
-                            date: "20 Februari 2022",
-                            time: "21:00 PM",
-                            message: "Yth. Gilang Pradana\n"
-                                "\n"
-                                "Kami dari Telkomsel ingin mengucapkan selamat "
-                                "atas keberhasilan Anda melewati seluruh tahapan seleksi "
-                                "untuk posisi Marketing Staf.",
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-
-              // TAB 3: Ditolak
-              ListView(
-                padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
-                children: [
-                  SizedBox(height: 16.0), 
-                  LamaranCard(
-                    companyName: "PT Unilever",
-                    status: "Ditolak",
-                  ),
-                  LamaranCard(
-                    companyName: "PT Tokopedia",
-                    status: "Ditolak",
-                  ),
-                ],
-              ),
+              _buildList(diproses),
+              _buildList(diterima, clickable: true),
+              _buildList(ditolak),
             ],
           ),
         ),
