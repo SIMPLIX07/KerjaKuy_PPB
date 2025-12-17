@@ -26,6 +26,31 @@ class _DetailCVPelamarPageState extends State<DetailCVPelamarPage> {
   Map<String, dynamic>? kontak;
   String namaPelamar = "";
 
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            "Berhasil",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: const Text("Jadwal wawancara berhasil disubmit."),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -271,6 +296,7 @@ class _DetailCVPelamarPageState extends State<DetailCVPelamarPage> {
                     print("===========================");
 
                     Navigator.pop(context);
+                    _showSuccessDialog();
                   },
                   child: const Text("Kirim"),
                 ),

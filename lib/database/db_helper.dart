@@ -165,6 +165,7 @@ class DBHelper {
       },
       onOpen: (db) async {
         await insertDummyLowonganIfEmpty(db);
+        await seedTelkomIfEmpty(db);
       },
     );
   }
@@ -738,4 +739,95 @@ class DBHelper {
     return result.isNotEmpty ? result.first : null;
   }
 
+  static Future<void> seedTelkomIfEmpty(Database db) async {
+    final perusahaan = await db.query(
+      'perusahaan',
+      where: 'namaPerusahaan = ?',
+      whereArgs: ['PT Telkom Indonesia'],
+    );
+
+    // Jika sudah ada → jangan insert lagi
+    if (perusahaan.isNotEmpty) {
+      print("➡ Telkom sudah ada, skip seeding");
+      return;
+    }
+
+    // INSERT PERUSAHAAN TELKOM
+    int telkomId = await db.insert('perusahaan', {
+      'namaPerusahaan': 'PT Telkom Indonesia',
+      'email': 'hr@telkom.co.id',
+      'password': 'telkom123',
+      'alamat': 'Jl. Japati No.1, Bandung, Jawa Barat',
+      'deskripsi':
+          'PT Telkom Indonesia adalah perusahaan BUMN yang bergerak di bidang '
+          'telekomunikasi dan teknologi informasi. Telkom menyediakan layanan '
+          'konektivitas jaringan, data center, cloud computing, solusi enterprise, '
+          'serta platform digital untuk mendukung transformasi digital nasional.',
+      'noTelepon': '021-12345678',
+    });
+
+    // INSERT USER
+    int userId = await db.insert('users', {
+      'username': 'rizkydev',
+      'fullname': 'Rizky Pratama',
+      'email': 'rizky@gmail.com',
+      'password': 'password123',
+      'pekerjaan': 'Pelamar',
+    });
+
+    // INSERT KEAHLIAN USER
+    await db.insert('keahlian', {
+      'user_id': userId,
+      'nama_skill': 'Programming',
+    });
+
+    // INSERT LOWONGAN TELKOM
+    await db.insert('lowongan', {
+      'perusahaan_id': telkomId,
+      'nama_perusahaan': 'PT Telkom Indonesia',
+      'kategori': 'Programming',
+      'posisi': 'Flutter Developer',
+      'deskripsi':
+          'Mengembangkan aplikasi mobile menggunakan Flutter dan bekerja sama '
+          'dengan tim backend dan UI/UX.',
+      'syarat': jsonEncode([
+        'Menguasai Flutter',
+        'Mengerti REST API',
+        'Terbiasa menggunakan Git',
+      ]),
+      'gaji': '8.000.000 - 12.000.000',
+      'tipe': 'Full Time',
+      'periode_awal': '2025-01-01',
+      'periode_akhir': '2025-03-01',
+      'lokasi': 'Bandung',
+    });
+
+    print("✅ Dummy Telkom + User + Lowongan berhasil ditambahkan");
+  }
+
+  static Future<void> tolakPelamar({
+    required int userId,
+    required int lowonganId,
+    required int perusahaanId,
+  }) async {
+    final db = await _getDB();
+
+    // UPDATE WAWANCARA → selesai
+    await db.update(
+      'wawancara',
+      {'status': 'selesai'},
+      where: 'user_id = ? AND lowongan_id = ? AND perusahaan_id = ?',
+      whereArgs: [userId, lowonganId, perusahaanId],
+    );
+
+    // UPDATE LAMARAN → Ditolak
+    await db.update(
+      'lamaran',
+      {'status': 'Ditolak'},
+      where: 'user_id = ? AND lowongan_id = ? AND perusahaan_id = ?',
+      whereArgs: [userId, lowonganId, perusahaanId],
+    );
+
+    print("❌ Pelamar DITOLAK — user:$userId lowongan:$lowonganId");
+  }
 }

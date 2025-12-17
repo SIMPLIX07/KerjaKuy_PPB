@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../database/db_helper.dart';
-import '../../../widget/wawancara_card.dart';
+import '../../../widget/wawancara_card_perusahaan.dart';
 
 class JadwalWawancaraPerusahaan extends StatefulWidget {
   final int perusahaanId;
@@ -12,8 +12,7 @@ class JadwalWawancaraPerusahaan extends StatefulWidget {
       _JadwalWawancaraPerusahaanState();
 }
 
-class _JadwalWawancaraPerusahaanState
-    extends State<JadwalWawancaraPerusahaan> {
+class _JadwalWawancaraPerusahaanState extends State<JadwalWawancaraPerusahaan> {
   List<Map<String, dynamic>> upcoming = [];
   List<Map<String, dynamic>> history = [];
 
@@ -24,8 +23,7 @@ class _JadwalWawancaraPerusahaanState
   }
 
   Future<void> _loadWawancara() async {
-    final data =
-        await DBHelper.getWawancaraByPerusahaanId(widget.perusahaanId);
+    final data = await DBHelper.getWawancaraByPerusahaanId(widget.perusahaanId);
 
     List<Map<String, dynamic>> listUpcoming = [];
     List<Map<String, dynamic>> listHistory = [];
@@ -33,11 +31,11 @@ class _JadwalWawancaraPerusahaanState
     for (var row in data) {
       final item = Map<String, dynamic>.from(row);
 
-      item["nama_perusahaan"] =
-          await DBHelper.getNamaPerusahaan(item["perusahaan_id"]);
+      item["posisi"] = await DBHelper.getPosisiByLowonganId(
+        item["lowongan_id"],
+      );
 
-      item["posisi"] =
-          await DBHelper.getPosisiByLowonganId(item["lowongan_id"]);
+      item["nama_user"] = await DBHelper.getNamaUserById(item["user_id"]);
 
       if (item["status"] == "process") {
         listUpcoming.add(item);
@@ -53,38 +51,43 @@ class _JadwalWawancaraPerusahaanState
   }
 
   void _showDetailDialog(Map<String, dynamic> wawancara) async {
-  final perusahaanName = await DBHelper.getNamaPerusahaan(wawancara["perusahaan_id"]);
-  final posisi = await DBHelper.getPosisiByLowonganId(wawancara["lowongan_id"]);
-  final namaPelamar = await DBHelper.getNamaUserById(wawancara["user_id"]);
+    final perusahaanName = await DBHelper.getNamaPerusahaan(
+      wawancara["perusahaan_id"],
+    );
+    final posisi = await DBHelper.getPosisiByLowonganId(
+      wawancara["lowongan_id"],
+    );
+    final namaPelamar = await DBHelper.getNamaUserById(wawancara["user_id"]);
 
-  showDialog(
-    context: context,
-    builder: (_) {
-      return AlertDialog(
-        title: Text("Detail Wawancara"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Pelamar: $namaPelamar"),
-            Text("Posisi: $posisi"),
-            Text("Tanggal: ${wawancara['tanggal']}"),
-            Text("Jam: ${wawancara['jam_mulai']} - ${wawancara['jam_selesai']}"),
-            Text("Link Meet: ${wawancara['link_meet']}"),
-            Text("Pesan: ${wawancara['pesan']}"),
-          ],
-        ),
-        actions: [
-          TextButton(
-            child: Text("Tutup"),
-            onPressed: () => Navigator.pop(context),
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text("Detail Wawancara"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Pelamar: $namaPelamar"),
+              Text("Posisi: $posisi"),
+              Text("Tanggal: ${wawancara['tanggal']}"),
+              Text(
+                "Jam: ${wawancara['jam_mulai']} - ${wawancara['jam_selesai']}",
+              ),
+              Text("Link Meet: ${wawancara['link_meet']}"),
+              Text("Pesan: ${wawancara['pesan']}"),
+            ],
           ),
-        ],
-      );
-    },
-  );
-}
-
+          actions: [
+            TextButton(
+              child: Text("Tutup"),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Widget _buildList(List<Map<String, dynamic>> list) {
     if (list.isEmpty) {
@@ -107,7 +110,10 @@ class _JadwalWawancaraPerusahaanState
           child: WawancaraCard(
             date: w["tanggal"],
             time: "${w['jam_mulai']} - ${w['jam_selesai']}",
-            company: w["posisi"],
+            namaUser: w["nama_user"],
+            userId: w["user_id"],
+            lowonganId: w["lowongan_id"],
+            perusahaanId: widget.perusahaanId,
             isCompleted: w["status"] != "process",
           ),
         );
@@ -131,7 +137,10 @@ class _JadwalWawancaraPerusahaanState
                 Text(
                   "Jadwal Wawancara Perusahaan",
                   style: TextStyle(
-                      fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+                    fontSize: 22,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -155,10 +164,7 @@ class _JadwalWawancaraPerusahaanState
                 ),
                 Expanded(
                   child: TabBarView(
-                    children: [
-                      _buildList(upcoming),
-                      _buildList(history),
-                    ],
+                    children: [_buildList(upcoming), _buildList(history)],
                   ),
                 ),
               ],
