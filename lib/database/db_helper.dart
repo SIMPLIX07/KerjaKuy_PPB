@@ -870,4 +870,49 @@ class DBHelper {
       [userId],
     );
   }
+
+  //STATUS WAWANCARA
+  static Future<void> updateStatusPelamar(int wawancaraId, int userId, int lowonganId, String status) async {
+    final db = await _getDB();
+    
+    // Update tabel wawancara
+    await db.update(
+      'wawancara',
+      {'status': status}, 
+      where: 'id = ?',
+      whereArgs: [wawancaraId],
+    );
+
+    // Update tabel lamaran(pelamar)
+    String statusLamaran = status == 'accepted' ? 'Diterima' : 'Ditolak';
+    await db.update(
+      'lamaran',
+      {'status': statusLamaran},
+      where: 'user_id = ? AND lowongan_id = ?',
+      whereArgs: [userId, lowonganId],
+    );
+  }
+
+  // Kategori lowongan
+  static Future<List<Map<String, dynamic>>> getKategoriKaryawan(int perusahaanId) async {
+    final db = await _getDB();
+    return await db.rawQuery('''
+      SELECT kategori, COUNT(id) as total_job 
+      FROM lowongan 
+      WHERE perusahaan_id = ? 
+      GROUP BY kategori
+    ''', [perusahaanId]);
+  }
+
+  // List karyawan
+  static Future<List<Map<String, dynamic>>> getDaftarKaryawanDiterima(int perusahaanId, String role) async {
+    final db = await _getDB();
+    return await db.rawQuery('''
+      SELECT u.fullname as nama, l.posisi, l.kategori 
+      FROM wawancara w
+      JOIN users u ON w.user_id = u.id
+      JOIN lowongan l ON w.lowongan_id = l.id
+      WHERE w.perusahaan_id = ? AND l.kategori = ? AND w.status = 'accepted'
+    ''', [perusahaanId, role]);
+  }
 }

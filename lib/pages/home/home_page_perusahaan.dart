@@ -58,7 +58,7 @@ class _HomePagePerusahaanState extends State<HomePagePerusahaan>
               namaPerusahaan: widget.namaPerusahaan,
               perusahaanId: widget.perusahaanId,
             ),
-            KaryawanPerusahaanTab(),
+            KaryawanPerusahaanTab(perusahaanId: widget.perusahaanId),
             JadwalWawancaraPerusahaan(perusahaanId: widget.perusahaanId),
           ],
         ),
