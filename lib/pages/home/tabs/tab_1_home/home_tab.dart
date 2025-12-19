@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../../../database/db_helper.dart';
 import 'package:flutter_application_1/pages/settings/settingPelamar/settingPelamar.dart';
@@ -331,19 +332,40 @@ class _HomeTabState extends State<HomeTab> {
                     ),
                     child: Row(
                       children: [
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            color: Color(0xFF28AE9D),
-                          ),
-                          child: Icon(
-                            Icons.person,
-                            color: Colors.white,
-                            size: 30,
-                          ),
+                        StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('profiles')
+                              .doc(widget.userId.toString())
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return CircleAvatar(
+                                radius: 25,
+                                backgroundColor: Color(0xFF28AE9D),
+                                child: Icon(Icons.person, color: Colors.white),
+                              );
+                            }
+
+                            final data = snapshot.data!;
+                            final photoUrl = data['photoUrl'];
+
+                            return CircleAvatar(
+                              radius: 25,
+                              backgroundColor: Color(0xFF28AE9D),
+                              backgroundImage:
+                                  photoUrl != null &&
+                                      photoUrl.toString().isNotEmpty
+                                  ? NetworkImage(photoUrl)
+                                  : null,
+                              child:
+                                  (photoUrl == null ||
+                                      photoUrl.toString().isEmpty)
+                                  ? Icon(Icons.person, color: Colors.white)
+                                  : null,
+                            );
+                          },
                         ),
+
                         SizedBox(width: 10),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,

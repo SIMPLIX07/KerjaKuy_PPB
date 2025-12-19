@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:flutter_application_1/pages/cvPelamar/buatCV.dart';
 import 'package:flutter_application_1/pages/cvPelamar/cvPelamar.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../../services/profile_service.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   final int userId;
   final String nama;
   final String jobTitle;
@@ -12,6 +15,96 @@ class ProfilePage extends StatelessWidget {
     required this.nama,
     required this.jobTitle,
   });
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  File? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+  final picked = await _picker.pickImage(
+    source: ImageSource.gallery,
+    imageQuality: 75,
+  );
+
+  if (picked != null) {
+    setState(() {
+      _selectedImage = File(picked.path);
+    });
+  }
+}
+
+  void _showEditProfileDialog() {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: const Text("Edit Profile"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircleAvatar(
+              radius: 45,
+              backgroundImage:
+                  _selectedImage != null ? FileImage(_selectedImage!) : null,
+              child: _selectedImage == null
+                  ? Icon(Icons.person, size: 50)
+                  : null,
+            ),
+            const SizedBox(height: 12),
+
+            ElevatedButton.icon(
+              onPressed: _pickImage,
+              icon: const Icon(Icons.photo),
+              label: const Text("Pilih Foto"),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              _selectedImage = null;
+              Navigator.pop(context);
+            },
+            child: const Text("Batal"),
+          ),
+          ElevatedButton(
+            onPressed: _selectedImage == null
+                ? null
+                : () async {
+                    await ProfileService.uploadProfilePhoto(
+                      userId: widget.userId,
+                      file: _selectedImage!,
+                    );
+
+                    _selectedImage = null;
+
+                    Navigator.pop(context);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Foto profile berhasil diperbarui"),
+                      ),
+                    );
+                  },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF28AE9D),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text("Simpan"),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +134,11 @@ class ProfilePage extends StatelessWidget {
                 Icon(Icons.account_circle, size: 110, color: Colors.grey),
                 SizedBox(height: 8),
                 Text(
-                  nama,
+                  widget.nama,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  jobTitle,
+                  widget.jobTitle,
                   style: TextStyle(color: Colors.grey, fontSize: 14),
                 ),
                 const SizedBox(height: 20),
@@ -83,8 +176,9 @@ class ProfilePage extends StatelessWidget {
                     _menuTile(
                       icon: Icons.edit,
                       text: "Edit Profile",
-                      onTap: () => print("Edit Profile tapped"),
+                      onTap: _showEditProfileDialog,
                     ),
+
                     _menuTile(
                       icon: Icons.info_outline,
                       text: "Informasi Profile",
@@ -103,7 +197,7 @@ class ProfilePage extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (_) => CVPage(
-                              userId: userId, // data yang dikirim
+                              userId: widget.userId, // data yang dikirim
                             ),
                           ),
                         );
