@@ -40,6 +40,7 @@ class _HomePagePerusahaanState extends State<HomePagePerusahaan>
     setState(() {
       _currentIndex = index;
     });
+    
   }
 
   @override

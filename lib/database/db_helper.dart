@@ -897,8 +897,29 @@ class DBHelper {
       where: 'user_id = ? AND lowongan_id = ?',
       whereArgs: [userId, lowonganId],
     );
-  }
 
+    if (status == 'accepted') {
+      // Ambil nama posisi dari lowongan tersebut
+      List<Map<String, dynamic>> lowongan = await db.query(
+        'lowongan', 
+        columns: ['posisi'], 
+        where: 'id = ?', 
+        whereArgs: [lowonganId]
+      );
+
+      if (lowongan.isNotEmpty) {
+        String posisiBaru = lowongan.first['posisi'];
+        
+        // Update job_title di tabel users
+        await db.update(
+          'users',
+          {'pekerjaan': posisiBaru},
+          where: 'id = ?',
+          whereArgs: [userId],
+        );
+      }
+    }
+  }
   // Kategori lowongan
   static Future<List<Map<String, dynamic>>> getKategoriKaryawan(
     int perusahaanId,
@@ -958,4 +979,24 @@ class DBHelper {
     );
     return res.isNotEmpty ? res.first : null;
   }
+
+  static Future<Map<String, dynamic>?> getUserData(int userId) async {
+    final db = await _getDB();
+    List<Map<String, dynamic>> results = await db.query(
+      'users', 
+      where: 'id = ?', 
+      whereArgs: [userId]
+    );
+    return results.isNotEmpty ? results.first : null;
+  }
+
+static Future<void> updateUserJobTitle(int userId, String newTitle) async {
+  final db = await _getDB();
+  await db.update(
+    'users',
+    {'pekerjaan': newTitle}, 
+    where: 'id = ?', 
+    whereArgs: [userId],
+  );
+}
 }

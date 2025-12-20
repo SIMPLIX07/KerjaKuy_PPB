@@ -32,6 +32,7 @@ class _HomeTabState extends State<HomeTab> {
   bool loadingRekom = true;
   List<Map<String, dynamic>> _berita = [];
   bool _loadingBerita = true;
+  String displayJobTitle = "";
 
   Future<void> _loadLamaran() async {
     final data = await DBHelper.getLamaranByUserId(widget.userId);
@@ -45,9 +46,20 @@ class _HomeTabState extends State<HomeTab> {
   @override
   void initState() {
     super.initState();
+    displayJobTitle = widget.jobTitle; // Default awal
+    _loadUserData();
     _loadRekomendasi();
     _loadBerita();
     _loadLamaran();
+  }
+
+  Future<void> _loadUserData() async {
+    final userData = await DBHelper.getUserData(widget.userId);
+    if (userData != null && userData['job_title'] != null) {
+      setState(() {
+        displayJobTitle = userData['job_title'];
+      });
+    }
   }
 
   Future<void> _loadBerita() async {
@@ -335,16 +347,22 @@ class _HomeTabState extends State<HomeTab> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ProfilePage(
-                          userId: widget.userId,
-                          nama: widget.username,
-                          jobTitle: widget.jobTitle,
-                        ),
-                      ),
-                    ),
+                    onTap: () =>
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ProfilePage(
+                              userId: widget.userId,
+                              nama: widget.username,
+                              jobTitle: widget.jobTitle,
+                            ),
+                          ),
+                        ).then((_) {
+                          // Jalankan ini setelah user kembali dari halaman profile
+                          setState(() {
+                            _loadUserData(); // Muat ulang data agar foto terbaru muncul
+                          });
+                        }),
                     child: Row(
                       children: [
                         FutureBuilder<Map<String, dynamic>?>(
@@ -380,11 +398,17 @@ class _HomeTabState extends State<HomeTab> {
                             Text(
                               widget.username,
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Text(widget.jobTitle),
+                            Text(
+                              displayJobTitle,
+                              style: TextStyle(
+                                color: Color(0xFF28AE9D),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ],
                         ),
                       ],
