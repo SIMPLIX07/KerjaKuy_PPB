@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/database/db_helper.dart';
 import 'dart:io';
 import 'package:flutter_application_1/pages/cvPelamar/buatCV.dart';
 import 'package:flutter_application_1/pages/cvPelamar/cvPelamar.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../services/profile_service.dart';
+import '../../../services/profile_local_service.dart';
 
 class ProfilePage extends StatefulWidget {
   final int userId;
@@ -25,86 +26,112 @@ class _ProfilePageState extends State<ProfilePage> {
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage() async {
-  final picked = await _picker.pickImage(
-    source: ImageSource.gallery,
-    imageQuality: 75,
-  );
+    final picked = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 75,
+    );
 
-  if (picked != null) {
-    setState(() {
-      _selectedImage = File(picked.path);
-    });
+    if (picked != null) {
+      setState(() {
+        _selectedImage = File(picked.path);
+      });
+    }
   }
-}
 
   void _showEditProfileDialog() {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Text("Edit Profile"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircleAvatar(
-              radius: 45,
-              backgroundImage:
-                  _selectedImage != null ? FileImage(_selectedImage!) : null,
-              child: _selectedImage == null
-                  ? Icon(Icons.person, size: 50)
-                  : null,
-            ),
-            const SizedBox(height: 12),
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: const Text("Edit Profile"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FutureBuilder<Map<String, dynamic>?>(
+                    future: DBHelper.getUserById(widget.userId),
+                    builder: (context, snapshot) {
+                      final photoPath = snapshot.data?['photo_path'];
 
-            ElevatedButton.icon(
-              onPressed: _pickImage,
-              icon: const Icon(Icons.photo),
-              label: const Text("Pilih Foto"),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              _selectedImage = null;
-              Navigator.pop(context);
-            },
-            child: const Text("Batal"),
-          ),
-          ElevatedButton(
-            onPressed: _selectedImage == null
-                ? null
-                : () async {
-                    await ProfileService.uploadProfilePhoto(
-                      userId: widget.userId,
-                      file: _selectedImage!,
-                    );
+                      return CircleAvatar(
+                        radius: 40,
+                        backgroundColor: const Color(0xFF28AE9D),
+                        backgroundImage:
+                            photoPath != null && photoPath.toString().isNotEmpty
+                            ? FileImage(File(photoPath))
+                            : null,
+                        child:
+                            (photoPath == null || photoPath.toString().isEmpty)
+                            ? const Icon(Icons.person, color: Colors.white)
+                            : null,
+                      );
+                    },
+                  ),
 
+                  const SizedBox(height: 12),
+
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      final picked = await _picker.pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 75,
+                      );
+
+                      if (picked != null) {
+                        setDialogState(() {
+                          _selectedImage = File(picked.path);
+                        });
+                      }
+                    },
+                    icon: const Icon(Icons.photo),
+                    label: const Text("Pilih Foto"),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
                     _selectedImage = null;
-
                     Navigator.pop(context);
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Foto profile berhasil diperbarui"),
-                      ),
-                    );
                   },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF28AE9D),
-              foregroundColor: Colors.white,
-            ),
-            child: const Text("Simpan"),
-          ),
-        ],
-      );
-    },
-  );
-}
+                  child: const Text("Batal"),
+                ),
+                ElevatedButton(
+                  onPressed: _selectedImage == null
+                      ? null
+                      : () async {
+                          await ProfileLocalService.saveProfileImage(
+                            userId: widget.userId,
+                            imageFile: _selectedImage!,
+                          );
 
+                          if (!mounted) return;
+
+                          setState(() {
+                            _selectedImage = null;
+                          });
+
+                          Navigator.pop(context);
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Foto profile berhasil diperbarui"),
+                            ),
+                          );
+                        },
+                  child: const Text("Simpan"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +158,29 @@ class _ProfilePageState extends State<ProfilePage> {
             // Photo + Name + Role
             Column(
               children: [
-                Icon(Icons.account_circle, size: 110, color: Colors.grey),
+                FutureBuilder<Map<String, dynamic>?>(
+                  future: DBHelper.getUserById(widget.userId),
+                  builder: (context, snapshot) {
+                    final photoPath = snapshot.data?['photo_path'];
+
+                    return CircleAvatar(
+                      radius: 55,
+                      backgroundColor: const Color(0xFF28AE9D),
+                      backgroundImage:
+                          photoPath != null && photoPath.toString().isNotEmpty
+                          ? FileImage(File(photoPath))
+                          : null,
+                      child: (photoPath == null || photoPath.toString().isEmpty)
+                          ? const Icon(
+                              Icons.person,
+                              size: 60,
+                              color: Colors.white,
+                            )
+                          : null,
+                    );
+                  },
+                ),
+
                 SizedBox(height: 8),
                 Text(
                   widget.nama,

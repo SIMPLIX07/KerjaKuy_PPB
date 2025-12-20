@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../../../database/db_helper.dart';
@@ -332,35 +334,26 @@ class _HomeTabState extends State<HomeTab> {
                     ),
                     child: Row(
                       children: [
-                        StreamBuilder<DocumentSnapshot>(
-                          stream: FirebaseFirestore.instance
-                              .collection('profiles')
-                              .doc(widget.userId.toString())
-                              .snapshots(),
+                        FutureBuilder<Map<String, dynamic>?>(
+                          future: DBHelper.getUserById(widget.userId),
                           builder: (context, snapshot) {
-                            if (!snapshot.hasData) {
-                              return CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Color(0xFF28AE9D),
-                                child: Icon(Icons.person, color: Colors.white),
-                              );
-                            }
-
-                            final data = snapshot.data!;
-                            final photoUrl = data['photoUrl'];
+                            final photoPath = snapshot.data?['photo_path'];
 
                             return CircleAvatar(
                               radius: 25,
-                              backgroundColor: Color(0xFF28AE9D),
+                              backgroundColor: const Color(0xFF28AE9D),
                               backgroundImage:
-                                  photoUrl != null &&
-                                      photoUrl.toString().isNotEmpty
-                                  ? NetworkImage(photoUrl)
+                                  photoPath != null &&
+                                      photoPath.toString().isNotEmpty
+                                  ? FileImage(File(photoPath))
                                   : null,
                               child:
-                                  (photoUrl == null ||
-                                      photoUrl.toString().isEmpty)
-                                  ? Icon(Icons.person, color: Colors.white)
+                                  (photoPath == null ||
+                                      photoPath.toString().isEmpty)
+                                  ? const Icon(
+                                      Icons.person,
+                                      color: Colors.white,
+                                    )
                                   : null,
                             );
                           },

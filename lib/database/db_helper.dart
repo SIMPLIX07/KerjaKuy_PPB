@@ -21,7 +21,8 @@ class DBHelper {
             fullname TEXT,
             email TEXT UNIQUE,
             password TEXT,
-            pekerjaan TEXT
+            pekerjaan TEXT,
+            photo_path TEXT
           )
         ''');
 
@@ -872,13 +873,18 @@ class DBHelper {
   }
 
   //STATUS WAWANCARA
-  static Future<void> updateStatusPelamar(int wawancaraId, int userId, int lowonganId, String status) async {
+  static Future<void> updateStatusPelamar(
+    int wawancaraId,
+    int userId,
+    int lowonganId,
+    String status,
+  ) async {
     final db = await _getDB();
-    
+
     // Update tabel wawancara
     await db.update(
       'wawancara',
-      {'status': status}, 
+      {'status': status},
       where: 'id = ?',
       whereArgs: [wawancaraId],
     );
@@ -894,25 +900,62 @@ class DBHelper {
   }
 
   // Kategori lowongan
-  static Future<List<Map<String, dynamic>>> getKategoriKaryawan(int perusahaanId) async {
+  static Future<List<Map<String, dynamic>>> getKategoriKaryawan(
+    int perusahaanId,
+  ) async {
     final db = await _getDB();
-    return await db.rawQuery('''
+    return await db.rawQuery(
+      '''
       SELECT kategori, COUNT(id) as total_job 
       FROM lowongan 
       WHERE perusahaan_id = ? 
       GROUP BY kategori
-    ''', [perusahaanId]);
+    ''',
+      [perusahaanId],
+    );
   }
 
   // List karyawan
-  static Future<List<Map<String, dynamic>>> getDaftarKaryawanDiterima(int perusahaanId, String role) async {
+  static Future<List<Map<String, dynamic>>> getDaftarKaryawanDiterima(
+    int perusahaanId,
+    String role,
+  ) async {
     final db = await _getDB();
-    return await db.rawQuery('''
+    return await db.rawQuery(
+      '''
       SELECT u.fullname as nama, l.posisi, l.kategori 
       FROM wawancara w
       JOIN users u ON w.user_id = u.id
       JOIN lowongan l ON w.lowongan_id = l.id
       WHERE w.perusahaan_id = ? AND l.kategori = ? AND w.status = 'accepted'
-    ''', [perusahaanId, role]);
+    ''',
+      [perusahaanId, role],
+    );
+  }
+
+  static Future<void> updateUserPhoto({
+    required int userId,
+    required String photoPath,
+  }) async {
+    final db = await _getDB();
+    await db.update(
+      'users',
+      {'photo_path': photoPath},
+      where: 'id = ?',
+      whereArgs: [userId],
+    );
+
+    print("📸 FOTO PROFILE UPDATE: user=$userId path=$photoPath");
+  }
+
+  static Future<Map<String, dynamic>?> getUserById(int userId) async {
+    final db = await _getDB();
+    final res = await db.query(
+      'users',
+      where: 'id = ?',
+      whereArgs: [userId],
+      limit: 1,
+    );
+    return res.isNotEmpty ? res.first : null;
   }
 }

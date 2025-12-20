@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../home/home_page.dart';
 import '../../database/db_helper.dart';
-import '../../services/profile_service.dart';
+import '../../services/profile_local_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -242,12 +242,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           password: _passwordController.text,
                         );
 
-                        await ProfileService.createProfile(
-                          userId: userId,
-                          username: _nameController.text,
-                          fullname: _fullnameController.text,
-                          jobTitle: "Pelamar",
-                        );
 
                         List<String> skills = _skill.text.split(',');
                         for (var s in skills) {
