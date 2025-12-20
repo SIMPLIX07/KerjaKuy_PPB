@@ -25,16 +25,29 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  List<Map<String, dynamic>> _lamaran = [];
+  bool _loadingLamaran = true;
+
   Map<String, dynamic>? rekomendasi;
   bool loadingRekom = true;
   List<Map<String, dynamic>> _berita = [];
   bool _loadingBerita = true;
+
+  Future<void> _loadLamaran() async {
+    final data = await DBHelper.getLamaranByUserId(widget.userId);
+
+    setState(() {
+      _lamaran = data.take(2).toList();
+      _loadingLamaran = false;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _loadRekomendasi();
     _loadBerita();
+    _loadLamaran();
   }
 
   Future<void> _loadBerita() async {
@@ -422,18 +435,42 @@ class _HomeTabState extends State<HomeTab> {
               ),
               child: Column(
                 children: [
-                  buildLamaranCard(
-                    statusColor: Color(0xFF28AE9D),
-                    icon: Icons.airplanemode_active,
-                    text1: "Selamat anda diterima di perusahaan",
-                    text2: "PT Garuda Indonesia",
-                  ),
-                  buildLamaranCard(
-                    statusColor: Colors.red,
-                    icon: Icons.airplanemode_active,
-                    text1: "Mohon Maaf anda belum diterima",
-                    text2: "Qatar Airways",
-                  ),
+                  _loadingLamaran
+                      ? const CircularProgressIndicator()
+                      : _lamaran.isEmpty
+                      ? const Text(
+                          "Belum ada lamaran",
+                          style: TextStyle(color: Colors.white),
+                        )
+                      : Column(
+                          children: _lamaran.map((item) {
+                            final status = item['status'];
+                            final namaPerusahaan = item['namaPerusahaan'];
+                            final posisi = item['posisi'];
+
+                            Color statusColor;
+                            String text1;
+
+                            if (status == 'Diterima') {
+                              statusColor = const Color(0xFF28AE9D);
+                              text1 = "Selamat, Anda diterima sebagai $posisi";
+                            } else if (status == 'Ditolak') {
+                              statusColor = Colors.red;
+                              text1 = "Mohon maaf, Anda belum diterima";
+                            } else {
+                              statusColor = Colors.orange;
+                              text1 = "Lamaran Anda sedang diproses";
+                            }
+
+                            return buildLamaranCard(
+                              statusColor: statusColor,
+                              icon: Icons.work_outline,
+                              text1: text1,
+                              text2: namaPerusahaan,
+                            );
+                          }).toList(),
+                        ),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
