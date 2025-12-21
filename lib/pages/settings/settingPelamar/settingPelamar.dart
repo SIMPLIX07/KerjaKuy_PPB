@@ -3,6 +3,7 @@ import 'package:flutter_application_1/database/db_helper.dart';
 import 'dart:io';
 import 'package:flutter_application_1/pages/cvPelamar/buatCV.dart';
 import 'package:flutter_application_1/pages/cvPelamar/cvPelamar.dart';
+import 'package:flutter_application_1/pages/pilihRole/pilihRole.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../services/profile_local_service.dart';
 
@@ -255,7 +256,15 @@ class _ProfilePageState extends State<ProfilePage> {
                     _menuTile(
                       icon: Icons.logout,
                       text: "Logout",
-                      onTap: () => print("Logout tapped"),
+                      onTap: () {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const LandingPage(),
+                          ),
+                          (route) => false,
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 25),

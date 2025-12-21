@@ -51,7 +51,8 @@ class DBHelper {
           CREATE TABLE berita (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             deskripsi TEXT,
-            tanggal TEXT
+            tanggal TEXT,
+            image_path TEXT
           )
         ''');
 
@@ -153,15 +154,15 @@ class DBHelper {
         ''');
 
         await db.execute('''
-    INSERT INTO berita (deskripsi, tanggal) VALUES
-    ('Klaim Pengangguran AS Naik Tipis, dekati posisi terendah dalam sejarah', '23 Desember 2025'),
-    ('Gaji Minimum Regional Jakarta Resmi Naik Tahun Ini', '21 Desember 2025'),
-    ('LinkedIn Rilis Fitur Baru Untuk Pencari Kerja', '20 Desember 2025'),
-    ('Tips Lolos Wawancara HRD 2025, Simak Berikut Ini', '18 Desember 2025'),
-    ('Lowongan Developer Meningkat 45% Tahun Ini', '16 Desember 2025'),
-    ('Cara Memilih Pekerjaan yang Sesuai Passion', '15 Desember 2025'),
-    ('Fresh Graduate Banyak Dicari di Industri Digital 2025', '14 Desember 2025'),
-    ('5 Skill yang Wajib Dimiliki untuk Karir Masa Depan', '12 Desember 2025');
+    INSERT INTO berita (deskripsi, tanggal, image_path) VALUES
+    ('Klaim Pengangguran AS Naik Tipis, dekati posisi terendah dalam sejarah', '23 Desember 2025', 'lib/assets/berita/berita1.jpg'),
+    ('Gaji Minimum Regional Jakarta Resmi Naik Tahun Ini', '21 Desember 2025','lib/assets/berita/berita2.jpg'),
+    ('LinkedIn Rilis Fitur Baru Untuk Pencari Kerja', '20 Desember 2025','lib/assets/berita/berita3.jpg'),
+    ('Tips Lolos Wawancara HRD 2025, Simak Berikut Ini', '18 Desember 2025','lib/assets/berita/berita4.jpg'),
+    ('Lowongan Developer Meningkat 45% Tahun Ini', '16 Desember 2025','lib/assets/berita/berita5.jpg'),
+    ('Cara Memilih Pekerjaan yang Sesuai Passion', '15 Desember 2025','lib/assets/berita/berita6.jpg'),
+    ('Fresh Graduate Banyak Dicari di Industri Digital 2025', '14 Desember 2025','lib/assets/berita/berita7.jpg'),
+    ('5 Skill yang Wajib Dimiliki untuk Karir Masa Depan', '12 Desember 2025','lib/assets/berita/berita8.jpg');
   ''');
       },
       onOpen: (db) async {
@@ -901,15 +902,15 @@ class DBHelper {
     if (status == 'accepted') {
       // Ambil nama posisi dari lowongan tersebut
       List<Map<String, dynamic>> lowongan = await db.query(
-        'lowongan', 
-        columns: ['posisi'], 
-        where: 'id = ?', 
-        whereArgs: [lowonganId]
+        'lowongan',
+        columns: ['posisi'],
+        where: 'id = ?',
+        whereArgs: [lowonganId],
       );
 
       if (lowongan.isNotEmpty) {
         String posisiBaru = lowongan.first['posisi'];
-        
+
         // Update job_title di tabel users
         await db.update(
           'users',
@@ -920,6 +921,7 @@ class DBHelper {
       }
     }
   }
+
   // Kategori lowongan
   static Future<List<Map<String, dynamic>>> getKategoriKaryawan(
     int perusahaanId,
@@ -983,20 +985,20 @@ class DBHelper {
   static Future<Map<String, dynamic>?> getUserData(int userId) async {
     final db = await _getDB();
     List<Map<String, dynamic>> results = await db.query(
-      'users', 
-      where: 'id = ?', 
-      whereArgs: [userId]
+      'users',
+      where: 'id = ?',
+      whereArgs: [userId],
     );
     return results.isNotEmpty ? results.first : null;
   }
 
-static Future<void> updateUserJobTitle(int userId, String newTitle) async {
-  final db = await _getDB();
-  await db.update(
-    'users',
-    {'pekerjaan': newTitle}, 
-    where: 'id = ?', 
-    whereArgs: [userId],
-  );
-}
+  static Future<void> updateUserJobTitle(int userId, String newTitle) async {
+    final db = await _getDB();
+    await db.update(
+      'users',
+      {'pekerjaan': newTitle},
+      where: 'id = ?',
+      whereArgs: [userId],
+    );
+  }
 }

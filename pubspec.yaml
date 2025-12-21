@@ -77,6 +77,7 @@ flutter:
     - lib/assets/landingpage.png
     - lib/assets/KerjaKuy.png
     - lib/assets/header_bg.jpg
+    - lib/assets/berita/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
