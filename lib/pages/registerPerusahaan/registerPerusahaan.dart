@@ -51,24 +51,14 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // 4. Fungsi yang memeriksa apakah semua field sudah diisi
   void _checkFormValidity() {
-    final name = _nameController.text.trim();
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
-    final confirmPassword = _confirmPasswordController.text.trim();
-    final alamat = _alamat.text.trim();
-    final deskripsi = _deskripsi.text.trim();
-    final noTelepon = _noTelepon.text.trim();
-
-    // Logika validitas: semua field harus tidak kosong (isNotEmpty)
     final isValid =
-        (name.isNotEmpty &&
-            email.isNotEmpty &&
-            password.isNotEmpty &&
-            confirmPassword.isNotEmpty &&
-            alamat.isNotEmpty &&
-            deskripsi.isNotEmpty &&
-            noTelepon.isNotEmpty) &&
-        password == confirmPassword;
+        _nameController.text.isNotEmpty &&
+        _emailController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty &&
+        _confirmPasswordController.text.isNotEmpty &&
+        _alamat.text.isNotEmpty &&
+        _deskripsi.text.isNotEmpty &&
+        _noTelepon.text.isNotEmpty;
 
     // Hanya panggil setState jika status validitas berubah
     if (isValid != _isFormValid) {
@@ -252,46 +242,104 @@ class _RegisterPageState extends State<RegisterPage> {
               ElevatedButton(
                 onPressed: _isFormValid
                     ? () async {
-                        int userId = await DBHelper.registerPerusahaan(
-                          namaPerusahaan: _nameController.text,
-                          email: _emailController.text,
-                          password: _passwordController.text,
-                          deskripsi: _deskripsi.text,
-                          alamat: _alamat.text,
-                          noTelepon: _noTelepon.text,
-                        );
+                        // 1. VALIDASI FRONT-END (BAGIAN ANDA)
 
-                        // PRINT DATA
-                        print("=== DATA PERUSAHAAN BERHASIL DIKIRIM ===");
-                        print("ID Perusahaan   : $userId");
-                        print("Nama Perusahaan : ${_nameController.text}");
-                        print("Email           : ${_emailController.text}");
-                        print("Password        : ${_passwordController.text}");
-                        print("Alamat          : ${_alamat.text}");
-                        print("Deskripsi       : ${_deskripsi.text}");
-                        print("No Telepon      : ${_noTelepon.text}");
-                        print("========================================");
-
-                        // NOTIFIKASI
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Pendaftaran berhasil"),
-                            backgroundColor: Colors.green,
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
-
-                        // NAVIGASI KE HOME PERUSAHAAN
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HomePagePerusahaan(
-                              perusahaanId: userId, 
-                              namaPerusahaan:
-                                  _nameController.text,
+                        // Cek Format Email
+                        if (!_emailController.text.contains('@') ||
+                            !_emailController.text.contains('.')) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "Format email salah (harus ada @ dan .)",
+                              ),
+                              backgroundColor: Colors.red,
                             ),
-                          ),
-                        );
+                          );
+                          return;
+                        }
+
+                        // Cek Panjang Password
+                        if (_passwordController.text.length < 8) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "Password minimal harus 8 karakter!",
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        // Cek Kesamaan Password
+                        if (_passwordController.text !=
+                            _confirmPasswordController.text) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Konfirmasi password tidak cocok!"),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        // 2. PROSES DATABASE (DIBUNGKUS TRY-CATCH)
+                        try {
+                          // Memanggil fungsi register milik teman Anda
+                          int userId = await DBHelper.registerPerusahaan(
+                            namaPerusahaan: _nameController.text,
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            deskripsi: _deskripsi.text,
+                            alamat: _alamat.text,
+                            noTelepon: _noTelepon.text,
+                          );
+
+                          // --- KODE LOG PRINT DARI TEMAN ANDA ---
+                          print("=== DATA PERUSAHAAN BERHASIL DIKIRIM ===");
+                          print("ID Perusahaan   : $userId");
+                          print("Nama Perusahaan : ${_nameController.text}");
+                          print("Email           : ${_emailController.text}");
+                          print(
+                            "Password        : ${_passwordController.text}",
+                          );
+                          print("Alamat          : ${_alamat.text}");
+                          print("Deskripsi       : ${_deskripsi.text}");
+                          print("No Telepon      : ${_noTelepon.text}");
+                          print("========================================");
+
+                          // NOTIFIKASI BERHASIL
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Pendaftaran berhasil"),
+                              backgroundColor: Colors.green,
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+
+                          // NAVIGASI KE HOME PERUSAHAAN
+                          if (mounted) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HomePagePerusahaan(
+                                  perusahaanId: userId,
+                                  namaPerusahaan: _nameController.text,
+                                ),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          print("Database Error: $e");
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "Email atau Nama Perusahaan sudah terdaftar!",
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
                       }
                     : null,
                 style: ElevatedButton.styleFrom(

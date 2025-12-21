@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../home/home_page.dart';
 import '../../database/db_helper.dart';
 import '../../services/profile_local_service.dart';
+import 'package:flutter/services.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -48,22 +49,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // 4. Fungsi yang memeriksa apakah semua field sudah diisi
   void _checkFormValidity() {
-    final name = _nameController.text.trim();
-    final fullname = _fullnameController.text.trim();
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
-    final confirmPassword = _confirmPasswordController.text.trim();
-    final skill = _skill.text.trim();
-
-    // Logika validitas: semua field harus tidak kosong (isNotEmpty)
     final isValid =
-        (name.isNotEmpty &&
-            fullname.isNotEmpty &&
-            email.isNotEmpty &&
-            password.isNotEmpty &&
-            confirmPassword.isNotEmpty &&
-            skill.isNotEmpty) &&
-        password == confirmPassword;
+        _nameController.text.isNotEmpty &&
+        _fullnameController.text.isNotEmpty &&
+        _emailController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty &&
+        _confirmPasswordController.text.isNotEmpty &&
+        _skill.text.isNotEmpty;
 
     // Hanya panggil setState jika status validitas berubah
     if (isValid != _isFormValid) {
@@ -172,6 +164,9 @@ class _RegisterPageState extends State<RegisterPage> {
               _buildTextLabel("Nama Lengkap"),
               TextField(
                 controller: _fullnameController, // <-- Hubungkan controller
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
+                ],
                 decoration: InputDecoration(
                   hintText: "Masukkan nama anda disini.",
                   border: InputBorder.none,
@@ -235,29 +230,122 @@ class _RegisterPageState extends State<RegisterPage> {
                 // 5. onPressed hanya aktif jika form valid (_isFormValid == true)
                 onPressed: _isFormValid
                     ? () async {
-                        int userId = await DBHelper.registerUser(
-                          fullname: _fullnameController.text,
-                          username: _nameController.text,
-                          email: _emailController.text,
-                          password: _passwordController.text,
-                        );
-
-
-                        List<String> skills = _skill.text.split(',');
-                        for (var s in skills) {
-                          await DBHelper.tambahSkill(userId, s.trim());
-                        }
-                        // Logika pendaftaran dan navigasi
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HomePage(
-                              username: _nameController.text,
-                              userId: userId,
-                              jobTitle: "Pelamar",
+                        // 1. Cek Username (Tidak boleh ada spasi)
+                        if (_nameController.text.contains(' ')) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "Username tidak boleh mengandung spasi!",
+                              ),
+                              backgroundColor: Colors.red,
                             ),
-                          ),
+                          );
+                          return; // Berhenti di sini, jangan lanjut ke database
+                        }
+
+                        final charRegExp = RegExp(
+                          r'[!@#<>?":_`~;[\]\\|=+)(*&^%/-]',
                         );
+                        if (charRegExp.hasMatch(_fullnameController.text)) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "Nama Lengkap tidak boleh mengandung karakter spesial!",
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        // 2. Cek Email (Harus ada @ dan .)
+                        if (!_emailController.text.contains('@') ||
+                            !_emailController.text.contains('.')) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "Format email tidak valid (harus ada @ dan .)",
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        // 3. Cek Panjang Password
+                        if (_passwordController.text.length < 8) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "Password harus lebih dari 8 karakter!",
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        // 4. Cek Konfirmasi Password
+                        if (_passwordController.text !=
+                            _confirmPasswordController.text) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Konfirmasi password tidak cocok!"),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        // --- JIKA SEMUA LOLOS CEK DI ATAS, BARU MASUK KE DATABASE ---
+                        try {
+                          int userId = await DBHelper.registerUser(
+                            fullname: _fullnameController.text.trim(),
+                            username: _nameController.text.trim(),
+                            email: _emailController.text.trim(),
+                            password: _passwordController.text.trim(),
+                          );
+
+                          List<String> skills = _skill.text.split(',');
+                          for (var s in skills) {
+                            if (s.trim().isNotEmpty) {
+                              await DBHelper.tambahSkill(userId, s.trim());
+                            }
+                          }
+
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Registrasi Berhasil! Selamat berjuang mencari kerja.",
+                                ),
+                                backgroundColor: Colors.green,
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          }
+
+                          if (mounted) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HomePage(
+                                  username: _nameController.text.trim(),
+                                  userId: userId,
+                                  jobTitle: "Pelamar",
+                                ),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "Registrasi Gagal. Username/Email mungkin sudah terdaftar.",
+                              ),
+                            ),
+                          );
+                        }
                       }
                     : null, // Jika tidak valid, tombol dinonaktifkan
 

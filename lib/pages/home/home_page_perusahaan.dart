@@ -8,6 +8,7 @@ import 'tabsPerusahaan/jadwal_wawancara_perusahaan.dart';
 class HomePagePerusahaan extends StatefulWidget {
   final int perusahaanId;
   final String namaPerusahaan;
+  
   const HomePagePerusahaan({
     super.key,
     required this.namaPerusahaan,
@@ -22,6 +23,7 @@ class _HomePagePerusahaanState extends State<HomePagePerusahaan>
     with TickerProviderStateMixin {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
+
 
   @override
   void dispose() {
