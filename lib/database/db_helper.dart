@@ -136,6 +136,24 @@ class DBHelper {
             FOREIGN KEY(perusahaan_id) REFERENCES perusahaan(id)
           )
         ''');
+        await db.execute('''
+          CREATE TABLE chat_room (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER,
+          perusahaan_id INTEGER,
+          last_message TEXT,
+          updated_at TEXT
+        )
+        ''');
+        await db.execute('''
+            CREATE TABLE chat_message (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            room_id INTEGER,
+            sender_type TEXT, -- 'user' / 'perusahaan'
+            message TEXT,
+            created_at TEXT
+          )
+        ''');
 
         await db.execute('''
           CREATE TABLE wawancara (
@@ -156,20 +174,20 @@ class DBHelper {
         ''');
 
         await db.execute('''
-    INSERT INTO berita (deskripsi, tanggal, image_path) VALUES
-    ('Klaim Pengangguran AS Naik Tipis, dekati posisi terendah dalam sejarah', '23 Desember 2025', 'lib/assets/berita/berita1.jpg'),
-    ('Gaji Minimum Regional Jakarta Resmi Naik Tahun Ini', '21 Desember 2025','lib/assets/berita/berita2.jpg'),
-    ('LinkedIn Rilis Fitur Baru Untuk Pencari Kerja', '20 Desember 2025','lib/assets/berita/berita3.jpg'),
-    ('Tips Lolos Wawancara HRD 2025, Simak Berikut Ini', '18 Desember 2025','lib/assets/berita/berita4.jpg'),
-    ('Lowongan Developer Meningkat 45% Tahun Ini', '16 Desember 2025','lib/assets/berita/berita5.jpg'),
-    ('Cara Memilih Pekerjaan yang Sesuai Passion', '15 Desember 2025','lib/assets/berita/berita6.jpg'),
-    ('Fresh Graduate Banyak Dicari di Industri Digital 2025', '14 Desember 2025','lib/assets/berita/berita7.jpg'),
-    ('5 Skill yang Wajib Dimiliki untuk Karir Masa Depan', '12 Desember 2025','lib/assets/berita/berita8.jpg');
-  ''');
+          INSERT INTO berita (deskripsi, tanggal, image_path) VALUES
+          ('Klaim Pengangguran AS Naik Tipis, dekati posisi terendah dalam sejarah', '23 Desember 2025', 'lib/assets/berita/berita1.jpg'),
+          ('Gaji Minimum Regional Jakarta Resmi Naik Tahun Ini', '21 Desember 2025','lib/assets/berita/berita2.jpg'),
+          ('LinkedIn Rilis Fitur Baru Untuk Pencari Kerja', '20 Desember 2025','lib/assets/berita/berita3.jpg'),
+          ('Tips Lolos Wawancara HRD 2025, Simak Berikut Ini', '18 Desember 2025','lib/assets/berita/berita4.jpg'),
+          ('Lowongan Developer Meningkat 45% Tahun Ini', '16 Desember 2025','lib/assets/berita/berita5.jpg'),
+          ('Cara Memilih Pekerjaan yang Sesuai Passion', '15 Desember 2025','lib/assets/berita/berita6.jpg'),
+          ('Fresh Graduate Banyak Dicari di Industri Digital 2025', '14 Desember 2025','lib/assets/berita/berita7.jpg'),
+          ('5 Skill yang Wajib Dimiliki untuk Karir Masa Depan', '12 Desember 2025','lib/assets/berita/berita8.jpg');
+      ''');
       },
       onOpen: (db) async {
-        await insertDummyLowonganIfEmpty(db);
-        await seedTelkomIfEmpty(db);
+        // await insertDummyLowonganIfEmpty(db);
+        // await seedTelkomIfEmpty(db);
       },
     );
   }
@@ -338,16 +356,25 @@ class DBHelper {
     List<String> skills = await getSkillUser(userId);
     if (skills.isEmpty) return null;
 
-    String likeQuery = skills.map((_) => "kategori LIKE ?").join(" OR ");
+    String likeQuery = skills.map((_) => "l.kategori LIKE ?").join(" OR ");
     List<String> likeArgs = skills.map((s) => "%$s%").toList();
 
-    final res = await db.query(
-      'lowongan',
-      where: likeQuery,
-      whereArgs: likeArgs,
-      orderBy: "RANDOM()",
-      limit: 1,
-    );
+    final res = await db.rawQuery('''
+    SELECT 
+      l.*,
+      p.namaPerusahaan AS nama_perusahaan,
+      p.photo_profile,
+      p.photo_background,
+      p.email,
+      p.alamat,
+      p.noTelepon,
+      p.deskripsi
+    FROM lowongan l
+    JOIN perusahaan p ON p.id = l.perusahaan_id
+    WHERE $likeQuery
+    ORDER BY RANDOM()
+    LIMIT 1
+    ''', likeArgs);
 
     return res.isNotEmpty ? res.first : null;
   }
@@ -1058,6 +1085,99 @@ class DBHelper {
       data,
       where: 'id = ?',
       whereArgs: [perusahaanId],
+    );
+  }
+
+  static Future<int> createOrGetChatRoom({
+    required int userId,
+    required int perusahaanId,
+  }) async {
+    final db = await _getDB();
+
+    final existing = await db.query(
+      'chat_room',
+      where: 'user_id = ? AND perusahaan_id = ?',
+      whereArgs: [userId, perusahaanId],
+    );
+
+    if (existing.isNotEmpty) {
+      return existing.first['id'] as int;
+    }
+
+    return await db.insert('chat_room', {
+      'user_id': userId,
+      'perusahaan_id': perusahaanId,
+      'last_message': '',
+      'updated_at': DateTime.now().toIso8601String(),
+    });
+  }
+
+  static Future<List<Map<String, dynamic>>> getChatListByUser(
+    int userId,
+  ) async {
+    final db = await _getDB();
+
+    return await db.rawQuery(
+      '''
+    SELECT 
+      c.id AS room_id,
+      p.id AS perusahaan_id,
+      p.namaPerusahaan,
+      p.photo_profile,
+      c.last_message,
+      c.updated_at
+
+    FROM chat_room c
+    JOIN perusahaan p ON p.id = c.perusahaan_id
+    WHERE c.user_id = ?
+    ORDER BY c.updated_at DESC
+  ''',
+      [userId],
+    );
+  }
+
+  static Future<void> insertChatMessage({
+    required int roomId,
+    required String senderType,
+    required String message,
+  }) async {
+    final db = await _getDB();
+
+    await db.insert('chat_message', {
+      'room_id': roomId,
+      'sender_type': senderType,
+      'message': message,
+      'created_at': DateTime.now().toIso8601String(),
+    });
+
+    await db.update(
+      'chat_room',
+      {'last_message': message, 'updated_at': DateTime.now().toIso8601String()},
+      where: 'id = ?',
+      whereArgs: [roomId],
+    );
+  }
+
+  static Future<List<Map<String, dynamic>>> getChatListByPerusahaan(
+    int perusahaanId,
+  ) async {
+    final db = await _getDB();
+
+    return await db.rawQuery(
+      '''
+    SELECT 
+      c.id AS room_id,
+      u.id AS user_id,
+      u.fullname,
+      u.photo_path,
+      c.last_message,
+      c.updated_at
+    FROM chat_room c
+    JOIN users u ON u.id = c.user_id
+    WHERE c.perusahaan_id = ?
+    ORDER BY c.updated_at DESC
+    ''',
+      [perusahaanId],
     );
   }
 }

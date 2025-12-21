@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/chat/chatPage.dart';
+import 'package:flutter_application_1/detailPerusahaan/detailPerusahaan.dart';
 import '../../../../database/db_helper.dart';
 import 'package:flutter_application_1/pages/settings/settingPelamar/settingPelamar.dart';
 import '../../../detailLowongan/detail_lowongan.dart';
@@ -213,18 +215,47 @@ class _HomeTabState extends State<HomeTab> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 90,
-                height: 60,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20),
-                    bottomLeft: Radius.circular(20),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => DetailPerusahaanPage(
+                        perusahaanId: data['perusahaan_id'],
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  width: 90,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(20),
+                      bottomLeft: Radius.circular(20),
+                    ),
+                    border: Border.all(color: const Color(0xFF28AE9D)),
+                    image:
+                        data['photo_profile'] != null &&
+                            data['photo_profile'].toString().isNotEmpty
+                        ? DecorationImage(
+                            image: FileImage(File(data['photo_profile'])),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
                   ),
-                  border: Border.all(color: Color(0xFF28AE9D)),
+                  child:
+                      (data['photo_profile'] == null ||
+                          data['photo_profile'].toString().isEmpty)
+                      ? const Icon(
+                          Icons.business,
+                          size: 40,
+                          color: Color(0xFF28AE9D),
+                        )
+                      : null,
                 ),
-                child: Center(child: Icon(Icons.work, size: 40)),
               ),
+
               SizedBox(width: 15),
               Expanded(
                 child: Column(
@@ -414,7 +445,17 @@ class _HomeTabState extends State<HomeTab> {
                       ],
                     ),
                   ),
-                  Icon(Icons.notifications),
+                  IconButton(
+                    icon: const Icon(Icons.message),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ChatListPage(userId: widget.userId),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/chat/chatPerusahaanPage.dart';
 import 'package:flutter_application_1/database/db_helper.dart';
 import 'package:flutter_application_1/pages/settings/settingPelamar/settingPerusahaan/settingPerusahaan.dart';
 import '../../detailPelamar/detailPelamar.dart';
@@ -122,57 +123,79 @@ class _HomePerusahaanState extends State<HomePerusahaan> {
                     }
                   },
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey.shade300,
-                          image:
-                              perusahaan?['photo_profile'] != null &&
-                                  perusahaan!['photo_profile']
-                                      .toString()
-                                      .isNotEmpty
-                              ? DecorationImage(
-                                  image: FileImage(
-                                    File(perusahaan!['photo_profile']),
-                                  ),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
-                        ),
-                        child:
-                            (perusahaan?['photo_profile'] == null ||
-                                perusahaan!['photo_profile'].toString().isEmpty)
-                            ? const Icon(
-                                Icons.business,
-                                size: 30,
-                                color: Colors.white,
-                              )
-                            : null,
-                      ),
-
-                      const SizedBox(width: 12),
-
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
                         children: [
-                          Text(
-                            widget.namaPerusahaan,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                          Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey.shade300,
+                              image:
+                                  perusahaan?['photo_profile'] != null &&
+                                      perusahaan!['photo_profile']
+                                          .toString()
+                                          .isNotEmpty
+                                  ? DecorationImage(
+                                      image: FileImage(
+                                        File(perusahaan!['photo_profile']),
+                                      ),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : null,
                             ),
+                            child:
+                                (perusahaan?['photo_profile'] == null ||
+                                    perusahaan!['photo_profile']
+                                        .toString()
+                                        .isEmpty)
+                                ? const Icon(
+                                    Icons.business,
+                                    size: 30,
+                                    color: Colors.white,
+                                  )
+                                : null,
                           ),
-                          const Text(
-                            "Pemilik Perusahaan",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black54,
-                            ),
+
+                          const SizedBox(width: 12),
+
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.namaPerusahaan,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Text(
+                                "Pemilik Perusahaan",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
+                      ),
+
+                      /// ICON MESSAGE 🔥
+                      IconButton(
+                        icon: const Icon(Icons.message),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ChatListPerusahaanPage(
+                                perusahaanId: widget.perusahaanId,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
