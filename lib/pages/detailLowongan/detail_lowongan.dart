@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../../database/db_helper.dart';
 
@@ -172,58 +174,107 @@ class DetailLowonganPage extends StatelessWidget {
           Container(
             height: 200,
             width: double.infinity,
-            decoration: BoxDecoration(color: Colors.grey.shade300),
-            child: Stack(
-              children: [
-                // BACK BUTTON
-                Positioned(
-                  top: 40,
-                  left: 15,
-                  child: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.black),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ),
-                ),
+            child: FutureBuilder<Map<String, dynamic>?>(
+              future: DBHelper.getPerusahaanById(perusahaanId),
+              builder: (context, snapshot) {
+                final perusahaan = snapshot.data;
 
-                // COMPANY INFO
-                Positioned(
-                  bottom: 15,
-                  left: 20,
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 32,
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.business, size: 36),
+                return Stack(
+                  children: [
+                    // BACKGROUND FOTO
+                    Container(
+                      height: 200,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        image:
+                            perusahaan?['photo_background'] != null &&
+                                perusahaan!['photo_background']
+                                    .toString()
+                                    .isNotEmpty
+                            ? DecorationImage(
+                                image: FileImage(
+                                  File(perusahaan['photo_background']),
+                                ),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                        color: Colors.grey.shade300,
                       ),
-                      SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            namaPerusahaan,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
+                    ),
+
+                    // OVERLAY GELAP
+                    Container(
+                      height: 200,
+                      color: Colors.black.withOpacity(0.35),
+                    ),
+
+                    // BACK BUTTON
+                    Positioned(
+                      top: 40,
+                      left: 15,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.black,
                           ),
-                          Text(
-                            posisi,
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 18,
-                            ),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                    ),
+
+                    // INFO PERUSAHAAN
+                    Positioned(
+                      bottom: 15,
+                      left: 20,
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 32,
+                            backgroundColor: Colors.white,
+                            backgroundImage:
+                                perusahaan?['photo_profile'] != null &&
+                                    perusahaan!['photo_profile']
+                                        .toString()
+                                        .isNotEmpty
+                                ? FileImage(File(perusahaan['photo_profile']))
+                                : null,
+                            child:
+                                perusahaan?['photo_profile'] == null ||
+                                    perusahaan!['photo_profile']
+                                        .toString()
+                                        .isEmpty
+                                ? const Icon(Icons.business, size: 36)
+                                : null,
+                          ),
+                          const SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                namaPerusahaan,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                posisi,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-              ],
+                    ),
+                  ],
+                );
+              },
             ),
           ),
 

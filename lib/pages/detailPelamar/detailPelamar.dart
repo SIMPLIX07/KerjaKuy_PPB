@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../../database/db_helper.dart';
 import '../detailCV/detailCV.dart';
@@ -58,11 +60,27 @@ class _DetailPelamarPageState extends State<DetailPelamarPage> {
         children: [
           // HEADER
           Container(
-            height: 200,
+            height: 220,
             width: double.infinity,
-            decoration: BoxDecoration(color: Colors.grey.shade300),
+            decoration: BoxDecoration(
+              image:
+                  lowonganDetail!["photo_background"] != null &&
+                      lowonganDetail!["photo_background"].toString().isNotEmpty
+                  ? DecorationImage(
+                      image: FileImage(
+                        File(lowonganDetail!["photo_background"]),
+                      ),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
+              color: Colors.grey.shade300,
+            ),
             child: Stack(
               children: [
+                // Overlay gelap
+                Container(color: Colors.black.withOpacity(0.35)),
+
+                // BACK BUTTON
                 Positioned(
                   top: 40,
                   left: 15,
@@ -75,16 +93,40 @@ class _DetailPelamarPageState extends State<DetailPelamarPage> {
                   ),
                 ),
 
+                // PROFILE + INFO
                 Positioned(
                   bottom: 15,
                   left: 20,
                   child: Row(
                     children: [
-                      const CircleAvatar(
-                        radius: 32,
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.business, size: 36),
+                      Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          image:
+                              lowonganDetail!["photo_profile"] != null &&
+                                  lowonganDetail!["photo_profile"]
+                                      .toString()
+                                      .isNotEmpty
+                              ? DecorationImage(
+                                  image: FileImage(
+                                    File(lowonganDetail!["photo_profile"]),
+                                  ),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
+                        ),
+                        child:
+                            (lowonganDetail!["photo_profile"] == null ||
+                                lowonganDetail!["photo_profile"]
+                                    .toString()
+                                    .isEmpty)
+                            ? const Icon(Icons.business, size: 36)
+                            : null,
                       ),
+
                       const SizedBox(width: 12),
 
                       Column(
@@ -95,11 +137,15 @@ class _DetailPelamarPageState extends State<DetailPelamarPage> {
                             style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                           Text(
                             widget.namaLowongan,
-                            style: const TextStyle(fontSize: 18),
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: Colors.white70,
+                            ),
                           ),
                         ],
                       ),

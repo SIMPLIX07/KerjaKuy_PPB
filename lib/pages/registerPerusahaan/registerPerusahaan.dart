@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../home/home_page.dart';
 import '../../database/db_helper.dart';
 import '../../pages/home/home_page_perusahaan.dart';
@@ -11,6 +14,27 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  File? _photoProfile;
+  File? _photoBackground;
+
+  Future<void> _pickImage(bool isProfile) async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+
+    if (picked != null) {
+      setState(() {
+        if (isProfile) {
+          _photoProfile = File(picked.path);
+        } else {
+          _photoBackground = File(picked.path);
+        }
+      });
+    }
+  }
+
   // 1. Controller untuk setiap TextField
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -224,6 +248,56 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               Divider(),
 
+              _buildTextLabel("Foto Profile Perusahaan"),
+              GestureDetector(
+                onTap: () => _pickImage(true),
+                child: Container(
+                  height: 120,
+                  width: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey.shade200,
+                    image: _photoProfile != null
+                        ? DecorationImage(
+                            image: FileImage(_photoProfile!),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                  ),
+                  child: _photoProfile == null
+                      ? Icon(Icons.camera_alt, size: 40, color: Colors.grey)
+                      : null,
+                ),
+              ),
+
+              _buildTextLabel("Foto Background Perusahaan"),
+              GestureDetector(
+                onTap: () => _pickImage(false),
+                child: Container(
+                  height: 120,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(10),
+                    image: _photoBackground != null
+                        ? DecorationImage(
+                            image: FileImage(_photoBackground!),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                  ),
+                  child: _photoBackground == null
+                      ? Center(
+                          child: Icon(
+                            Icons.camera_alt,
+                            size: 40,
+                            color: Colors.grey,
+                          ),
+                        )
+                      : null,
+                ),
+              ),
+
               // Konfirmasi Kata Sandi
               _buildTextLabel("NoTelepon"),
               TextField(
@@ -293,6 +367,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             deskripsi: _deskripsi.text,
                             alamat: _alamat.text,
                             noTelepon: _noTelepon.text,
+                            photoProfile: _photoProfile?.path,
+                            photoBackground: _photoBackground?.path,
                           );
 
                           // --- KODE LOG PRINT DARI TEMAN ANDA ---

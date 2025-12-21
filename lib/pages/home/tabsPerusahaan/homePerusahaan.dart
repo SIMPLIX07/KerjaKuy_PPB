@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/database/db_helper.dart';
+import 'package:flutter_application_1/pages/settings/settingPelamar/settingPerusahaan/settingPerusahaan.dart';
 import '../../detailPelamar/detailPelamar.dart';
 import '../../buatLowongan/buatLowongan.dart';
 
@@ -18,12 +21,22 @@ class HomePerusahaan extends StatefulWidget {
 }
 
 class _HomePerusahaanState extends State<HomePerusahaan> {
+  Map<String, dynamic>? perusahaan;
   List<Map<String, dynamic>> lowongan = [];
+
+  Future<void> _loadPerusahaan() async {
+    final data = await DBHelper.getPerusahaanById(widget.perusahaanId);
+
+    setState(() {
+      perusahaan = data;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _loadLowongan();
+    _loadPerusahaan();
   }
 
   Future<void> _loadLowongan() async {
@@ -91,35 +104,78 @@ class _HomePerusahaanState extends State<HomePerusahaan> {
               // HEADER
               Padding(
                 padding: const EdgeInsets.only(left: 20),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        shape: BoxShape.circle,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProfilePage(
+                          perusahaanId: widget.perusahaanId,
+                          namaPerusahaan: widget.namaPerusahaan,
+                        ),
                       ),
-                      child: const Icon(Icons.business, size: 35),
-                    ),
-                    const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.namaPerusahaan,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                    );
+
+                    if (result == true) {
+                      _loadPerusahaan(); // 🔥 REFRESH FOTO
+                    }
+                  },
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey.shade300,
+                          image:
+                              perusahaan?['photo_profile'] != null &&
+                                  perusahaan!['photo_profile']
+                                      .toString()
+                                      .isNotEmpty
+                              ? DecorationImage(
+                                  image: FileImage(
+                                    File(perusahaan!['photo_profile']),
+                                  ),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
+                        ),
+                        child:
+                            (perusahaan?['photo_profile'] == null ||
+                                perusahaan!['photo_profile'].toString().isEmpty)
+                            ? const Icon(
+                                Icons.business,
+                                size: 30,
+                                color: Colors.white,
+                              )
+                            : null,
+                      ),
+
+                      const SizedBox(width: 12),
+
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.namaPerusahaan,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        const Text(
-                          "Pemilik Perusahaan",
-                          style: TextStyle(fontSize: 14, color: Colors.black54),
-                        ),
-                      ],
-                    ),
-                  ],
+                          const Text(
+                            "Pemilik Perusahaan",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
 

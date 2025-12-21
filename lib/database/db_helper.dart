@@ -34,7 +34,9 @@ class DBHelper {
             password TEXT,
             alamat TEXT,
             deskripsi Text,
-            noTelepon Text
+            noTelepon Text,
+            photo_profile TEXT,
+            photo_background TEXT
           )
         ''');
 
@@ -242,6 +244,8 @@ class DBHelper {
     required String alamat,
     required String deskripsi,
     required String noTelepon,
+    String? photoProfile,
+    String? photoBackground,
   }) async {
     final db = await _getDB();
     final userId = await db.insert('perusahaan', {
@@ -251,6 +255,8 @@ class DBHelper {
       'alamat': alamat,
       'deskripsi': deskripsi,
       'noTelepon': noTelepon,
+      'photo_profile': photoProfile,
+      'photo_background': photoBackground,
     });
 
     print(
@@ -553,10 +559,18 @@ class DBHelper {
   static Future<Map<String, dynamic>?> getDetailLowongan(int lowonganId) async {
     final db = await _getDB();
 
-    final result = await db.query(
-      'lowongan',
-      where: 'id = ?',
-      whereArgs: [lowonganId],
+    final result = await db.rawQuery(
+      '''
+    SELECT 
+      l.*,
+      p.namaPerusahaan,
+      p.photo_profile,
+      p.photo_background
+    FROM lowongan l
+    JOIN perusahaan p ON p.id = l.perusahaan_id
+    WHERE l.id = ?
+    ''',
+      [lowonganId],
     );
 
     if (result.isEmpty) return null;
@@ -999,6 +1013,51 @@ class DBHelper {
       {'pekerjaan': newTitle},
       where: 'id = ?',
       whereArgs: [userId],
+    );
+  }
+
+  static Future<Map<String, dynamic>?> getPerusahaanById(int id) async {
+    final db = await _getDB();
+    final res = await db.query(
+      'perusahaan',
+      where: 'id = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+
+    return res.isNotEmpty ? res.first : null;
+  }
+
+  static Future<void> updatePerusahaan({
+    required int perusahaanId,
+    required String email,
+    required String alamat,
+    required String deskripsi,
+    required String noTelepon,
+    String? photoProfile,
+    String? photoBackground,
+    String? password,
+  }) async {
+    final db = await _getDB();
+
+    final data = {
+      'email': email,
+      'alamat': alamat,
+      'deskripsi': deskripsi,
+      'noTelepon': noTelepon,
+      'photo_profile': photoProfile,
+      'photo_background': photoBackground,
+    };
+
+    if (password != null) {
+      data['password'] = password;
+    }
+
+    await db.update(
+      'perusahaan',
+      data,
+      where: 'id = ?',
+      whereArgs: [perusahaanId],
     );
   }
 }

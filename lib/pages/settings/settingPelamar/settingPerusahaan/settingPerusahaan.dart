@@ -1,38 +1,97 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+import 'package:flutter/material.dart';
+import 'package:flutter_application_1/database/db_helper.dart';
+import 'package:flutter_application_1/pages/pilihRole/pilihRole.dart';
+import 'package:flutter_application_1/pages/settings/settingPelamar/settingPerusahaan/edit_profile_perusahaan.dart';
+
+class ProfilePage extends StatefulWidget {
+  final int perusahaanId;
+  final String namaPerusahaan;
+
+  const ProfilePage({
+    super.key,
+    required this.perusahaanId,
+    required this.namaPerusahaan,
+  });
 
   @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  Map<String, dynamic>? perusahaan;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPerusahaan();
+  }
+
+  Future<void> _loadPerusahaan() async {
+    final data = await DBHelper.getPerusahaanById(widget.perusahaanId);
+    setState(() {
+      perusahaan = data;
+    });
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-            // Back icon + profile header
+            // Back
             Padding(
               padding: const EdgeInsets.only(top: 8, left: 8),
               child: Row(
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back_ios_new),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () => Navigator.pop(context, true),
                   ),
                 ],
               ),
             ),
 
-            // Photo + Name + Role
+            // Photo + Name
             Column(
               children: [
-                const Icon(Icons.account_circle, size: 110, color: Colors.grey),
+                Container(
+                  width: 110,
+                  height: 110,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey.shade300,
+                    image:
+                        perusahaan?['photo_profile'] != null &&
+                            perusahaan!['photo_profile'].toString().isNotEmpty
+                        ? DecorationImage(
+                            image: FileImage(
+                              File(perusahaan!['photo_profile']),
+                            ),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                  ),
+                  child:
+                      perusahaan?['photo_profile'] == null ||
+                          perusahaan!['photo_profile'].toString().isEmpty
+                      ? const Icon(
+                          Icons.business,
+                          size: 60,
+                          color: Colors.white,
+                        )
+                      : null,
+                ),
+
                 const SizedBox(height: 8),
-                const Text(
-                  "Telkom Indonesia",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  widget.namaPerusahaan,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 20),
               ],
@@ -50,7 +109,6 @@ class ProfilePage extends StatelessWidget {
                     BoxShadow(
                       blurRadius: 15,
                       color: Colors.black.withOpacity(0.05),
-                      spreadRadius: 1,
                     ),
                   ],
                 ),
@@ -69,50 +127,40 @@ class ProfilePage extends StatelessWidget {
                     _menuTile(
                       icon: Icons.edit,
                       text: "Edit Profile",
-                      onTap: () => print("Edit Profile tapped"),
+                      onTap: () async {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => EditProfilePerusahaanPage(
+                              perusahaanId: widget.perusahaanId,
+                              namaPerusahaan: widget.namaPerusahaan,
+                            ),
+                          ),
+                        );
+
+                        if (result == true) {
+                          _loadPerusahaan();
+                        }
+                      },
                     ),
+
                     _menuTile(
                       icon: Icons.info_outline,
-                      text: "Informasi Profile",
-                      onTap: () => print("Informasi Profile tapped"),
+                      text: "Informasi Perusahaan",
+                      onTap: () {},
                     ),
                     _menuTile(
-                      icon: Icons.settings_suggest,
+                      icon: Icons.settings,
                       text: "Pengaturan Aplikasi",
-                      onTap: () => print("Pengaturan Aplikasi tapped"),
+                      onTap: () {},
                     ),
                     _menuTile(
                       icon: Icons.logout,
                       text: "Logout",
-                      onTap: () => print("Logout tapped"),
+                      onTap: () => _logout(context),
                     ),
 
                     const SizedBox(height: 25),
-                    const Text(
-                      "TENTANG KITA",
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    _menuTile(
-                      icon: Icons.shield_outlined,
-                      text: "Kebijakan Privasi",
-                      onTap: () => print("Kebijakan Privasi tapped"),
-                    ),
-                    _menuTile(
-                      icon: Icons.check_circle_outline,
-                      text: "Visi Misi",
-                      onTap: () => print("Visi Misi tapped"),
-                    ),
-                    _menuTile(
-                      icon: Icons.headset_mic,
-                      text: "Pusat Bantuan",
-                      onTap: () => print("Pusat Bantuan tapped"),
-                    ),
-
-                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -123,14 +171,21 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // List tile custom
+  // Logout sama persis dengan pelamar
+  void _logout(BuildContext context) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => LandingPage()),
+      (route) => false,
+    );
+  }
+
   Widget _menuTile({
     required IconData icon,
     required String text,
     required VoidCallback onTap,
   }) {
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(vertical: 2),
       leading: Icon(icon, size: 26),
       title: Text(text),
       trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 18),
