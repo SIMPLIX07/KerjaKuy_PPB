@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/database/db_helper.dart';
+import 'package:flutter_application_1/detailPerusahaan/detailPerusahaan.dart';
+import 'package:flutter_application_1/pages/detailLowongan/detail_lowongan.dart';
 import 'package:flutter_application_1/pages/detailPekerjaan/detail_pekerjaan.dart';
+import 'package:flutter_application_1/pages/lowongan/lowongan_filter_page.dart';
 import 'dart:convert';
+import '../../../../widget/lowongan_card.dart';
 
 class LowonganTab extends StatefulWidget {
-  const LowonganTab({super.key});
+  final int userId;
+
+  LowonganTab({super.key, required this.userId});
 
   @override
   State<LowonganTab> createState() => _LowonganTabState();
 }
 
 class _LowonganTabState extends State<LowonganTab> {
+  final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> daftarLowongan = [];
 
   @override
@@ -20,7 +27,8 @@ class _LowonganTabState extends State<LowonganTab> {
   }
 
   Future<void> loadLowongan() async {
-    final data = await DBHelper.getLowongan();
+    final data = await DBHelper.getRekomendasiLowonganList(widget.userId);
+
     setState(() {
       daftarLowongan = data;
     });
@@ -37,6 +45,8 @@ class _LowonganTabState extends State<LowonganTab> {
     {'icon': Icons.account_balance_rounded, 'nama': 'Pemerintahan'},
     {'icon': Icons.video_camera_back, 'nama': 'Video Editor'},
     {'icon': Icons.campaign, 'nama': 'Digital Marketing'},
+    {'icon': Icons.design_services, 'nama': 'UI/UX'},
+    {'icon': Icons.phone_android, 'nama': 'Mobile Development'},
   ];
 
   @override
@@ -65,25 +75,29 @@ class _LowonganTabState extends State<LowonganTab> {
                       ],
                     ),
                     child: TextFormField(
+                      controller: _searchController,
+                      textInputAction: TextInputAction.search,
+                      onFieldSubmitted: (value) {
+                        if (value.trim().isEmpty) return;
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => LowonganFilterPage(
+                              userId: widget.userId,
+                              keyword: value.trim(),
+                            ),
+                          ),
+                        );
+                      },
                       decoration: InputDecoration(
-                        hintText: 'Cari',
-                        prefixIcon: const Icon(
-                          Icons.search,
-                          color: Colors.grey,
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 16,
-                        ),
+                        hintText: 'Cari (UI/UX, Flutter, Data)',
+                        prefixIcon: const Icon(Icons.search),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                           borderSide: BorderSide.none,
                         ),
-                        hintStyle: const TextStyle(color: Colors.grey),
                       ),
-                      style: const TextStyle(fontSize: 12),
                     ),
                   ),
                 ),
@@ -116,7 +130,7 @@ class _LowonganTabState extends State<LowonganTab> {
                         child: GridView.count(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          crossAxisCount: 5,
+                          crossAxisCount: 4,
                           mainAxisSpacing: 12,
                           crossAxisSpacing: 12,
                           childAspectRatio: 1,
@@ -124,39 +138,54 @@ class _LowonganTabState extends State<LowonganTab> {
                             return InkWell(
                               borderRadius: BorderRadius.circular(12),
                               onTap: () {
-                                print("Klik: ${kategori['nama']}");
+                                final keyword = kategori['nama'];
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => LowonganFilterPage(
+                                      userId: widget.userId,
+                                      keyword: keyword,
+                                    ),
+                                  ),
+                                );
                               },
-                              child: Container(
-                                padding: EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      kategori['icon'],
-                                      size: 20,
-                                      color: const Color(0xFF28AE9D),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      kategori['nama'],
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        fontSize: 6,
-                                        fontWeight: FontWeight.w500,
+                              child: AspectRatio(
+                                aspectRatio: 1,
+                                child: Container(
+                                  padding: EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 6,
+                                        offset: const Offset(0, 3),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        kategori['icon'],
+                                        size: 20,
+                                        color: const Color(0xFF28AE9D),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        kategori['nama'],
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );
@@ -180,14 +209,19 @@ class _LowonganTabState extends State<LowonganTab> {
                   itemBuilder: (context, index) {
                     final pk = daftarLowongan[index];
 
-                    // Hindari crash kalau syarat NULL atau bukan JSON valid
-                    final syaratList =
-                        (pk['syarat'] != null &&
-                            pk['syarat'].toString().isNotEmpty)
-                        ? jsonDecode(pk['syarat'])
-                        : [];
+                    return LowonganCard(
+                      data: pk,
 
-                    return GestureDetector(
+                      onLogoTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DetailPerusahaanPage(
+                              perusahaanId: pk['perusahaan_id'],
+                            ),
+                          ),
+                        );
+                      },
                       onTap: () {
                         Navigator.push(
                           context,
@@ -197,91 +231,25 @@ class _LowonganTabState extends State<LowonganTab> {
                           ),
                         );
                       },
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: BorderSide(color: const Color(0xFF28AE9D)),
-                        ),
-                        color: const Color.fromARGB(255, 55, 55, 55),
-                        margin: EdgeInsets.only(bottom: 12),
-                        child: Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ListTile(
-                                title: Text(
-                                  pk['posisi'] ?? '',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                subtitle: Text(
-                                  pk['nama_perusahaan'] ?? '',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-
-                              Wrap(
-                                spacing: 6,
-                                runSpacing: 6,
-                                children: syaratList.map<Widget>((s) {
-                                  return Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white12,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Text(
-                                      s.toString(),
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-
-                              SizedBox(height: 16),
-
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.location_on,
-                                        color: const Color(0xFF28AE9D),
-                                      ),
-                                      Text(
-                                        pk['lokasi'] ?? '',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ],
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {},
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFF28AE9D),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 20,
-                                        vertical: 10,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      "Lamar",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                      onLamar: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DetailLowonganPage(
+                              userId: widget.userId,
+                              perusahaanId: pk['perusahaan_id'],
+                              posisi: pk['posisi'] ?? "",
+                              namaPerusahaan: pk['nama_perusahaan'] ?? "",
+                              gaji: pk['gaji'] ?? "",
+                              tipe: pk['tipe'] ?? "",
+                              lokasi: pk['lokasi'] ?? "",
+                              deskripsi: pk['deskripsi'] ?? "",
+                              syarat: pk['syarat'] ?? "",
+                              lowonganId: pk['id'],
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     );
                   },
                 ),

@@ -11,9 +11,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
 
   bool _isFormValid = false;
 
@@ -21,24 +19,19 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     _nameController.addListener(_checkFormValidity);
-    _emailController.addListener(_checkFormValidity);
     _passwordController.addListener(_checkFormValidity);
-    _confirmPasswordController.addListener(_checkFormValidity);
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 
   void _checkFormValidity() {
     final isValid =
         _nameController.text.trim().isNotEmpty &&
-        _emailController.text.trim().isNotEmpty &&
         _passwordController.text.trim().isNotEmpty;
 
     if (isValid != _isFormValid) {
@@ -68,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // =============== BAGIAN ATAS (Tetap scrollable) ==================
+            // =================== BAGIAN ATAS ===================
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24.0),
@@ -90,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 8),
 
                     const Text(
-                      "Hai calon Jobhunters ! Silahkan mendaftar\nmenggunakan email atau akun sosial media.",
+                      "Hai calon Jobhunters ! Silahkan masuk\nmenggunakan akun anda.",
                       style: TextStyle(fontSize: 14, color: Colors.black54),
                       textAlign: TextAlign.center,
                     ),
@@ -147,36 +140,24 @@ class _LoginPageState extends State<LoginPage> {
 
                     const SizedBox(height: 30),
 
-                    // Username
+                    // USERNAME
                     _buildTextLabel("Username"),
                     TextField(
                       controller: _nameController,
                       decoration: const InputDecoration(
-                        hintText: "Masukkan nama anda disini.",
+                        hintText: "Masukkan username anda.",
                         border: InputBorder.none,
                       ),
                     ),
                     const Divider(),
 
-                    // Email
-                    _buildTextLabel("Email"),
-                    TextField(
-                      controller: _emailController,
-                      decoration: const InputDecoration(
-                        hintText: "Masukkan email anda disini.",
-                        border: InputBorder.none,
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                    ),
-                    const Divider(),
-
-                    // Kata sandi
+                    // PASSWORD
                     _buildTextLabel("Kata Sandi"),
                     TextField(
                       controller: _passwordController,
                       obscureText: true,
                       decoration: const InputDecoration(
-                        hintText: "Masukkan kata sandi anda disini.",
+                        hintText: "Masukkan kata sandi anda.",
                         border: InputBorder.none,
                       ),
                     ),
@@ -188,13 +169,12 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
 
-            // =============== BAGIAN BAWAH (Fixed di bawah layar) ==================
+            // =================== BAGIAN BAWAH ===================
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // BUTTON MASUK
                   ElevatedButton(
                     onPressed: _isFormValid
                         ? () async {
@@ -203,24 +183,26 @@ class _LoginPageState extends State<LoginPage> {
                               password: _passwordController.text,
                             );
 
-                            if(user != null){
+                            if (user != null) {
                               Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>  HomePage(
-                                  
-                                  username: user['username'],
-                                  jobTitle: user['pekerjaan'],
-                                  userId: user['id'],    
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomePage(
+                                    username: user['username'],
+                                    jobTitle: user['pekerjaan'],
+                                    userId: user['id'],
+                                  ),
                                 ),
-                              ),
-                            );
-                            }else{
+                              );
+                            } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("Username atau Password tidak valid"))
+                                const SnackBar(
+                                  content: Text(
+                                    "Username atau Password tidak valid",
+                                  ),
+                                ),
                               );
                             }
-                            
                           }
                         : null,
                     style: ElevatedButton.styleFrom(
@@ -242,7 +224,6 @@ class _LoginPageState extends State<LoginPage> {
 
                   const SizedBox(height: 10),
 
-                  // LUPA KATA SANDI
                   GestureDetector(
                     onTap: () {},
                     child: const Text(

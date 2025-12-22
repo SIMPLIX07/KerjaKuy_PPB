@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/chat/chatPage.dart';
 import 'package:flutter_application_1/detailPerusahaan/detailPerusahaan.dart';
+import 'package:flutter_application_1/pages/lowongan/lowongan_filter_page.dart';
 import '../../../../database/db_helper.dart';
 import 'package:flutter_application_1/pages/settings/settingPelamar/settingPelamar.dart';
 import '../../../detailLowongan/detail_lowongan.dart';
@@ -27,6 +28,8 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  final TextEditingController _searchController = TextEditingController();
+
   List<Map<String, dynamic>> _lamaran = [];
   bool _loadingLamaran = true;
 
@@ -462,13 +465,29 @@ class _HomeTabState extends State<HomeTab> {
 
             // Search
             Container(
-              margin: EdgeInsets.only(top: 10),
+              margin: const EdgeInsets.only(top: 10),
               width: MediaQuery.of(context).size.width * 0.9,
               height: 50,
               child: TextField(
+                controller: _searchController,
+                textInputAction: TextInputAction.search,
+                onSubmitted: (value) {
+                  if (value.trim().isEmpty) return;
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => LowonganFilterPage(
+                        userId: widget.userId,
+                        keyword: value.trim(),
+                      ),
+                    ),
+                  );
+                },
                 decoration: InputDecoration(
                   labelText: "Cari",
-                  hintText: "Masukkan jenis pekerjaan",
+                  hintText: "UI/UX, Flutter, Data Analyst",
+                  prefixIcon: const Icon(Icons.search),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),

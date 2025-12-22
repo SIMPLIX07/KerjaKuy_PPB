@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../../database/db_helper.dart';
 
@@ -20,6 +22,8 @@ class DetailCVPelamarPage extends StatefulWidget {
 }
 
 class _DetailCVPelamarPageState extends State<DetailCVPelamarPage> {
+  String? userPhotoPath;
+
   Map<String, dynamic>? cv;
   List<Map<String, dynamic>> skills = [];
   List<Map<String, dynamic>> pengalaman = [];
@@ -101,6 +105,8 @@ class _DetailCVPelamarPageState extends State<DetailCVPelamarPage> {
   }
 
   Future<void> _loadCV() async {
+    String? photoPath;
+
     final db = await DBHelper.getDBPublic();
 
     // Ambil data CV
@@ -148,6 +154,10 @@ class _DetailCVPelamarPageState extends State<DetailCVPelamarPage> {
       skills = skillData;
       pengalaman = pengalamanData;
       kontak = kontakData.isNotEmpty ? kontakData.first : null;
+
+      userPhotoPath = userData.isNotEmpty
+          ? userData.first["photo_path"] as String?
+          : null;
 
       namaPelamar = userData.isNotEmpty
           ? userData.first["fullname"].toString()
@@ -369,28 +379,45 @@ class _DetailCVPelamarPageState extends State<DetailCVPelamarPage> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 32,
                     backgroundColor: Colors.grey,
-                    child: Icon(Icons.person, size: 40, color: Colors.white),
+                    backgroundImage:
+                        userPhotoPath != null && userPhotoPath!.isNotEmpty
+                        ? FileImage(File(userPhotoPath!))
+                        : null,
+                    child: (userPhotoPath == null || userPhotoPath!.isEmpty)
+                        ? const Icon(
+                            Icons.person,
+                            size: 40,
+                            color: Colors.white,
+                          )
+                        : null,
                   ),
+
                   const SizedBox(width: 15),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // <<< PAKAI NAMA DARI USERS
-                      Text(
-                        namaPelamar,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // <<< PAKAI NAMA DARI USERS
+                        Text(
+                          namaPelamar,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Text(
-                        "Pendidikan: ${cv!["jurusan"]}",
-                        style: const TextStyle(fontSize: 15),
-                      ),
-                    ],
+                        Text(
+                          "Pendidikan: ${cv!["jurusan"]}",
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 15),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

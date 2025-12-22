@@ -26,6 +26,69 @@ class _ChatListPerusahaanPageState extends State<ChatListPerusahaanPage> {
     setState(() => chats = data);
   }
 
+  void _showUserPicker() async {
+    final users = await DBHelper.getUserForChatByPerusahaan(
+      widget.perusahaanId,
+    );
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        if (users.isEmpty) {
+          return const Padding(
+            padding: EdgeInsets.all(20),
+            child: Text("Belum ada karyawan / pelamar"),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: users.length,
+          itemBuilder: (context, index) {
+            final user = users[index];
+
+            return ListTile(
+              leading: CircleAvatar(
+                backgroundImage:
+                    user['photo_path'] != null &&
+                        user['photo_path'].toString().isNotEmpty
+                    ? FileImage(File(user['photo_path']))
+                    : null,
+                child: user['photo_path'] == null
+                    ? const Icon(Icons.person)
+                    : null,
+              ),
+              title: Text(user['fullname']),
+              onTap: () async {
+                Navigator.pop(context); // tutup bottom sheet
+
+                final roomId = await DBHelper.createOrGetChatRoom(
+                  userId: user['user_id'],
+                  perusahaanId: widget.perusahaanId,
+                );
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChatRoomPage(
+                      roomId: roomId,
+                      perusahaanId: widget.perusahaanId,
+                      userId: user['user_id'],
+                      namaPerusahaan: user['fullname'],
+                      isUser: false,
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +96,12 @@ class _ChatListPerusahaanPageState extends State<ChatListPerusahaanPage> {
         backgroundColor: const Color(0xFF28AE9D),
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text("Pesan", style: TextStyle(color: Colors.white)),
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF28AE9D),
+        child: const Icon(Icons.add),
+        onPressed: _showUserPicker,
       ),
 
       body: chats.isEmpty

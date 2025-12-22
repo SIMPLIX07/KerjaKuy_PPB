@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
 
             // PAGE 2 - LOWONGAN
-            LowonganTab(),
+            LowonganTab(userId: widget.userId),
 
             // PAGE 3 - LAMARAN
             LamaranTab(
@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           backgroundColor: Colors.white,
           currentIndex: _currentIndex,
           onTap: _onItemTapped,
-          selectedItemColor: Colors.green,
+          selectedItemColor: const Color(0xFF28AE9D),
           unselectedItemColor: Colors.grey,
           type: BottomNavigationBarType.fixed,
           items: const [

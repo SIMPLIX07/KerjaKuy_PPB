@@ -26,17 +26,67 @@ class _ChatListPageState extends State<ChatListPage> {
     setState(() => chats = data);
   }
 
-  /// SIMULASI: perusahaan menerima pelamar
-  Future<void> _simulateAccept() async {
-    // contoh perusahaan id
-    const perusahaanId = 1;
-
-    await DBHelper.createOrGetChatRoom(
-      userId: widget.userId,
-      perusahaanId: perusahaanId,
+  void _showPerusahaanPicker() async {
+    final perusahaanList = await DBHelper.getPerusahaanForChatByUser(
+      widget.userId,
     );
 
-    _loadChat();
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        if (perusahaanList.isEmpty) {
+          return const Padding(
+            padding: EdgeInsets.all(20),
+            child: Text("Belum ada perusahaan terkait"),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: perusahaanList.length,
+          itemBuilder: (context, index) {
+            final p = perusahaanList[index];
+
+            return ListTile(
+              leading: CircleAvatar(
+                backgroundImage:
+                    p['photo_profile'] != null &&
+                        p['photo_profile'].toString().isNotEmpty
+                    ? FileImage(File(p['photo_profile']))
+                    : null,
+                child: p['photo_profile'] == null
+                    ? const Icon(Icons.business)
+                    : null,
+              ),
+              title: Text(p['namaPerusahaan']),
+              onTap: () async {
+                Navigator.pop(context); // tutup bottom sheet
+
+                final roomId = await DBHelper.createOrGetChatRoom(
+                  userId: widget.userId,
+                  perusahaanId: p['perusahaan_id'],
+                );
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChatRoomPage(
+                      roomId: roomId,
+                      userId: widget.userId,
+                      perusahaanId: p['perusahaan_id'],
+                      namaPerusahaan: p['namaPerusahaan'],
+                      isUser: true,
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -49,7 +99,7 @@ class _ChatListPageState extends State<ChatListPage> {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: _simulateAccept,
+        onPressed: _showPerusahaanPicker,
         backgroundColor: const Color(0xFF28AE9D),
         child: const Icon(Icons.add),
       ),
