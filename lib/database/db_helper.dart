@@ -1180,4 +1180,86 @@ class DBHelper {
       [perusahaanId],
     );
   }
+
+  static Future<int> updateCV({
+    required int cvId,
+    required String title,
+    required String subtitle,
+    required String tentangSaya,
+    required String universitas,
+    required String jurusan,
+  }) async {
+    final db = await _getDB();
+    return await db.update(
+      'cv',
+      {
+        'title': title,
+        'subtitle': subtitle,
+        'tentang_saya': tentangSaya,
+        'universitas': universitas,
+        'jurusan': jurusan,
+      },
+      where: 'id = ?',
+      whereArgs: [cvId],
+    );
+  }
+
+  static Future<Map<String, dynamic>?> getCVById(int cvId) async {
+    final db = await _getDB();
+    final result = await db.query('cv', where: 'id = ?', whereArgs: [cvId]);
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  static Future<Map<String, dynamic>?> getKontakByCV(int cvId) async {
+    final db = await _getDB();
+    final result = await db.query(
+      'kontak',
+      where: 'cv_id = ?',
+      whereArgs: [cvId],
+      limit: 1,
+    );
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  static Future<List<Map<String, dynamic>>> getSkillByCV(int cvId) async {
+    final db = await _getDB();
+    return await db.query('skillCV', where: 'cv_id = ?', whereArgs: [cvId]);
+  }
+
+  static Future<List<Map<String, dynamic>>> getPengalamanByCV(int cvId) async {
+    final db = await _getDB();
+    return await db.query('pengalaman', where: 'cv_id = ?', whereArgs: [cvId]);
+  }
+
+  static Future<int> deleteCV(int cvId) async {
+    final db = await _getDB();
+
+    final rowsDeleted = await db.delete(
+      'cv',
+      where: 'id = ?',
+      whereArgs: [cvId],
+    );
+
+    print("\x1B[31mCV DELETE SUCCESS — ROWS: $rowsDeleted\x1B[0m");
+
+    return rowsDeleted;
+  }
+
+  static Future<int> deleteSkillByCV(int cvId) async {
+    final db = await _getDB();
+
+    return await db.delete('skillCV', where: 'cv_id = ?', whereArgs: [cvId]);
+  }
+
+  static Future<int> deletePengalamanByCV(int cvId) async {
+    final db = await _getDB();
+
+    return await db.delete('pengalaman', where: 'cv_id = ?', whereArgs: [cvId]);
+  }
+
+  static Future<int> deleteKontakByCV(int cvId) async {
+    final db = await _getDB();
+
+    return await db.delete('kontak', where: 'cv_id = ?', whereArgs: [cvId]);
+  }
 }

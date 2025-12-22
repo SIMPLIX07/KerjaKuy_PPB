@@ -3,7 +3,9 @@ import '../../database/db_helper.dart';
 
 class BuatCV extends StatefulWidget {
   final int userId;
-  const BuatCV({super.key, required this.userId});
+  final int? cvId;
+
+  const BuatCV({super.key, required this.userId, this.cvId});
 
   @override
   State<BuatCV> createState() => _BuatCVState();
@@ -38,6 +40,48 @@ class _BuatCVState extends State<BuatCV> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController telpController = TextEditingController();
   final TextEditingController linkedinController = TextEditingController();
+
+  bool get isEdit => widget.cvId != null;
+
+  Future<void> loadCV() async {
+    final cv = await DBHelper.getCVById(widget.cvId!);
+    if (cv == null) return;
+
+    setState(() {
+      titleController.text = cv['title'];
+      subtitleController.text = cv['subtitle'];
+      tentangController.text = cv['tentang_saya'];
+      universitasController.text = cv['universitas'];
+      jurusanController.text = cv['jurusan'];
+    });
+
+    final kontak = await DBHelper.getKontakByCV(widget.cvId!);
+    if (kontak != null) {
+      emailController.text = kontak['email'];
+      telpController.text = kontak['no_telepon'];
+      linkedinController.text = kontak['linkedIn'];
+    }
+
+    final skills = await DBHelper.getSkillByCV(widget.cvId!);
+    for (int i = 0; i < skills.length && i < 3; i++) {
+      skillController[i].text = skills[i]['skill'];
+      skillLevelController[i].text = skills[i]['kemampuan'].toString();
+    }
+
+    final pengalaman = await DBHelper.getPengalamanByCV(widget.cvId!);
+    for (int i = 0; i < pengalaman.length && i < 3; i++) {
+      pengalamanController[i].text = pengalaman[i]['pengalaman'];
+      durasiController[i].text = pengalaman[i]['durasi'];
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (isEdit) {
+      loadCV();
+    }
+  }
 
   // validasi
   bool validasiForm() {
@@ -116,8 +160,8 @@ class _BuatCVState extends State<BuatCV> {
                 height: 48,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
+                    Navigator.pop(context, true);
+                    Navigator.pop(context, true);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF28AE9D),
@@ -247,18 +291,39 @@ class _BuatCVState extends State<BuatCV> {
                               return;
                             }
 
-                            // insert ke table cv
-                            int cvId = await DBHelper.insertCV(
-                              userId: widget.userId,
-                              pendidikan: "N/A",
-                              umur: 0,
-                              tentangSaya: tentangController.text,
-                              universitas: universitasController.text,
-                              jurusan: jurusanController.text,
-                              kontak: emailController.text,
-                              title: titleController.text,
-                              subtitle: subtitleController.text,
-                            );
+                            // insert dan update ke table cv
+                            int cvId;
+
+                            if (isEdit) {
+                              //Update
+                              cvId = widget.cvId!;
+
+                              await DBHelper.updateCV(
+                                cvId: cvId,
+                                title: titleController.text,
+                                subtitle: subtitleController.text,
+                                tentangSaya: tentangController.text,
+                                universitas: universitasController.text,
+                                jurusan: jurusanController.text,
+                              );
+
+                              await DBHelper.deleteSkillByCV(cvId);
+                              await DBHelper.deletePengalamanByCV(cvId);
+                              await DBHelper.deleteKontakByCV(cvId);
+                            } else {
+                              // Create
+                              cvId = await DBHelper.insertCV(
+                                userId: widget.userId,
+                                pendidikan: "N/A",
+                                umur: 0,
+                                tentangSaya: tentangController.text,
+                                universitas: universitasController.text,
+                                jurusan: jurusanController.text,
+                                kontak: emailController.text,
+                                title: titleController.text,
+                                subtitle: subtitleController.text,
+                              );
+                            }
 
                             // insert skill
                             for (int i = 0; i < 3; i++) {

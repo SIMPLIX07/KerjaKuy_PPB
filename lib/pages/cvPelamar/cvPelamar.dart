@@ -27,6 +27,11 @@ class _CVPageState extends State<CVPage> {
     });
   }
 
+  Future<void> deleteCV(int cvId) async {
+    await DBHelper.deleteCV(cvId);
+    await _loadCV();
+  }
+
   void _showMaxDialog() {
     showDialog(
       context: context,
@@ -61,9 +66,7 @@ class _CVPageState extends State<CVPage> {
 
     await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => BuatCV(userId: widget.userId),
-      ),
+      MaterialPageRoute(builder: (_) => BuatCV(userId: widget.userId)),
     );
 
     _loadCV();
@@ -95,9 +98,8 @@ class _CVPageState extends State<CVPage> {
                   return _cvCard(
                     title: cv["title"] ?? "Tanpa Judul",
                     desc: cv["subtitle"] ?? "",
-                    onDelete: () {
-                      print("CV dihapus ID: ${cv['id']}");
-                    },
+                    cvId: cv["id"] as int,
+                    userId: cv["user_id"] as int,
                   );
                 },
               ),
@@ -129,7 +131,8 @@ class _CVPageState extends State<CVPage> {
   Widget _cvCard({
     required String title,
     required String desc,
-    required VoidCallback onDelete,
+    required int cvId,
+    required int userId,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -170,8 +173,57 @@ class _CVPageState extends State<CVPage> {
           ),
 
           IconButton(
+            icon: const Icon(Icons.edit, color: Colors.blue),
+            onPressed: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BuatCV(userId: userId, cvId: cvId),
+                ),
+              );
+
+              if (result == true) {
+                _loadCV(); 
+              }
+            },
+          ),
+
+          IconButton(
             icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: onDelete,
+            onPressed: () => {
+              showDialog<void>(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Hapus CV'),
+                    content: const Text(
+                      'Apakah Anda Yakin Ingin Menghapus CV Ini ?',
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          textStyle: Theme.of(context).textTheme.labelLarge,
+                        ),
+                        child: const Text('Batal'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          textStyle: Theme.of(context).textTheme.labelLarge,
+                        ),
+                        child: const Text('Hapus'),
+                        onPressed: () async {
+                          await deleteCV(cvId);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+            },
           ),
         ],
       ),
