@@ -1314,11 +1314,12 @@ class DBHelper {
   }
 
   static Future<List<Map<String, dynamic>>> getPerusahaanForChatByUser(
-  int userId,
-) async {
-  final db = await _getDB();
+    int userId,
+  ) async {
+    final db = await _getDB();
 
-  return await db.rawQuery('''
+    return await db.rawQuery(
+      '''
     SELECT DISTINCT
       p.id AS perusahaan_id,
       p.namaPerusahaan,
@@ -1326,7 +1327,42 @@ class DBHelper {
     FROM lamaran l
     JOIN perusahaan p ON p.id = l.perusahaan_id
     WHERE l.user_id = ?
-  ''', [userId]);
-}
+  ''',
+      [userId],
+    );
+  }
 
+  static Future<void> acceptPelamarDanTolakYangLain({
+    required int userId,
+    required int perusahaanIdDiterima,
+    required int lowonganIdDiterima,
+  }) async {
+    final db = await _getDB();
+
+    // 1. TERIMA lamaran
+    await db.update(
+      'lamaran',
+      {'status': 'Diterima'},
+      where: 'user_id = ? AND perusahaan_id = ? AND lowongan_id = ?',
+      whereArgs: [userId, perusahaanIdDiterima, lowonganIdDiterima],
+    );
+
+    // 2. TOLAK semua lamaran
+    await db.update(
+      'lamaran',
+      {'status': 'Ditolak'},
+      where: 'user_id = ? AND NOT (perusahaan_id = ? AND lowongan_id = ?)',
+      whereArgs: [userId, perusahaanIdDiterima, lowonganIdDiterima],
+    );
+
+    // 3. REJECT semua wawancara
+    await db.update(
+      'wawancara',
+      {'status': 'rejected'},
+      where: 'user_id = ? AND NOT (perusahaan_id = ? AND lowongan_id = ?)',
+      whereArgs: [userId, perusahaanIdDiterima, lowonganIdDiterima],
+    );
+
+    print("Semua lamaran & wawancara lain ditolak");
+  }
 }

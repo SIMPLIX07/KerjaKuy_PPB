@@ -67,9 +67,19 @@ class _JadwalWawancaraPerusahaanState extends State<JadwalWawancaraPerusahaan> {
                 w['lowongan_id'],
                 status,
               );
+
+              if (status == 'accepted') {
+                await DBHelper.acceptPelamarDanTolakYangLain(
+                  userId: w['user_id'],
+                  perusahaanIdDiterima: widget.perusahaanId,
+                  lowonganIdDiterima: w['lowongan_id'],
+                );
+              }
+
               Navigator.pop(context);
               _loadWawancara();
             },
+
             child: const Text(
               "Ya, Yakin",
               style: TextStyle(color: Colors.white),
@@ -215,7 +225,7 @@ class _JadwalWawancaraPerusahaanState extends State<JadwalWawancaraPerusahaan> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          backgroundColor:  Color(0xFF28AE9D),
+          backgroundColor: Color(0xFF28AE9D),
           elevation: 0,
           title: const Text(
             "Jadwal Wawancara",
@@ -227,10 +237,7 @@ class _JadwalWawancaraPerusahaanState extends State<JadwalWawancaraPerusahaan> {
               color: Colors.white,
               child: TabBar(
                 indicator: UnderlineTabIndicator(
-                  borderSide: BorderSide(
-                    color: Color(0xFF28AE9D), 
-                    width: 3,
-                  ),
+                  borderSide: BorderSide(color: Color(0xFF28AE9D), width: 3),
                 ),
                 indicatorSize: TabBarIndicatorSize.tab,
                 labelColor: Colors.black,
