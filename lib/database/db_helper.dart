@@ -368,7 +368,7 @@ class DBHelper {
       p.email,
       p.alamat,
       p.noTelepon,
-      p.deskripsi
+      p.deskripsi as deskripsi_perusahaan
     FROM lowongan l
     JOIN perusahaan p ON p.id = l.perusahaan_id
     WHERE $likeQuery
@@ -829,25 +829,6 @@ class DBHelper {
     });
 
     // INSERT LOWONGAN TELKOM
-    await db.insert('lowongan', {
-      'perusahaan_id': telkomId,
-      'nama_perusahaan': 'PT Telkom Indonesia',
-      'kategori': 'Programming',
-      'posisi': 'Flutter Developer',
-      'deskripsi':
-          'Mengembangkan aplikasi mobile menggunakan Flutter dan bekerja sama '
-          'dengan tim backend dan UI/UX.',
-      'syarat': jsonEncode([
-        'Menguasai Flutter',
-        'Mengerti REST API',
-        'Terbiasa menggunakan Git',
-      ]),
-      'gaji': '8.000.000 - 12.000.000',
-      'tipe': 'Full Time',
-      'periode_awal': '2025-01-01',
-      'periode_akhir': '2025-03-01',
-      'lokasi': 'Bandung',
-    });
 
     print("✅ Dummy Telkom + User + Lowongan berhasil ditambahkan");
   }
@@ -1262,4 +1243,89 @@ class DBHelper {
 
     return await db.delete('kontak', where: 'cv_id = ?', whereArgs: [cvId]);
   }
+
+  static Future<List<Map<String, dynamic>>> getRekomendasiLowonganList(
+    int userId,
+  ) async {
+    final db = await _getDB();
+
+    // ambil skill user
+    List<String> skills = await getSkillUser(userId);
+    if (skills.isEmpty) return [];
+
+    String likeQuery = skills.map((_) => "l.kategori LIKE ?").join(" OR ");
+    List<String> likeArgs = skills.map((s) => "%$s%").toList();
+
+    final res = await db.rawQuery('''
+    SELECT 
+      l.*,
+      p.namaPerusahaan AS nama_perusahaan,
+      p.photo_profile,
+      p.photo_background
+    FROM lowongan l
+    JOIN perusahaan p ON p.id = l.perusahaan_id
+    WHERE $likeQuery
+    ORDER BY l.id DESC
+  ''', likeArgs);
+
+    return res;
+  }
+
+  static Future<List<Map<String, dynamic>>> searchLowongan(
+    String keyword,
+  ) async {
+    final db = await _getDB();
+
+    return await db.rawQuery(
+      '''
+    SELECT 
+      l.*,
+      p.namaPerusahaan AS nama_perusahaan,
+      p.photo_profile
+    FROM lowongan l
+    JOIN perusahaan p ON p.id = l.perusahaan_id
+    WHERE 
+      l.posisi LIKE ? OR
+      l.kategori LIKE ?
+    ORDER BY l.id DESC
+    ''',
+      ['%$keyword%', '%$keyword%'],
+    );
+  }
+
+  static Future<List<Map<String, dynamic>>> getUserForChatByPerusahaan(
+    int perusahaanId,
+  ) async {
+    final db = await _getDB();
+
+    return await db.rawQuery(
+      '''
+    SELECT DISTINCT
+      u.id AS user_id,
+      u.fullname,
+      u.photo_path
+    FROM lamaran l
+    JOIN users u ON u.id = l.user_id
+    WHERE l.perusahaan_id = ?
+  ''',
+      [perusahaanId],
+    );
+  }
+
+  static Future<List<Map<String, dynamic>>> getPerusahaanForChatByUser(
+  int userId,
+) async {
+  final db = await _getDB();
+
+  return await db.rawQuery('''
+    SELECT DISTINCT
+      p.id AS perusahaan_id,
+      p.namaPerusahaan,
+      p.photo_profile
+    FROM lamaran l
+    JOIN perusahaan p ON p.id = l.perusahaan_id
+    WHERE l.user_id = ?
+  ''', [userId]);
+}
+
 }
