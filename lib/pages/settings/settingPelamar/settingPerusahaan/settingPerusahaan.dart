@@ -171,7 +171,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Logout sama persis dengan pelamar
+
   void _logout(BuildContext context) {
     Navigator.pushAndRemoveUntil(
       context,

@@ -55,7 +55,6 @@ class _HomePerusahaanState extends State<HomePerusahaan> {
     return Scaffold(
       backgroundColor: Colors.white,
 
-      // Tambah tombol di bawah
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(15),
         child: SizedBox(
@@ -119,7 +118,7 @@ class _HomePerusahaanState extends State<HomePerusahaan> {
                     );
 
                     if (result == true) {
-                      _loadPerusahaan(); // 🔥 REFRESH FOTO
+                      _loadPerusahaan(); //  REFRESH FOTO
                     }
                   },
                   child: Row(
@@ -183,7 +182,7 @@ class _HomePerusahaanState extends State<HomePerusahaan> {
                         ],
                       ),
 
-                      /// ICON MESSAGE 🔥
+                      /// ICON MESSAGE 
                       IconButton(
                         icon: const Icon(Icons.message),
                         onPressed: () {
@@ -214,7 +213,7 @@ class _HomePerusahaanState extends State<HomePerusahaan> {
 
               const SizedBox(height: 10),
 
-              // ========== CONTAINER HITAM (TINGGI OTOMATIS) ==========
+              // ========== CONTAINER HITAM ==========
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 15),
                 padding: const EdgeInsets.all(15),

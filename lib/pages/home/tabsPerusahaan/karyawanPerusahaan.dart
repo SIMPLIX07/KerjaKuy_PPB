@@ -76,7 +76,6 @@ class _KaryawanPerusahaanTabState extends State<KaryawanPerusahaanTab> {
 
   @override
   Widget build(BuildContext context) {
-    // Variabel warna card
     final colors = [
       const Color.fromARGB(255, 253, 233, 227),
       const Color(0xFFE8F5E9),

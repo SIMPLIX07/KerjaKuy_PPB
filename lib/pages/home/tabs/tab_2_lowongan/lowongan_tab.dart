@@ -58,7 +58,7 @@ class _LowonganTabState extends State<LowonganTab> {
             child: ListView(
               padding: const EdgeInsets.all(20),
               children: [
-                // 🔍 Search bar
+                // Search bar
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Container(

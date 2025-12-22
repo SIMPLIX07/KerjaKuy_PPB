@@ -158,14 +158,13 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               );
 
-                              // sementara belum ada HomePerusahaan
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => HomePagePerusahaan(
-                                    perusahaanId: perusahaan['id'], // BENAR
+                                    perusahaanId: perusahaan['id'], 
                                     namaPerusahaan:
-                                        perusahaan['namaPerusahaan'], // BENAR
+                                        perusahaan['namaPerusahaan'], 
                                   ),
                                 ),
                               );

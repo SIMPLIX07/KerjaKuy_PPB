@@ -35,7 +35,6 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  // 1. Controller untuk setiap TextField
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -44,13 +43,11 @@ class _RegisterPageState extends State<RegisterPage> {
   final _deskripsi = TextEditingController();
   final _noTelepon = TextEditingController();
 
-  // 2. Variabel status untuk melacak validitas form
   bool _isFormValid = false;
 
   @override
   void initState() {
     super.initState();
-    // 3. Tambahkan listener ke setiap controller
     _nameController.addListener(_checkFormValidity);
     _emailController.addListener(_checkFormValidity);
     _passwordController.addListener(_checkFormValidity);
@@ -62,7 +59,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
-    // memastikan controller dibuang untuk menghindari kebocoran memori
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -73,7 +69,6 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-  // 4. Fungsi yang memeriksa apakah semua field sudah diisi
   void _checkFormValidity() {
     final isValid =
         _nameController.text.isNotEmpty &&
@@ -84,7 +79,6 @@ class _RegisterPageState extends State<RegisterPage> {
         _deskripsi.text.isNotEmpty &&
         _noTelepon.text.isNotEmpty;
 
-    // Hanya panggil setState jika status validitas berubah
     if (isValid != _isFormValid) {
       setState(() {
         _isFormValid = isValid;
@@ -173,13 +167,10 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
 
               SizedBox(height: 30),
-
-              // --- INPUT FIELDS ---
-
               // Nama
               _buildTextLabel("nama Perusahaan"),
               TextField(
-                controller: _nameController, // <-- Hubungkan controller
+                controller: _nameController, 
                 decoration: InputDecoration(
                   hintText: "Masukkan nama Perusahaan anda disini.",
                   border: InputBorder.none,
@@ -190,7 +181,7 @@ class _RegisterPageState extends State<RegisterPage> {
               // Email
               _buildTextLabel("Email"),
               TextField(
-                controller: _emailController, // <-- Hubungkan controller
+                controller: _emailController, 
                 decoration: InputDecoration(
                   hintText: "Masukkan email anda disini.",
                   border: InputBorder.none,
@@ -202,7 +193,7 @@ class _RegisterPageState extends State<RegisterPage> {
               // Kata Sandi
               _buildTextLabel("Buat Kata Sandi"),
               TextField(
-                controller: _passwordController, // <-- Hubungkan controller
+                controller: _passwordController, 
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: "Masukkan kata sandi anda disini.",
@@ -215,7 +206,7 @@ class _RegisterPageState extends State<RegisterPage> {
               _buildTextLabel("Konfirmasi Kata Sandi"),
               TextField(
                 controller:
-                    _confirmPasswordController, // <-- Hubungkan controller
+                    _confirmPasswordController, 
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: "Konfirmasi kata sandi anda disini.",
@@ -227,7 +218,7 @@ class _RegisterPageState extends State<RegisterPage> {
               // Konfirmasi Kata Sandi
               _buildTextLabel("Alamat"),
               TextField(
-                controller: _alamat, // <-- Hubungkan controller
+                controller: _alamat, 
                 obscureText: false,
                 decoration: InputDecoration(
                   hintText: "Jl. Bojongsoang Kec Sukabirus",
@@ -239,7 +230,7 @@ class _RegisterPageState extends State<RegisterPage> {
               // Konfirmasi Kata Sandi
               _buildTextLabel("Deskripsi"),
               TextField(
-                controller: _deskripsi, // <-- Hubungkan controller
+                controller: _deskripsi, 
                 obscureText: false,
                 decoration: InputDecoration(
                   hintText: "Masukan deskripsi perusahaan ana",
@@ -301,7 +292,7 @@ class _RegisterPageState extends State<RegisterPage> {
               // Konfirmasi Kata Sandi
               _buildTextLabel("NoTelepon"),
               TextField(
-                controller: _noTelepon, // <-- Hubungkan controller
+                controller: _noTelepon, 
                 obscureText: false,
                 decoration: InputDecoration(
                   hintText: "+62xxxxxx",
@@ -311,13 +302,9 @@ class _RegisterPageState extends State<RegisterPage> {
               Divider(),
 
               SizedBox(height: 40),
-
-              // --- ELEVATED BUTTON (Tombol) ---
               ElevatedButton(
                 onPressed: _isFormValid
                     ? () async {
-                        // 1. VALIDASI FRONT-END (BAGIAN ANDA)
-
                         // Cek Format Email
                         if (!_emailController.text.contains('@') ||
                             !_emailController.text.contains('.')) {
@@ -357,9 +344,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           return;
                         }
 
-                        // 2. PROSES DATABASE (DIBUNGKUS TRY-CATCH)
                         try {
-                          // Memanggil fungsi register milik teman Anda
                           int userId = await DBHelper.registerPerusahaan(
                             namaPerusahaan: _nameController.text,
                             email: _emailController.text,
@@ -371,7 +356,6 @@ class _RegisterPageState extends State<RegisterPage> {
                             photoBackground: _photoBackground?.path,
                           );
 
-                          // --- KODE LOG PRINT DARI TEMAN ANDA ---
                           print("=== DATA PERUSAHAAN BERHASIL DIKIRIM ===");
                           print("ID Perusahaan   : $userId");
                           print("Nama Perusahaan : ${_nameController.text}");

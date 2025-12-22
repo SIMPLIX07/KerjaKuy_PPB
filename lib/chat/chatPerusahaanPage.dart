@@ -62,7 +62,7 @@ class _ChatListPerusahaanPageState extends State<ChatListPerusahaanPage> {
               ),
               title: Text(user['fullname']),
               onTap: () async {
-                Navigator.pop(context); // tutup bottom sheet
+                Navigator.pop(context); 
 
                 final roomId = await DBHelper.createOrGetChatRoom(
                   userId: user['user_id'],

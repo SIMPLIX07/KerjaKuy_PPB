@@ -51,15 +51,14 @@ class _DetailCVPelamarPageState extends State<DetailCVPelamarPage> {
                 foregroundColor: Colors.white,
               ),
               onPressed: () async {
-                // 🔴 PANGGIL FUNCTION TOLAK
                 await DBHelper.tolakPelamar(
                   userId: widget.userId,
                   lowonganId: widget.lowonganId,
                   perusahaanId: widget.perusahaanId,
                 );
 
-                Navigator.pop(context); // tutup dialog
-                Navigator.pop(context, true); // kembali ke list pelamar
+                Navigator.pop(context); 
+                Navigator.pop(context, true); 
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Pelamar berhasil ditolak")),
@@ -400,7 +399,6 @@ class _DetailCVPelamarPageState extends State<DetailCVPelamarPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // <<< PAKAI NAMA DARI USERS
                         Text(
                           namaPelamar,
                           maxLines: 1,

@@ -27,10 +27,8 @@ class _DetailPekerjaanState extends State<DetailPekerjaan> {
 
     if (row != null) {
       setState(() {
-        // WAJIB: jadikan map baru yang bisa diedit
         lowongan = Map<String, dynamic>.from(row);
 
-        // decode syarat (jika JSON)
         if (lowongan!['syarat'] != null &&
             lowongan!['syarat'].toString().isNotEmpty) {
           lowongan!['syarat'] = List<String>.from(
@@ -77,7 +75,7 @@ class _DetailPekerjaanState extends State<DetailPekerjaan> {
                 offset: Offset(2, 4),
               ),
             ],
-            borderRadius: BorderRadius.circular(12), // sudut melengkung
+            borderRadius: BorderRadius.circular(12), 
           ),
 
           child: Row(

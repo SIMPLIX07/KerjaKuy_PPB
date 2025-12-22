@@ -242,7 +242,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               backgroundColor: Colors.red,
                             ),
                           );
-                          return; // Berhenti di sini, jangan lanjut ke database
+                          return; 
                         }
 
                         final charRegExp = RegExp(
@@ -348,13 +348,13 @@ class _RegisterPageState extends State<RegisterPage> {
                           );
                         }
                       }
-                    : null, // Jika tidak valid, tombol dinonaktifkan
+                    : null, 
 
                 style: ElevatedButton.styleFrom(
                   // Perubahan Warna
                   backgroundColor: _isFormValid
-                      ? Color(0xFF28AE9D) // Warna Hijau jika valid
-                      : Colors.grey.shade300, // Warna Abu-abu jika tidak valid
+                      ? Color(0xFF28AE9D) 
+                      : Colors.grey.shade300, 
 
                   foregroundColor: Colors.white,
                   padding: EdgeInsets.symmetric(vertical: 16),

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:sqflite/sqflite.dart'; // KETIK
-import 'package:path/path.dart'; // KETIK
+import 'package:sqflite/sqflite.dart'; 
+import 'package:path/path.dart'; 
 
 class DBHelper {
   static Database? _database;
@@ -510,7 +510,7 @@ class DBHelper {
     return lamaranId;
   }
 
-  //fungsi megnambil lowogan berdasarkan id
+  
   // fungsi mengambil lowongan berdasarkan perusahaan sekaligus jumlah pelamar
   static Future<List<Map<String, dynamic>>> getLowonganByPerusahaanId(
     int perusahaanId,
@@ -794,7 +794,7 @@ class DBHelper {
       whereArgs: ['PT Telkom Indonesia'],
     );
 
-    // Jika sudah ada → jangan insert lagi
+    
     if (perusahaan.isNotEmpty) {
       print("➡ Telkom sudah ada, skip seeding");
       return;
@@ -841,14 +841,14 @@ class DBHelper {
   }) async {
     final db = await _getDB();
 
-    // 1️⃣ CEK APAKAH ADA WAWANCARA
+    // CEK APAKAH ADA WAWANCARA
     final wawancara = await db.query(
       'wawancara',
       where: 'user_id = ? AND lowongan_id = ? AND perusahaan_id = ?',
       whereArgs: [userId, lowonganId, perusahaanId],
     );
 
-    // 2️⃣ JIKA ADA WAWANCARA → UPDATE JADI SELESAI
+    // JIKA ADA WAWANCARA → UPDATE JADI SELESAI
     if (wawancara.isNotEmpty) {
       await db.update(
         'wawancara',
@@ -862,7 +862,7 @@ class DBHelper {
       print("ℹ Tidak ada wawancara → skip update wawancara");
     }
 
-    // 3️⃣ UPDATE LAMARAN JADI DITOLAK
+    // UPDATE LAMARAN JADI DITOLAK
     await db.update(
       'lamaran',
       {'status': 'Ditolak'},
@@ -870,7 +870,7 @@ class DBHelper {
       whereArgs: [userId, lowonganId, perusahaanId],
     );
 
-    print("❌ Lamaran DITOLAK — user:$userId lowongan:$lowonganId");
+    print("Lamaran DITOLAK — user:$userId lowongan:$lowonganId");
   }
 
   static Future<List<Map<String, dynamic>>> getLamaranByUserId(
@@ -934,7 +934,7 @@ class DBHelper {
       if (lowongan.isNotEmpty) {
         String posisiBaru = lowongan.first['posisi'];
 
-        // Update job_title di tabel users
+        // Update job_title 
         await db.update(
           'users',
           {'pekerjaan': posisiBaru},

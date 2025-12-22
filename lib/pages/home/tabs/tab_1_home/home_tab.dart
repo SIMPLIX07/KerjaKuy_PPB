@@ -51,7 +51,7 @@ class _HomeTabState extends State<HomeTab> {
   @override
   void initState() {
     super.initState();
-    displayJobTitle = widget.jobTitle; // Default awal
+    displayJobTitle = widget.jobTitle; 
     _loadUserData();
     _loadRekomendasi();
     _loadBerita();
@@ -392,9 +392,8 @@ class _HomeTabState extends State<HomeTab> {
                             ),
                           ),
                         ).then((_) {
-                          // Jalankan ini setelah user kembali dari halaman profile
                           setState(() {
-                            _loadUserData(); // Muat ulang data agar foto terbaru muncul
+                            _loadUserData(); 
                           });
                         }),
                     child: Row(

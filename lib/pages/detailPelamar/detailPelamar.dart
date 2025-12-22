@@ -29,10 +29,8 @@ class _DetailPelamarPageState extends State<DetailPelamarPage> {
   }
 
   Future<void> _loadData() async {
-    // Ambil detail lowongan dari DB
     final detail = await DBHelper.getDetailLowongan(widget.lowonganId);
 
-    // Ambil pelamar berdasarkan lowongan ID
     final dataPelamar = await DBHelper.getPelamarByLowongan(widget.lowonganId);
 
     setState(() {
@@ -355,7 +353,7 @@ class _DetailPelamarPageState extends State<DetailPelamarPage> {
                                       );
 
                                       if (result == true) {
-                                        _loadData(); // 🔥 REFRESH LIST PELAMAR
+                                        _loadData(); 
                                       }
                                     },
                                   ),

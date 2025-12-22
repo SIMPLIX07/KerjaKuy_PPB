@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
       body: SizedBox.expand(
         child: Image.asset(
           "lib/assets/KerjaKuy.png",
-          fit: BoxFit.cover, // background full screen
+          fit: BoxFit.cover, 
         ),
       ),
     );
