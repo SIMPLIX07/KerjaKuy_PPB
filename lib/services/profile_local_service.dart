@@ -4,29 +4,17 @@ import 'package:path/path.dart';
 import '../database/db_helper.dart';
 
 class ProfileLocalService {
-  static Future<String> saveProfileImage({
+  static Future<void> saveProfileImage({
     required int userId,
     required File imageFile,
   }) async {
     final dir = await getApplicationDocumentsDirectory();
-    final profileDir = Directory('${dir.path}/profile_images');
 
-    if (!await profileDir.exists()) {
-      await profileDir.create(recursive: true);
-    }
+    final newPath =
+        "${dir.path}/profile_${userId}_${DateTime.now().millisecondsSinceEpoch}.jpg";
 
-    final filePath = join(profileDir.path, 'user_$userId.jpg');
-    final savedImage = await imageFile.copy(filePath);
+    final savedFile = await imageFile.copy(newPath);
 
-    // simpan path ke SQLite
-    final db = await DBHelper.getDBPublic();
-    await db.update(
-      'users',
-      {'photo_path': savedImage.path},
-      where: 'id = ?',
-      whereArgs: [userId],
-    );
-
-    return savedImage.path;
+    await DBHelper.updateUserPhoto(userId: userId, photoPath: savedFile.path);
   }
 }

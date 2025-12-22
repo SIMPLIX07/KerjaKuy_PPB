@@ -23,8 +23,16 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  late Future<Map<String, dynamic>?> _userFuture;
+
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    _userFuture = DBHelper.getUserById(widget.userId);
+  }
 
   Future<void> _pickImage() async {
     final picked = await _picker.pickImage(
@@ -54,19 +62,23 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   FutureBuilder<Map<String, dynamic>?>(
-                    future: DBHelper.getUserById(widget.userId),
+                    future: _userFuture,
                     builder: (context, snapshot) {
                       final photoPath = snapshot.data?['photo_path'];
 
                       return CircleAvatar(
                         radius: 40,
                         backgroundColor: const Color(0xFF28AE9D),
-                        backgroundImage:
-                            photoPath != null && photoPath.toString().isNotEmpty
-                            ? FileImage(File(photoPath))
-                            : null,
+                        backgroundImage: _selectedImage != null
+                            ? FileImage(_selectedImage!)
+                            : (photoPath != null &&
+                                      photoPath.toString().isNotEmpty
+                                  ? FileImage(File(photoPath))
+                                  : null),
                         child:
-                            (photoPath == null || photoPath.toString().isEmpty)
+                            (_selectedImage == null &&
+                                (photoPath == null ||
+                                    photoPath.toString().isEmpty))
                             ? const Icon(Icons.person, color: Colors.white)
                             : null,
                       );
@@ -114,6 +126,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                           setState(() {
                             _selectedImage = null;
+                            _userFuture = DBHelper.getUserById(widget.userId);
                           });
 
                           Navigator.pop(context);
@@ -160,7 +173,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Column(
               children: [
                 FutureBuilder<Map<String, dynamic>?>(
-                  future: DBHelper.getUserById(widget.userId),
+                  future: _userFuture,
                   builder: (context, snapshot) {
                     final photoPath = snapshot.data?['photo_path'];
 
@@ -246,9 +259,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => CVPage(
-                              userId: widget.userId, // data yang dikirim
-                            ),
+                            builder: (_) => CVPage(userId: widget.userId),
                           ),
                         );
                       },
