@@ -12,7 +12,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  // 1. Controller untuk setiap TextField
+  // Controller untuk setiap TextField
   final _nameController = TextEditingController();
   final _fullnameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -20,13 +20,13 @@ class _RegisterPageState extends State<RegisterPage> {
   final _confirmPasswordController = TextEditingController();
   final _skill = TextEditingController();
 
-  // 2. Variabel status untuk melacak validitas form
+  // Variabel status untuk melacak validitas form
   bool _isFormValid = false;
 
   @override
   void initState() {
     super.initState();
-    // 3. Tambahkan listener ke setiap controller
+    // Tambahkan listener ke setiap controller
     _nameController.addListener(_checkFormValidity);
     _fullnameController.addListener(_checkFormValidity);
     _emailController.addListener(_checkFormValidity);
@@ -38,7 +38,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void dispose() {
     // Pastikan controller dibuang untuk menghindari kebocoran memori
-    _nameController.dispose();
+    _nameController.dispose(); 
     _fullnameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -47,7 +47,7 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-  // 4. Fungsi yang memeriksa apakah semua field sudah diisi
+  // Fungsi yang memeriksa apakah semua field sudah diisi
   void _checkFormValidity() {
     final isValid =
         _nameController.text.isNotEmpty &&
@@ -147,12 +147,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
               SizedBox(height: 30),
 
-              // --- INPUT FIELDS ---
+              // INPUT FIELDS
 
               // Nama
               _buildTextLabel("Username"),
               TextField(
-                controller: _nameController, // <-- Hubungkan controller
+                controller: _nameController, 
                 decoration: InputDecoration(
                   hintText: "Masukkan username anda disini.",
                   border: InputBorder.none,
@@ -163,7 +163,7 @@ class _RegisterPageState extends State<RegisterPage> {
               // Nama
               _buildTextLabel("Nama Lengkap"),
               TextField(
-                controller: _fullnameController, // <-- Hubungkan controller
+                controller: _fullnameController, 
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
                 ],
@@ -177,7 +177,7 @@ class _RegisterPageState extends State<RegisterPage> {
               // Email
               _buildTextLabel("Email"),
               TextField(
-                controller: _emailController, // <-- Hubungkan controller
+                controller: _emailController, 
                 decoration: InputDecoration(
                   hintText: "Masukkan email anda disini.",
                   border: InputBorder.none,
@@ -189,7 +189,7 @@ class _RegisterPageState extends State<RegisterPage> {
               // Kata Sandi
               _buildTextLabel("Buat Kata Sandi"),
               TextField(
-                controller: _passwordController, // <-- Hubungkan controller
+                controller: _passwordController, 
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: "Masukkan kata sandi anda disini.",
@@ -202,7 +202,7 @@ class _RegisterPageState extends State<RegisterPage> {
               _buildTextLabel("Konfirmasi Kata Sandi"),
               TextField(
                 controller:
-                    _confirmPasswordController, // <-- Hubungkan controller
+                    _confirmPasswordController, 
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: "Konfirmasi kata sandi anda disini.",
@@ -213,7 +213,7 @@ class _RegisterPageState extends State<RegisterPage> {
               // Konfirmasi Kata Sandi
               _buildTextLabel("Keahlian"),
               TextField(
-                controller: _skill, // <-- Hubungkan controller
+                controller: _skill, 
                 obscureText: false,
                 decoration: InputDecoration(
                   hintText:
@@ -225,13 +225,15 @@ class _RegisterPageState extends State<RegisterPage> {
 
               SizedBox(height: 40),
 
-              // --- ELEVATED BUTTON (Tombol) ---
+              // Tombol Daftar
               ElevatedButton(
-                // 5. onPressed hanya aktif jika form valid (_isFormValid == true)
+                // onPressed hanya aktif jika form valid (_isFormValid == true)
                 onPressed: _isFormValid
                     ? () async {
-                        // 1. Cek Username (Tidak boleh ada spasi)
-                        if (_nameController.text.contains(' ')) {
+
+                      String cleanUsername = _nameController.text.trim();
+                        // Cek Username 
+                        if (cleanUsername.contains(' ')) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
@@ -258,13 +260,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           return;
                         }
 
-                        // 2. Cek Email (Harus ada @ dan .)
-                        if (!_emailController.text.contains('@') ||
-                            !_emailController.text.contains('.')) {
+                        // Cek Email 
+                        if (!_emailController.text.trim().endsWith('@gmail.com')) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
-                                "Format email tidak valid (harus ada @ dan .)",
+                                "Format email tidak valid",
                               ),
                               backgroundColor: Colors.red,
                             ),
@@ -272,7 +273,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           return;
                         }
 
-                        // 3. Cek Panjang Password
+                        // Cek Panjang Password
                         if (_passwordController.text.length < 8) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -285,7 +286,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           return;
                         }
 
-                        // 4. Cek Konfirmasi Password
+                        // Konfirmasi Password
                         if (_passwordController.text !=
                             _confirmPasswordController.text) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -297,7 +298,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           return;
                         }
 
-                        // --- JIKA SEMUA LOLOS CEK DI ATAS, BARU MASUK KE DATABASE ---
+                        // Jika semua pengecekan sudaha benar, maka masuk ke database
                         try {
                           int userId = await DBHelper.registerUser(
                             fullname: _fullnameController.text.trim(),
@@ -350,7 +351,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     : null, // Jika tidak valid, tombol dinonaktifkan
 
                 style: ElevatedButton.styleFrom(
-                  // 6. Logika Perubahan Warna
+                  // Perubahan Warna
                   backgroundColor: _isFormValid
                       ? Color(0xFF28AE9D) // Warna Hijau jika valid
                       : Colors.grey.shade300, // Warna Abu-abu jika tidak valid

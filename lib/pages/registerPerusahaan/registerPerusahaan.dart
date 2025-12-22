@@ -62,7 +62,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
-    // Pastikan controller dibuang untuk menghindari kebocoran memori
+    // memastikan controller dibuang untuk menghindari kebocoran memori
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();

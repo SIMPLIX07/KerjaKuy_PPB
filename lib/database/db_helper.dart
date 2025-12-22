@@ -197,7 +197,7 @@ class DBHelper {
     return _database!;
   }
 
-  // REGISTER
+  // REGISTER PELAMAR
   static Future<int> registerUser({
     required String fullname,
     required String username,
@@ -255,6 +255,7 @@ class DBHelper {
     return await db.query('berita', orderBy: 'id Desc');
   }
 
+  // REGISTER PELAMAR
   static Future<int> registerPerusahaan({
     required String namaPerusahaan,
     required String email,

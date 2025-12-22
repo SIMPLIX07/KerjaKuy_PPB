@@ -1,5 +1,3 @@
-// ===================  VERSION RESPONSIVE ===================
-
 import 'package:flutter/material.dart';
 import '../../database/db_helper.dart';
 
@@ -187,7 +185,7 @@ class _BuatlowonganState extends State<Buatlowongan> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ================================ INPUT FIELD ================================
+                      // INPUT FIELD
                       fieldText(
                         "Kategori",
                         kategoriController,
@@ -226,7 +224,7 @@ class _BuatlowonganState extends State<Buatlowongan> {
 
                       SizedBox(height: 10),
 
-                      // ================================ ROW Gaji & Periode ================================
+                      // Gaji & Periode
                       Row(
                         children: [
                           Expanded(
@@ -273,7 +271,7 @@ class _BuatlowonganState extends State<Buatlowongan> {
 
                       SizedBox(height: 35),
 
-                      // ================================ BUTTON SUBMIT ================================
+                      // BUTTON SUBMIT
                       SizedBox(
                         height: 50,
                         width: double.infinity,
@@ -330,7 +328,7 @@ class _BuatlowonganState extends State<Buatlowongan> {
     );
   }
 
-  // ==================== COMPONENTS ====================
+  // COMPONENTS 
 
   Widget fieldText(
     String title,
