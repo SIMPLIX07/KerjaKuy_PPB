@@ -31,7 +31,7 @@ class LamaranCard extends StatelessWidget {
 
       case "Ditolak":
         statusColor = Colors.red;
-        message = "Mohon maaf, lamaran anda belum diterima";
+        message = "Mohon maaf, anda belum diterima";
         break;
 
       default:
@@ -83,10 +83,7 @@ class LamaranCard extends StatelessWidget {
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(
-                      Icons.business,
-                      color: Colors.grey[600],
-                    ),
+                    child: Icon(Icons.business, color: Colors.grey[600]),
                   ),
                   const SizedBox(width: 10),
 
@@ -94,10 +91,7 @@ class LamaranCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        message,
-                        style: const TextStyle(fontSize: 13),
-                      ),
+                      Text(message, style: const TextStyle(fontSize: 13)),
                       Text(
                         "oleh $companyName",
                         style: const TextStyle(

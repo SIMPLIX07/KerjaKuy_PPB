@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/chat/chatPage.dart';
 import 'package:flutter_application_1/detailPerusahaan/detailPerusahaan.dart';
+import 'package:flutter_application_1/pages/berita/detail_berita_page.dart';
 import 'package:flutter_application_1/pages/lowongan/lowongan_filter_page.dart';
 import '../../../../database/db_helper.dart';
 import 'package:flutter_application_1/pages/settings/settingPelamar/settingPelamar.dart';
@@ -51,7 +52,7 @@ class _HomeTabState extends State<HomeTab> {
   @override
   void initState() {
     super.initState();
-    displayJobTitle = widget.jobTitle; 
+    displayJobTitle = widget.jobTitle;
     _loadUserData();
     _loadRekomendasi();
     _loadBerita();
@@ -393,7 +394,7 @@ class _HomeTabState extends State<HomeTab> {
                           ),
                         ).then((_) {
                           setState(() {
-                            _loadUserData(); 
+                            _loadUserData();
                           });
                         }),
                     child: Row(
@@ -566,15 +567,10 @@ class _HomeTabState extends State<HomeTab> {
                                 height: 7,
                                 width: 7,
                                 decoration: BoxDecoration(
-                                  color: Color(0xFF28AE9D),
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                               ),
                               SizedBox(width: 5),
-                              Text(
-                                "Diterima",
-                                style: TextStyle(color: Colors.white),
-                              ),
                             ],
                           ),
                           Row(
@@ -583,15 +579,10 @@ class _HomeTabState extends State<HomeTab> {
                                 height: 7,
                                 width: 7,
                                 decoration: BoxDecoration(
-                                  color: Colors.red,
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                               ),
                               SizedBox(width: 5),
-                              Text(
-                                "Tidak diterima",
-                                style: TextStyle(color: Colors.white),
-                              ),
                             ],
                           ),
                         ],
@@ -681,58 +672,77 @@ class _HomeTabState extends State<HomeTab> {
                     itemBuilder: (context, index) {
                       final berita = _berita[index];
                       print("IMAGE PATH INDEX $index: ${berita['image_path']}");
-                      return Container(
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              height: 90,
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(10),
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => DetailBeritaPage(
+                                judul: berita['deskripsi'],
+                                tanggal: berita['tanggal'],
+                                imagePath: berita['image_path'],
+                                content: '''
+Berita ini membahas perkembangan terbaru di dunia kerja, termasuk tren industri, kebutuhan skill terbaru, serta peluang karier di tahun 2025.
+
+Pastikan kamu terus memperbarui skill dan mengikuti perkembangan dunia profesional agar tidak tertinggal.
+''',
                               ),
-                              child: Center(
-                                child: Container(
-                                  width: double.infinity,
-                                  height: 90,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    image: DecorationImage(
-                                      image: AssetImage(berita['image_path']),
-                                      fit: BoxFit.cover,
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                height: 90,
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Center(
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 90,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      image: DecorationImage(
+                                        image: AssetImage(berita['image_path']),
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              berita['deskripsi'],
-                              maxLines: 4,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Align(
-                              alignment: Alignment.bottomLeft,
-                              child: Text(
-                                berita['tanggal'],
+                              SizedBox(height: 10),
+                              Text(
+                                berita['deskripsi'],
+                                maxLines: 4,
+                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
+                                  fontSize: 15,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 12,
                                 ),
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 10),
+                              Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Text(
+                                  berita['tanggal'],
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
