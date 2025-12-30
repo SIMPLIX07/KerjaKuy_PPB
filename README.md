@@ -1,16 +1,69 @@
-# flutter_application_1
+# KerjaKuy
 
-A new Flutter project.
+KerjaKuy adalah aplikasi pencarian kerja berbasis Flutter yang dirancang untuk mempertemukan **pelamar kerja** dan **perusahaan**.  
+Aplikasi ini menggunakan **SQLite (Sqflite)** sebagai database lokal dan menerapkan konsep **Internal API (Service Layer)** untuk mengelola data dan logika bisnis.
 
-## Getting Started
+Project ini dibuat untuk keperluan akademik.
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## API Documentation
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Project ini menggunakan **Internal API berbasis SQLite** yang diimplementasikan melalui class `DBHelper`.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Dokumentasi API menjelaskan:
+- Proses registrasi & login
+- Manajemen user dan perusahaan
+- Lowongan pekerjaan
+- Lamaran kerja
+- CV dan skill
+- Wawancara
+- Fitur chat
+
+**[Lihat API Documentation](docs/api-documentation.md)**
+
+---
+
+## Fitur Utama
+
+###  Pelamar
+- Registrasi & Login
+- Manajemen Profil
+- Manajemen CV & Skill
+- Melamar Lowongan
+- Melihat Status Lamaran
+- Jadwal Wawancara
+- Chat dengan Perusahaan
+
+### Perusahaan
+- Registrasi & Login
+- Manajemen Profil Perusahaan
+- Membuat & Mengelola Lowongan
+- Melihat Daftar Pelamar
+- Menjadwalkan Wawancara
+- Menerima / Menolak Pelamar
+- Chat dengan Pelamar
+
+---
+
+## Teknologi yang Digunakan
+
+| Teknologi | Keterangan |
+|---------|-----------|
+| Flutter | Framework frontend |
+| Dart | Bahasa pemrograman |
+| Sqflite | Database lokal (SQLite) |
+| Internal API | Service Layer (`DBHelper`) |
+
+---
+
+## Struktur Project
+
+```text
+kerjakuy/
+├── lib/                 # Source code Flutter
+├── assets/              # Asset gambar & resource
+├── docs/                # Dokumentasi
+│   └── api-documentation.md
+├── pubspec.yaml
+└── README.md
