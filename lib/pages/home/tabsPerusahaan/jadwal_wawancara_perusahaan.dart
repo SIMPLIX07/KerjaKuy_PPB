@@ -90,6 +90,67 @@ class _JadwalWawancaraPerusahaanState extends State<JadwalWawancaraPerusahaan> {
     );
   }
 
+  void _showDetailDialog(Map<String, dynamic> w, bool isHistory) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Detail Wawancara"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Pelamar: ${w['nama_user']}"),
+            const SizedBox(height: 6),
+            Text("Tanggal: ${w['tanggal']}"),
+            Text("Jam: ${w['jam_mulai']} - ${w['jam_selesai']}"),
+            const SizedBox(height: 6),
+            Text("Link Meet: ${w['link_meet'] ?? '-'}"),
+            const SizedBox(height: 6),
+            Text("Pesan: ${w['pesan'] ?? '-'}"),
+            const SizedBox(height: 12),
+            if (isHistory)
+              Text(
+                "Status: ${w['status']}",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: w['status'] == 'accepted' ? Colors.green : Colors.red,
+                ),
+              ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Tutup"),
+          ),
+
+          // Tombol hanya muncul jika masih process
+          if (!isHistory) ...[
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              onPressed: () {
+                Navigator.pop(context);
+                _showKonfirmasiDialog(w, 'rejected');
+              },
+              child: const Text("Tolak", style: TextStyle(color: Colors.white)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+              onPressed: () {
+                Navigator.pop(context);
+                _showKonfirmasiDialog(w, 'accepted');
+              },
+              child: const Text(
+                "Terima",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   Widget _buildList(List<Map<String, dynamic>> list, bool isHistory) {
     if (list.isEmpty) {
       return const Center(child: Text("Belum ada data."));
@@ -100,115 +161,120 @@ class _JadwalWawancaraPerusahaanState extends State<JadwalWawancaraPerusahaan> {
       itemCount: list.length,
       itemBuilder: (_, index) {
         final w = list[index];
-        return Card(
-          elevation: 0,
-          margin: const EdgeInsets.only(bottom: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Container(
-            decoration: BoxDecoration(
+        return GestureDetector(
+          onTap: () => _showDetailDialog(w, isHistory),
+          child: Card(
+            elevation: 0,
+            margin: const EdgeInsets.only(bottom: 16),
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
             ),
-            child: IntrinsicHeight(
-              child: Row(
-                children: [
-                  Container(
-                    width: 5,
-                    decoration: BoxDecoration(
-                      color: isHistory ? Colors.teal : Colors.amber,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        bottomLeft: Radius.circular(12),
-                      ),
-                    ),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.06),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.calendar_today_outlined,
-                                size: 16,
-                                color: Colors.grey,
-                              ),
-                              const SizedBox(width: 8),
-                              Text("Tanggal: ${w['tanggal']}"),
-                            ],
-                          ),
-                          const SizedBox(height: 6),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.access_time,
-                                size: 16,
-                                color: Colors.grey,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                "Jam: ${w['jam_mulai']} - ${w['jam_selesai']}",
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            "Wawancara dengan ${w['nama_user']}",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  if (!isHistory)
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(
-                            Icons.check_circle,
-                            color: Colors.green,
-                            size: 28,
-                          ),
-                          onPressed: () => _showKonfirmasiDialog(w, 'accepted'),
-                        ),
-                        IconButton(
-                          icon: const Icon(
-                            Icons.cancel,
-                            color: Colors.red,
-                            size: 28,
-                          ),
-                          onPressed: () => _showKonfirmasiDialog(w, 'rejected'),
-                        ),
-                      ],
-                    )
-                  else
-                    Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: Icon(
-                        w['status'] == 'accepted'
-                            ? Icons.check_circle
-                            : Icons.cancel,
-                        color: w['status'] == 'accepted'
-                            ? Colors.green
-                            : Colors.red,
-                        size: 28,
-                      ),
-                    ),
                 ],
+              ),
+              child: IntrinsicHeight(
+                child: Row(
+                  children: [
+                    Container(
+                      width: 5,
+                      decoration: BoxDecoration(
+                        color: isHistory ? Colors.teal : Colors.amber,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          bottomLeft: Radius.circular(12),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.calendar_today_outlined,
+                                  size: 16,
+                                  color: Colors.grey,
+                                ),
+                                const SizedBox(width: 8),
+                                Text("Tanggal: ${w['tanggal']}"),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.access_time,
+                                  size: 16,
+                                  color: Colors.grey,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "Jam: ${w['jam_mulai']} - ${w['jam_selesai']}",
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              "Wawancara dengan ${w['nama_user']}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    // if (!isHistory)
+                    //   Row(
+                    //     children: [
+                    //       IconButton(
+                    //         icon: const Icon(
+                    //           Icons.check_circle,
+                    //           color: Colors.green,
+                    //           size: 28,
+                    //         ),
+                    //         onPressed: () =>
+                    //             _showKonfirmasiDialog(w, 'accepted'),
+                    //       ),
+                    //       IconButton(
+                    //         icon: const Icon(
+                    //           Icons.cancel,
+                    //           color: Colors.red,
+                    //           size: 28,
+                    //         ),
+                    //         onPressed: () =>
+                    //             _showKonfirmasiDialog(w, 'rejected'),
+                    //       ),
+                    //     ],
+                    //   )
+                    // else
+                    //   Padding(
+                    //     padding: const EdgeInsets.only(right: 16),
+                    //     child: Icon(
+                    //       w['status'] == 'accepted'
+                    //           ? Icons.check_circle
+                    //           : Icons.cancel,
+                    //       color: w['status'] == 'accepted'
+                    //           ? Colors.green
+                    //           : Colors.red,
+                    //       size: 28,
+                    //     ),
+                    //   ),
+                  ],
+                ),
               ),
             ),
           ),
